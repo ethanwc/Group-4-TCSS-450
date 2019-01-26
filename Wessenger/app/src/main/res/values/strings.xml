@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Weather Messenger</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_emailHint">E-mail Address</string>
+    <string name="login_passwordHint">Password</string>
+    <string name="login_signIn">Sign In</string>
+    <string name="login_newUser">New User?</string>
+    <string name="login_help">Help?</string>
+</resources>
