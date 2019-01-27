@@ -2,7 +2,6 @@ package ethanwc.tcss450.uw.edu.template;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import android.widget.TextView;
  */
 public class NewUserFragment extends Fragment {
     private OnNewUserFragmentButtonAction mListener;
-View v;
     public NewUserFragment() {
         // Required empty public constructor
     }
@@ -27,7 +25,7 @@ View v;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_new_user, container, false);
+        View v = inflater.inflate(R.layout.fragment_new_user, container, false);
         TextView txtLoginClick =(TextView) v.findViewById(R.id.btn_newUser_LogIn);
         txtLoginClick.setOnClickListener(new View.OnClickListener() {
             @Override

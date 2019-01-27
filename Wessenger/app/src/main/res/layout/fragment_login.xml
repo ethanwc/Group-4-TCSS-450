@@ -5,12 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark2"
-    android:theme="@style/AppTheme2"
+    android:theme="@style/AppTheme"
     tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/login_imageView_logo"
-        style="@style/AppTheme2"
         android:layout_width="167dp"
         android:layout_height="143dp"
         android:layout_marginStart="8dp"

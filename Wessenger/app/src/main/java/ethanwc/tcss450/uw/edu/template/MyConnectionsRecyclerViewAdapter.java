@@ -1,5 +1,6 @@
 package ethanwc.tcss450.uw.edu.template;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +22,12 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyConnectionsRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    MyConnectionsRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -56,16 +58,17 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        final View mView;
+        final TextView mContentView;
+        DummyItem mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";

@@ -1,5 +1,7 @@
 package ethanwc.tcss450.uw.edu.template.dummy;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,7 @@ public class DummyContent {
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    private static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
 
     private static final int COUNT = 25;
 
@@ -56,7 +58,7 @@ public class DummyContent {
     public static class DummyItem {
         public final String id;
         public final String content;
-        public final String details;
+        final String details;
 
         public DummyItem(String id, String content, String details) {
             this.id = id;
@@ -64,6 +66,7 @@ public class DummyContent {
             this.details = details;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return content;
