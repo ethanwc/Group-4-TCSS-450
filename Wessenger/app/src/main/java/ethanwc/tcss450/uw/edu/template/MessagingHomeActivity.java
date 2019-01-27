@@ -1,8 +1,12 @@
 package ethanwc.tcss450.uw.edu.template;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,7 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MessagingHomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +31,13 @@ public class MessagingHomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                loadFragment(new NewMessageFragment());
+            }
+            private void loadFragment(Fragment frag){
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, frag )
+                        .addToBackStack(null);
+                transaction.commit();
             }
         });
 
@@ -40,6 +49,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
     @Override
@@ -80,22 +91,40 @@ public class MessagingHomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_weather_home) {
+            Intent intent = new Intent(MessagingHomeActivity.this, WeatherHomeActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_Change_Locations) {
+            loadFragment(new ChangeLocationsFragment());
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.nav_View_Saved_Location) {
+            loadFragment(new SaveLocationsFragment());
         } else if (id == R.id.nav_chat_home) {
+            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
+            startActivity(intent);
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_chat_view_connections) {
+            loadFragment(new ConnectionsFragment());
 
+        } else if (id == R.id.nav_Request_Invitations) {
+            loadFragment(new NewInvitationFragment());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onSendFragmentInteraction() {
+        MessageViewFragment messageView = new MessageViewFragment();
+        loadFragment(messageView);
+    }
+
+    private void loadFragment(Fragment frag){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainer, frag )
+                .addToBackStack(null);
+        transaction.commit();
     }
 }

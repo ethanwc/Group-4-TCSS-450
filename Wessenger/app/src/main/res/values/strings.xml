@@ -28,4 +28,15 @@
     <string name="menu_nav_home">Home</string>
     <string name="change_location_zip_code">Enter zip code</string>
     <string name="title_activity_weather_home">WeatherHomeActivity</string>
+
+
+    <string name="Menu_Weather">Weather</string>
+    <string name="Menu_Home">Home</string>
+    <string name="Menu_Change_Location">Change Locations</string>
+    <string name="Menu_View_Saved_Locations">View Saved Locations</string>
+
+    <string name="Menu_Chat">Chat</string>
+    <string name="Chat_Home">Home</string>
+    <string name="Chat_View_Connections">View Connections</string>
+    <string name="Chat_requests_Invitations">Requests/Invitations</string>
 </resources>
