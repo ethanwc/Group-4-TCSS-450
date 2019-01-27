@@ -17,8 +17,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
+
 public class MessagingHomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage {
+        implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
+        ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnListFragmentInteractionListener,
+        InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
+        SavedLocationFragment.OnListFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +36,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(new NewMessageFragment());
+                loadFragment(new ConversationFragment());
             }
             private void loadFragment(Fragment frag){
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
@@ -92,22 +97,49 @@ public class MessagingHomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_weather_home) {
+
+
             Intent intent = new Intent(MessagingHomeActivity.this, WeatherHomeActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_Change_Locations) {
             loadFragment(new ChangeLocationsFragment());
 
         } else if (id == R.id.nav_View_Saved_Location) {
-            loadFragment(new SaveLocationsFragment());
-        } else if (id == R.id.nav_chat_home) {
-            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
-            startActivity(intent);
+            SavedLocationFragment locationFragment = new SavedLocationFragment();
 
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, locationFragment)
+                    .addToBackStack(null);
+            transaction.commit();
+        } else if (id == R.id.nav_chat_home) {
+//            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
+//            startActivity(intent);
+
+            ConversationFragment conversationFragment = new ConversationFragment();
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, conversationFragment)
+                    .addToBackStack(null);
+            transaction.commit();
         } else if (id == R.id.nav_chat_view_connections) {
-            loadFragment(new ConnectionsFragment());
+            ConnectionsFragment connectionsFragment = new ConnectionsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, connectionsFragment)
+                    .addToBackStack(null);
+            transaction.commit();
 
         } else if (id == R.id.nav_Request_Invitations) {
-            loadFragment(new NewInvitationFragment());
+            InvitationsFragment invitationsFragment = new InvitationsFragment();
+            RequestsFragment requestsFragment = new RequestsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+
+                    .replace(R.id.fragmentContainer, invitationsFragment)
+                    //.replace(R.id.secondFragmentContainer, requestsFragment)
+                    .addToBackStack(null);
+            transaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -126,5 +158,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .replace(R.id.fragmentContainer, frag )
                 .addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }

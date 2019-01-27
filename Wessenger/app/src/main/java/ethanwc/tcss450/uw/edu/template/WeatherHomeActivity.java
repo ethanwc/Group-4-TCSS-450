@@ -16,8 +16,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
+
 public class WeatherHomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SavedLocationFragment.OnListFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,7 @@ public class WeatherHomeActivity extends AppCompatActivity
             loadFragment(new ChangeLocationsFragment());
 
         } else if (id == R.id.nav_View_Saved_Location) {
-            loadFragment(new SaveLocationsFragment());
+            //
         } else if (id == R.id.nav_chat_home) {
             Intent intent = new Intent(WeatherHomeActivity.this, MessagingHomeActivity.class);
             startActivity(intent);
@@ -111,5 +113,10 @@ public class WeatherHomeActivity extends AppCompatActivity
                 .replace(R.id.fragmentContainer, frag )
                 .addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }
