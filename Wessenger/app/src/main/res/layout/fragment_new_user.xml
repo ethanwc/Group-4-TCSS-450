@@ -2,7 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/newUserFragment"
+    android:id="@+id/fragment_main_newuser"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
@@ -10,7 +10,7 @@
 
 
     <EditText
-        android:id="@+id/newUserEmail"
+        android:id="@+id/edittext_newuser_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/newUserPassword"
+        android:id="@+id/edittext_newuser_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -32,10 +32,10 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newUserEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_email" />
 
     <EditText
-        android:id="@+id/newUserPassword2"
+        android:id="@+id/edittext_newuser_password2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -44,10 +44,10 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newUserPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_password" />
 
     <EditText
-        android:id="@+id/firstName"
+        android:id="@+id/edittext_newuser_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -57,10 +57,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newUserPassword2" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_password2" />
 
     <EditText
-        android:id="@+id/lastName"
+        android:id="@+id/edittext_newuser_last"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -69,10 +69,10 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstName" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_first" />
 
     <EditText
-        android:id="@+id/newUserNickName"
+        android:id="@+id/edittext_newuser_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
@@ -83,22 +83,21 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastName" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_last" />
 
     <Button
-        android:id="@+id/btn_newUser_Register"
+        android:id="@+id/button_newuser_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="@drawable/round"
-        android:onClick="onClick"
         android:text="@string/new_user_register"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/newUserNickName" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_nickname" />
 
     <TextView
-        android:id="@+id/btn_newUser_LogIn"
+        android:id="@+id/textview_newuser_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -108,7 +107,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/newUserHelp"
+        android:id="@+id/textview_newuser_help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

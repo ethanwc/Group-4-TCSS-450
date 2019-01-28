@@ -34,13 +34,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     @Override
     public void onClick(View v) {
-        if (R.id.login_button_login == v.getId()) {
+        if (R.id.button_login_login == v.getId()) {
 
             Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
             startActivity(intent);
 
 
-        } else if (v.getId() == R.id.login_textView_newUser) {
+        } else if (v.getId() == R.id.textview_newuser_login) {
             NewUserFragment newUser = new NewUserFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction().replace(R.id.activity_main_container, newUser).addToBackStack(null);
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onNewUserButtonAction(View btn) {
 
-        if(btn.getId() ==R.id.btn_newUser_LogIn ){
+        if(btn.getId() ==R.id.textview_newuser_login ){
             System.out.println("btn Login");
             Intent intent = new Intent(MainActivity.this, MainActivity.class);
             startActivity(intent);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            transaction = getSupportFragmentManager()
 //                    .beginTransaction().replace(R.id.activity_main_container, mainA).addToBackStack(null);
 //            transaction.commit();
-        } else if (btn.getId() == R.id.btn_newUser_Register){
+        } else if (btn.getId() == R.id.button_newuser_register){
             AuthenticationFragment authentication = new AuthenticationFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction().replace(R.id.activity_main_container, authentication).addToBackStack(null);

@@ -27,7 +27,7 @@ public class NewUserFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_new_user, container, false);
-        TextView txtLoginClick = v.findViewById(R.id.btn_newUser_LogIn);
+        TextView txtLoginClick = v.findViewById(R.id.textview_newuser_login);
         txtLoginClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -35,7 +35,7 @@ public class NewUserFragment extends Fragment {
             }
         });
 
-        Button btnRegister = v.findViewById(R.id.btn_newUser_Register);
+        Button btnRegister = v.findViewById(R.id.button_newuser_register);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

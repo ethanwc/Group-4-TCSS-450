@@ -2,13 +2,14 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_main_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/login_imageView_logo"
+        android:id="@+id/imageview_login_logo"
         android:layout_width="167dp"
         android:layout_height="143dp"
         android:layout_marginStart="8dp"
@@ -20,7 +21,7 @@
         app:srcCompat="@drawable/logo" />
 
     <EditText
-        android:id="@+id/login_editText_email"
+        android:id="@+id/edittext_login_email"
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginStart="32dp"
@@ -34,10 +35,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/login_imageView_logo" />
+        app:layout_constraintTop_toBottomOf="@+id/imageview_login_logo" />
 
     <EditText
-        android:id="@+id/login_editText_password"
+        android:id="@+id/edittext_login_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -50,10 +51,10 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_editText_email" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_login_email" />
 
     <Button
-        android:id="@+id/login_button_login"
+        android:id="@+id/button_login_login"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -64,10 +65,10 @@
         android:text="@string/login_signIn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_editText_password" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_login_password" />
 
     <com.google.android.gms.common.SignInButton
-        android:id="@+id/login_button_google"
+        android:id="@+id/button_login_google"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -75,10 +76,10 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_button_login" />
+        app:layout_constraintTop_toBottomOf="@+id/button_login_login" />
 
     <TextView
-        android:id="@+id/login_textView_newUser"
+        android:id="@+id/testview_login_newuser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -90,7 +91,7 @@
 
 
     <TextView
-        android:id="@+id/login_textView_help"
+        android:id="@+id/textview_login_help"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"

@@ -28,7 +28,7 @@ public class NewMessageFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_new_message, container, false);
 
-        Button btnSend = v.findViewById(R.id.btn_newMessageFragment_send);
+        Button btnSend = v.findViewById(R.id.button_newmessage_send);
         btnSend.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
