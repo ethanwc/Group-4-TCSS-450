@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MessageViewFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <EditText
         android:id="@+id/textEntry"
         android:layout_width="wrap_content"

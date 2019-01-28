@@ -30,13 +30,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * These buttons are to handle the button click of Main Login Fragment.
      * It handles for Sign in and New User
-     * @param v
+     * @param v View used to represent the view passed in.
      */
     @Override
     public void onClick(View v) {
         if (R.id.login_button_login == v.getId()) {
-        MessagingHomeActivity messagingHome;
-        messagingHome= new MessagingHomeActivity();
 
             Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
             startActivity(intent);

@@ -3,6 +3,7 @@ package ethanwc.tcss450.uw.edu.template;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +23,11 @@ public class NewUserFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_new_user, container, false);
-        TextView txtLoginClick =(TextView) v.findViewById(R.id.btn_newUser_LogIn);
+        TextView txtLoginClick = v.findViewById(R.id.btn_newUser_LogIn);
         txtLoginClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -34,7 +35,7 @@ public class NewUserFragment extends Fragment {
             }
         });
 
-        Button btnRegister =(Button) v.findViewById(R.id.btn_newUser_Register);
+        Button btnRegister = v.findViewById(R.id.btn_newUser_Register);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

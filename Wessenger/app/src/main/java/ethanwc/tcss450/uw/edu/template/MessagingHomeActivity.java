@@ -2,6 +2,7 @@ package ethanwc.tcss450.uw.edu.template;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -27,10 +28,10 @@ public class MessagingHomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -38,19 +39,19 @@ public class MessagingHomeActivity extends AppCompatActivity
             }
             private void loadFragment(Fragment frag){
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, frag )
+                        .replace(R.id.activity_messaging_container, frag )
                         .addToBackStack(null);
                 transaction.commit();
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView =  findViewById(R.id.navview_messanging_nav);
         navigationView.setNavigationItemSelectedListener(this);
 
 
@@ -58,7 +59,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -90,7 +91,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -107,7 +108,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragmentContainer, locationFragment)
+                    .replace(R.id.activity_messaging_container, locationFragment)
                     .addToBackStack(null);
             transaction.commit();
         } else if (id == R.id.nav_chat_home) {
@@ -117,30 +118,30 @@ public class MessagingHomeActivity extends AppCompatActivity
             ConversationFragment conversationFragment = new ConversationFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragmentContainer, conversationFragment)
+                    .replace(R.id.activity_messaging_container, conversationFragment)
                     .addToBackStack(null);
             transaction.commit();
         } else if (id == R.id.nav_chat_view_connections) {
             ConnectionsFragment connectionsFragment = new ConnectionsFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragmentContainer, connectionsFragment)
+                    .replace(R.id.activity_messaging_container, connectionsFragment)
                     .addToBackStack(null);
             transaction.commit();
 
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
-            RequestsFragment requestsFragment = new RequestsFragment();
+            //RequestsFragment requestsFragment = new RequestsFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
 
-                    .replace(R.id.fragmentContainer, invitationsFragment)
+                    .replace(R.id.activity_messaging_container, invitationsFragment)
                     //.replace(R.id.secondFragmentContainer, requestsFragment)
                     .addToBackStack(null);
             transaction.commit();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -153,7 +154,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private void loadFragment(Fragment frag){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, frag )
+                .replace(R.id.activity_messaging_container, frag )
                 .addToBackStack(null);
         transaction.commit();
     }

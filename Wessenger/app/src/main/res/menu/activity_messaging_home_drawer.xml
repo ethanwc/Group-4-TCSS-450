@@ -32,7 +32,7 @@
                 android:title="@string/Chat_View_Connections" />
             <item
                 android:id="@+id/nav_Request_Invitations"
-                android:icon="@drawable/ic_request_invitators"
+                android:icon="@drawable/ic_request_invitations"
                 android:title="@string/Chat_requests_Invitations" />
         </menu>
     </item>

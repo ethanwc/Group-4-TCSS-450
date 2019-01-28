@@ -3,6 +3,7 @@ package ethanwc.tcss450.uw.edu.template;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +23,12 @@ public class NewMessageFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_new_message, container, false);
 
-        Button btnSend =(Button) v.findViewById(R.id.btn_newMessageFragment_send);
+        Button btnSend = v.findViewById(R.id.btn_newMessageFragment_send);
         btnSend.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

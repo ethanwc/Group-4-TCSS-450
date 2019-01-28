@@ -2,6 +2,7 @@ package ethanwc.tcss450.uw.edu.template;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,7 +55,7 @@ public class SavedLocationFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_savedlocation_list, container, false);
 
@@ -101,7 +102,7 @@ public class SavedLocationFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
+        // TODO: Update what method does upon list interaction.
         void onListFragmentInteraction(DummyItem item);
     }
 }
