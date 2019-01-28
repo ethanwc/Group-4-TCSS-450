@@ -108,7 +108,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.activity_messaging_container, locationFragment)
+                    .replace(R.id.fragment_messaging_container, locationFragment)
                     .addToBackStack(null);
             transaction.commit();
         } else if (id == R.id.nav_chat_home) {
@@ -118,14 +118,14 @@ public class MessagingHomeActivity extends AppCompatActivity
             ConversationFragment conversationFragment = new ConversationFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.activity_messaging_container, conversationFragment)
+                    .replace(R.id.fragment_messaging_container, conversationFragment)
                     .addToBackStack(null);
             transaction.commit();
         } else if (id == R.id.nav_chat_view_connections) {
             ConnectionsFragment connectionsFragment = new ConnectionsFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.activity_messaging_container, connectionsFragment)
+                    .replace(R.id.fragment_messaging_container, connectionsFragment)
                     .addToBackStack(null);
             transaction.commit();
 
@@ -135,7 +135,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
 
-                    .replace(R.id.activity_messaging_container, invitationsFragment)
+                    .replace(R.id.fragment_messaging_container, invitationsFragment)
                     //.replace(R.id.secondFragmentContainer, requestsFragment)
                     .addToBackStack(null);
             transaction.commit();

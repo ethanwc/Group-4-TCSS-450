@@ -90,19 +90,45 @@ public class WeatherHomeActivity extends AppCompatActivity
             Intent intent = new Intent(WeatherHomeActivity.this, WeatherHomeActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_Change_Locations) {
-            loadFragment(new ChangeLocationsFragment());
+            ChangeLocationsFragment changeFragment = new ChangeLocationsFragment();
+
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_weather_container, changeFragment)
+                    .addToBackStack(null);
+            transaction.commit();
 
         } else if (id == R.id.nav_View_Saved_Location) {
-            //
+            SavedLocationFragment locationFragment = new SavedLocationFragment();
+
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_weather_container, locationFragment)
+                    .addToBackStack(null);
+            transaction.commit();
+
         } else if (id == R.id.nav_chat_home) {
             Intent intent = new Intent(WeatherHomeActivity.this, MessagingHomeActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_chat_view_connections) {
-            loadFragment(new ConnectionsFragment());
+            ConnectionsFragment connectionsFragment = new ConnectionsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_weather_container, connectionsFragment)
+                    .addToBackStack(null);
+            transaction.commit();
 
         } else if (id == R.id.nav_Request_Invitations) {
-            loadFragment(new NewInvitationFragment());
+            InvitationsFragment invitationsFragment = new InvitationsFragment();
+            //RequestsFragment requestsFragment = new RequestsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+
+                    .replace(R.id.fragment_weather_container, invitationsFragment)
+                    //.replace(R.id.secondFragmentContainer, requestsFragment)
+                    .addToBackStack(null);
+            transaction.commit();
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_weather_container);

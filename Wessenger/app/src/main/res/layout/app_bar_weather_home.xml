@@ -5,6 +5,7 @@
     android:id="@+id/appbar_weather_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/WeatherTheme"
     tools:context=".WeatherHomeActivity">
 
     <android.support.design.widget.AppBarLayout
