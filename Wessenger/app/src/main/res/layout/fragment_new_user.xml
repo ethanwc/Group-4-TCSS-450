@@ -5,11 +5,9 @@
     android:id="@+id/newUserFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark2"
     android:theme="@style/AppTheme"
     tools:context=".NewUserFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <EditText
         android:id="@+id/newUserEmail"
@@ -19,7 +17,6 @@
         android:ems="10"
         android:hint="@string/login_emailHint"
         android:inputType="textEmailAddress"
-        android:textColorHint="@color/colorPrimary2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +30,6 @@
         android:ems="10"
         android:hint="@string/login_passwordHint"
         android:inputType="textPassword"
-        android:textColorHint="@color/colorPrimary2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newUserEmail" />
@@ -46,7 +42,6 @@
         android:ems="10"
         android:hint="@string/login_passwordHint"
         android:inputType="textPassword"
-        android:textColorHint="@color/colorPrimary2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newUserPassword" />
@@ -59,7 +54,6 @@
         android:ems="10"
         android:hint="@string/new_user_first_name"
         android:inputType="textPersonName"
-        android:textColorHint="@color/colorPrimary2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +67,6 @@
         android:ems="10"
         android:hint="@string/new_user_last_name"
         android:inputType="textPersonName"
-        android:textColorHint="@color/colorPrimary2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/firstName" />
@@ -88,7 +81,6 @@
         android:ems="10"
         android:hint="@string/new_user_nickname"
         android:inputType="textPersonName"
-        android:textColorHint="@color/colorPrimary2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lastName" />
@@ -111,9 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:onClick="onClick"
         android:text="@string/new_user_Log_In"
-        android:textColor="@color/colorAccent2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -124,7 +114,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/login_help"
-        android:textColor="@color/colorAccent2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

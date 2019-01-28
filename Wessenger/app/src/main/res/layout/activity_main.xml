@@ -4,7 +4,6 @@
     android:id="@+id/activity_main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark2"
     tools:context=".MainActivity">
 
 </FrameLayout>
