@@ -7,6 +7,8 @@
         <item name="android:textColorHint">@color/messageText</item>
         <item name="android:textColor">@color/messageText</item>
         <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/messageText</item>
+        <item name="android:textColorSecondary">@color/messageText</item>
 
     </style>
 
@@ -16,6 +18,9 @@
         <item name="android:background">@color/backgroundDark</item>
         <item name="android:textColorHint">@color/weatherText</item>
         <item name="android:textColor">@color/weatherText</item>
+        <item name="android:textColorPrimary">@color/weatherText</item>
+        <item name="android:textColorSecondary">@color/weatherText</item>
+
         <item name="windowActionBar">false</item>
 
     </style>
