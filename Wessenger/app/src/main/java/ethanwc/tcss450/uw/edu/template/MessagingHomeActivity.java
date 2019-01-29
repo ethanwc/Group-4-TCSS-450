@@ -54,6 +54,12 @@ public class MessagingHomeActivity extends AppCompatActivity
         NavigationView navigationView =  findViewById(R.id.navview_messanging_nav);
         navigationView.setNavigationItemSelectedListener(this);
 
+        ConversationFragment conversationFragment = new ConversationFragment();
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_messaging_container, conversationFragment)
+                .addToBackStack(null);
+        transaction.commit();
 
     }
 
