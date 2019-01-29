@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Weather Messenger</string>
+    <string name="app_name">Wessenger</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="login_emailHint">E-mail Address</string>
     <string name="login_passwordHint">Password</string>
     <string name="login_signIn">Sign In</string>
@@ -12,7 +12,7 @@
     <string name="new_user_nickname">NickName</string>
     <string name="new_user_register">Register</string>
     <string name="new_user_Log_In">Log In</string>
-    <string name="title_activity_messaging_home">MessagingHomeActivity</string>
+    <string name="title_activity_messaging_home">Messaging</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -22,11 +22,13 @@
     <string name="authentication_submit">Submit</string>
     <string name="authentication_code">Code</string>
     <string name="authentication">Please check email for authentication code</string>
+    <string name="authenticationHeader">Authentication Code Sent</string>
+
     <string name="new_message_send">Send</string>
-    <string name="menu_chat">Chat</string>
+    <string name="menu_chat">Messenger</string>
     <string name="menu_nav_home">Home</string>
     <string name="change_location_zip_code">Enter zip code</string>
-    <string name="title_activity_weather_home">WeatherHomeActivity</string>
+    <string name="title_activity_weather_home">Weather</string>
 
 
     <string name="Menu_Weather">Weather</string>
