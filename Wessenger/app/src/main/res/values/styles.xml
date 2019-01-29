@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <item name="android:background">@color/messageDark</item>
-        <item name="android:textColorHint">@color/colorAccent</item>
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:background">@color/backgroundDark</item>
+        <item name="android:textColorHint">@color/messageText</item>
+        <item name="android:textColor">@color/messageText</item>
         <item name="windowActionBar">false</item>
 
     </style>
@@ -13,7 +13,16 @@
 
     <style name="WeatherTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <item name="android:background">@color/weatherPrimary</item>
+        <item name="android:background">@color/backgroundDark</item>
+        <item name="android:textColorHint">@color/weatherText</item>
+        <item name="android:textColor">@color/weatherText</item>
+        <item name="windowActionBar">false</item>
+
+    </style>
+
+    <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="android:background">@color/backgroundDark</item>
         <item name="android:textColorHint">@color/colorAccent</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="windowActionBar">false</item>

@@ -3,11 +3,12 @@
 
 
     <color name="messagePrimary">#0F8EB5</color>
-    <color name="messageDark">#0C3D48</color>
+    <color name="backgroundDark">#0C3D48</color>
 
+    <color name="messageText">#13baea</color>
     <color name="colorAccent">#c7c7c7</color>
 
-    <color name="weatherPrimary">#ed7b22</color>
+    <color name="weatherText">#ed7b22</color>
     <color name="weatherDark">#0e395b</color>
 
 
