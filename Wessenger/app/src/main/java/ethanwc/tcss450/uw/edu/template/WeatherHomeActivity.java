@@ -106,22 +106,24 @@ public class WeatherHomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_chat_view_connections) {
             ConnectionsFragment connectionsFragment = new ConnectionsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_weather_container, connectionsFragment)
-                    .addToBackStack(null);
-            transaction.commit();
+//            FragmentTransaction transaction = getSupportFragmentManager()
+//                    .beginTransaction()
+//                    .replace(R.id.fragment_weather_container, connectionsFragment)
+//                    .addToBackStack(null);
+//            transaction.commit();
+            loadFragment(connectionsFragment);
 
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
             //RequestsFragment requestsFragment = new RequestsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-
-                    .replace(R.id.fragment_weather_container, invitationsFragment)
-                    //.replace(R.id.secondFragmentContainer, requestsFragment)
-                    .addToBackStack(null);
-            transaction.commit();
+//            FragmentTransaction transaction = getSupportFragmentManager()
+//                    .beginTransaction()
+//
+//                    .replace(R.id.fragment_weather_container, invitationsFragment)
+//                    //.replace(R.id.secondFragmentContainer, requestsFragment)
+//                    .addToBackStack(null);
+//            transaction.commit();
+            loadFragment( invitationsFragment);
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_weather_container);
