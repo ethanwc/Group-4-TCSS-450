@@ -35,6 +35,9 @@
     <string name="Menu_Home">Home</string>
     <string name="Menu_Change_Location">Change Locations</string>
     <string name="Menu_View_Saved_Locations">View Saved Locations</string>
+    <string name="change_location_zip_prompt">Change location by zip code: </string>
+    <string name="change_location_map_prompt">Change location by map: </string>
+    <string name="change_location_saved_prompt">Change location to a saved location: </string>
 
     <string name="Menu_Chat">Chat</string>
     <string name="Chat_Home">Home</string>
