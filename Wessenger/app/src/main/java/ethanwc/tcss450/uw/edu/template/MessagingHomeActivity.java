@@ -35,7 +35,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(new ConversationFragment());
+                loadFragment(new NewMessageFragment());
             }
             private void loadFragment(Fragment frag){
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
@@ -107,7 +107,11 @@ public class MessagingHomeActivity extends AppCompatActivity
             Intent intent = new Intent(MessagingHomeActivity.this, WeatherHomeActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_Change_Locations) {
-            loadFragment(new ChangeLocationsFragment());
+//            loadFragment(new ChangeLocationsFragment());
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_messaging_container, new ChangeLocationsFragment())
+                    .addToBackStack(null);
 
         } else if (id == R.id.nav_View_Saved_Location) {
             SavedLocationFragment locationFragment = new SavedLocationFragment();
@@ -118,8 +122,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .addToBackStack(null);
             transaction.commit();
         } else if (id == R.id.nav_chat_home) {
-//            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
+            startActivity(intent);
 
             ConversationFragment conversationFragment = new ConversationFragment();
             FragmentTransaction transaction = getSupportFragmentManager()

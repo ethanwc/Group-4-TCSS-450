@@ -1,6 +1,7 @@
 package ethanwc.tcss450.uw.edu.template;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,7 +9,9 @@ import android.view.View;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, NewUserFragment.OnNewUserFragmentButtonAction {
+import ethanwc.tcss450.uw.edu.template.model.Credentials;
+
+public class MainActivity extends AppCompatActivity implements  NewUserFragment.OnNewUserFragmentButtonAction, LoginFragment.OnLoginFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,49 +30,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    /**
-     * These buttons are to handle the button click of Main Login Fragment.
-     * It handles for Sign in and New User
-     * @param v View used to represent the view passed in.
-     */
-    @Override
-    public void onClick(View v) {
-        if (R.id.button_login_login == v.getId()) {
-
-            Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
-            startActivity(intent);
-
-
-        } else if (v.getId() == R.id.textview_newuser_login) {
-            NewUserFragment newUser = new NewUserFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction().replace(R.id.activity_main_container, newUser).addToBackStack(null);
-            transaction.commit();
-
-        }
-    }
-
-
-    @Override
-    public void onNewUserButtonAction(View btn) {
-
-        if(btn.getId() ==R.id.textview_newuser_login ){
-            System.out.println("btn Login");
-            Intent intent = new Intent(MainActivity.this, MainActivity.class);
-            startActivity(intent);
-//            MainActivity mainA = new MainActivity();
-//            FragmentTransaction transaction;
-//            transaction = getSupportFragmentManager()
-//                    .beginTransaction().replace(R.id.activity_main_container, mainA).addToBackStack(null);
+//    /**
+//     * These buttons are to handle the button click of Main Login Fragment.
+//     * It handles for Sign in and New User
+//     * @param v View used to represent the view passed in.
+//     */
+//    @Override
+//    public void onClick(View v) {
+//        if (R.id.button_login_login == v.getId()) {
+//
+//            Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
+//            startActivity(intent);
+//
+//
+//        } else if (v.getId() == R.id.textview_newuser_login) {
+//            NewUserFragment newUser = new NewUserFragment();
+//            FragmentTransaction transaction = getSupportFragmentManager()
+//                    .beginTransaction().replace(R.id.activity_main_container, newUser).addToBackStack(null);
 //            transaction.commit();
-        } else if (btn.getId() == R.id.button_newuser_register){
-            AuthenticationFragment authentication = new AuthenticationFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction().replace(R.id.activity_main_container, authentication).addToBackStack(null);
-            transaction.commit();
+//
+//        }
+//    }
 
-        }
+
+    @Override
+    public void registerSuccess(Credentials credentials) {
+        LoginFragment loginFragment;
+        loginFragment = new LoginFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
+        args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
+        loginFragment.setArguments(args);
+
+        loadFragment(loginFragment);
+
     }
 
+    @Override
+    public void loginButtonAction() {
+        loadFragment(new LoginFragment());
+    }
+
+    /**
+     * This method is to load fragment
+     * @param frag, fragment
+     */
+    public void loadFragment(Fragment frag){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main_container,  frag)
+                .commit();
+    }
+
+
+    @Override
+    public void onLoginSuccess(Credentials credentials) {
+        Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
+            startActivity(intent);
+    }
+
+    @Override
+    public void onRegisterClicked() {
+        loadFragment(new NewUserFragment());
+
+    }
 
 }

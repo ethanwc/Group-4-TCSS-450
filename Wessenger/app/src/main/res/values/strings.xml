@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Wessenger</string>
 
+    <string name="email_registerToLogin">email</string>
+    <string name="password_registerToLogin">password</string>
 
     <string name="login_emailHint">E-mail Address</string>
     <string name="login_passwordHint">Password</string>

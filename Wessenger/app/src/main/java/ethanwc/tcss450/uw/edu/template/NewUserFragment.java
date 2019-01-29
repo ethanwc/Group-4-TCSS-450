@@ -9,14 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewUserFragment extends Fragment {
+public class NewUserFragment extends Fragment implements View.OnClickListener{
     private OnNewUserFragmentButtonAction mListener;
+    View mView;
     public NewUserFragment() {
         // Required empty public constructor
     }
@@ -26,39 +30,106 @@ public class NewUserFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_new_user, container, false);
-        TextView txtLoginClick = v.findViewById(R.id.textview_newuser_login);
-        txtLoginClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onNewUserButtonAction(v);
-            }
-        });
+        mView = inflater.inflate(R.layout.fragment_new_user, container, false);
+        TextView txtLoginClick = mView.findViewById(R.id.textview_newuser_login);
+        txtLoginClick.setOnClickListener(this);
 
-        Button btnRegister = v.findViewById(R.id.button_newuser_register);
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onNewUserButtonAction(v);
-            }
-        });
-        return v;
+
+        Button btnRegister = mView.findViewById(R.id.button_newuser_register);
+        btnRegister.setOnClickListener(this);
+
+        return mView;
     }
 
     /**
-//     * These buttons are to handle the button click of New USer.
-//     * It handles for Register and Login
-//     * @param btnclicked
-//     */
-//    @Override
-//    public void onClick(View btnclicked) {
-////        if(v.getId() == R.id.btn_newUser_LogIn){
-////            Intent intent = new Intent(NewUserFragment.this, MainActivity.class);
-////        }else {
-//        System.out.println("---btn clicked-0000000");
-//            mListener.onNewUserButtonAction(btnclicked);
-////        }
-//    }
+     * These buttons are to handle the button click of New USer.
+     * It handles for Register and Login
+     * @param view
+     */
+    @Override
+    public void onClick(View view) {
+
+        if (mListener != null) {
+            switch ((view.getId())) {
+                case R.id.textview_newuser_login:
+                    mListener.loginButtonAction();
+                    break;
+
+                case R.id.button_newuser_register:
+                    EditText nickName_text = (EditText) mView.findViewById(R.id.edittext_newuser_nickname);
+                    EditText firstName_text = (EditText) mView.findViewById(R.id.edittext_newuser_first);
+                    EditText lastName_text = (EditText) mView.findViewById(R.id.edittext_newuser_last);
+                    EditText email_text = (EditText) mView.findViewById(R.id.edittext_newuser_email);
+                    EditText pwd_text = (EditText) mView.findViewById(R.id.edittext_newuser_password);
+                    EditText re_pwd_text = (EditText) mView.findViewById(R.id.edittext_newuser_password2);
+                    String nickName = nickName_text.getText().toString();
+                    String firstName = firstName_text.getText().toString();
+                    String lastName = lastName_text.getText().toString();
+
+                    String email = email_text.getText().toString();
+                    String password = pwd_text.getText().toString();
+                    String re_password = re_pwd_text.getText().toString();
+                    if (!email.isEmpty() && (!password.isEmpty()) && (!re_password.isEmpty())
+                            && (!nickName.isEmpty()) && (!firstName.isEmpty()) && (!lastName.isEmpty())) {
+
+                        if (!checkspecialcharacter(email)) {
+                            email_text.setError("email should contain @");
+                        }
+                        if (!password.equals(re_password)) {
+                            re_pwd_text.setError("Password not match");
+                        }
+                        if (password.length() < 6) {
+                            pwd_text.setError("password lenght smaller than 6");
+                        }
+                        if((checkspecialcharacter(email)) && (password.equals(re_password)) && (password.length() > 5)){
+                            Credentials credentials = new Credentials.Builder(email,password).build();
+                            mListener.registerSuccess(credentials);
+
+
+                        }
+                    }else{
+                        if (email.isEmpty()) {
+                            email_text.setError("Email is empty");
+                        }
+                        if(password.isEmpty()) {
+                            pwd_text.setError("Password is empty");
+                        }
+                        if(re_password.isEmpty()){
+                            re_pwd_text.setError("Re-Password is empty");
+                        }
+                        if(firstName.isEmpty()){
+                            firstName_text.setError("First Name is empty");
+                        }
+                        if(lastName.isEmpty()){
+                            lastName_text.setError("Last Name is empty");
+                        }
+                        if(nickName.isEmpty()){
+                            nickName_text.setError("Nick Name is empty");
+                        }
+                    }
+                    break;
+
+            }
+
+
+        }
+    }
+    /**
+     * method to check if the string contains @
+     * @param email
+     * @return
+     */
+    public boolean checkspecialcharacter(String email){
+        char a;
+        for(int i=0; i<email.length(); i++){
+            a = email.charAt(i);
+            if(Character.toString(a).equals("@")){
+                return true;
+            }
+
+        }
+        return false;
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -90,6 +161,7 @@ public class NewUserFragment extends Fragment {
      */
     public interface OnNewUserFragmentButtonAction {
         // TODO: Update argument type and name
-        void onNewUserButtonAction(View btn);
+        void registerSuccess(Credentials credentials);
+        void loginButtonAction();
     }
 }
