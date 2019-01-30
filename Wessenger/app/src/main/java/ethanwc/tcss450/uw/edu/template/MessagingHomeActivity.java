@@ -139,7 +139,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private void loadFragment(Fragment frag){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_messaging_container, frag )
+                .replace(R.id.fragment_messaging_container, frag )
                 .addToBackStack(null);
         transaction.commit();
     }
