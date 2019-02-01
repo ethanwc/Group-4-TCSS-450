@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Messenger;
 
 
 import android.os.Bundle;

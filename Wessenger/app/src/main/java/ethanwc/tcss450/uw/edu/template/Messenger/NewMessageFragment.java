@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Messenger;
 
 
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import ethanwc.tcss450.uw.edu.template.R;
 
 
 /**

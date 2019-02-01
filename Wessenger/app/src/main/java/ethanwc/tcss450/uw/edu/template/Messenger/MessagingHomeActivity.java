@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,13 +16,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.WeatherHomeActivity;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 
 public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
-        SavedLocationFragment.OnListFragmentInteractionListener{
+        SavedLocationFragment.OnListFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
 
-    tools:context=".NewMessageFragment">
+    tools:context=".Messenger.NewMessageFragment">
 
     <Button
         android:id="@+id/button_newmessage_send"

@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Main;
 
 
 import android.os.Bundle;
@@ -8,14 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ethanwc.tcss450.uw.edu.template.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChangeLocationsFragment extends Fragment {
+public class AuthenticationFragment extends Fragment {
 
 
-    public ChangeLocationsFragment() {
+    public AuthenticationFragment() {
         // Required empty public constructor
     }
 
@@ -24,7 +26,7 @@ public class ChangeLocationsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_change_locations, container, false);
+        return inflater.inflate(R.layout.fragment_authentication, container, false);
     }
 
 }

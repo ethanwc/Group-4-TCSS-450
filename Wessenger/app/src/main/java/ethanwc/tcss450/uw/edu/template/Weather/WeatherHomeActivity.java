@@ -1,13 +1,10 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Weather;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment;
+import ethanwc.tcss450.uw.edu.template.Messenger.InvitationsFragment;
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
+import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 
 public class WeatherHomeActivity extends AppCompatActivity

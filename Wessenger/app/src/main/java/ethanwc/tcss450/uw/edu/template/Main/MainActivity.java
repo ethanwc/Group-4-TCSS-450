@@ -1,17 +1,17 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Main;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
+import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
-public class MainActivity extends AppCompatActivity implements  NewUserFragment.OnNewUserFragmentButtonAction, LoginFragment.OnLoginFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction, LoginFragment.OnLoginFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
