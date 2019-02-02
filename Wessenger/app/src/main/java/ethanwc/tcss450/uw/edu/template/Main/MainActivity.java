@@ -11,7 +11,8 @@ import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
-public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction, LoginFragment.OnLoginFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
+        LoginFragment.OnLoginFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,23 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     public void onRegisterClicked() {
         loadFragment(new NewUserFragment());
 
+    }
+
+    @Override
+    public void onWaitFragmentInteractionShow() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.activity_main_container, new WaitFragment(), "WAIT")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onWaitFragmentInteractionHide() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
+                .commit();
     }
 
 }

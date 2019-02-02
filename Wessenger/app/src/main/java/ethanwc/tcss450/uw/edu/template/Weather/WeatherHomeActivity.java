@@ -114,15 +114,16 @@ public class WeatherHomeActivity extends AppCompatActivity
             transaction.commit();
 
         } else if (id == R.id.nav_Request_Invitations) {
-            InvitationsFragment invitationsFragment = new InvitationsFragment();
-            //RequestsFragment requestsFragment = new RequestsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
 
-                    .replace(R.id.fragment_weather_container, invitationsFragment)
-                    //.replace(R.id.secondFragmentContainer, requestsFragment)
-                    .addToBackStack(null);
-            transaction.commit();
+//            InvitationsFragment invitationsFragment = new InvitationsFragment();
+//            //RequestsFragment requestsFragment = new RequestsFragment();
+//            FragmentTransaction transaction = getSupportFragmentManager()
+//                    .beginTransaction()
+//
+//                    .replace(R.id.fragment_weather_container, invitationsFragment)
+//                    //.replace(R.id.secondFragmentContainer, requestsFragment)
+//                    .addToBackStack(null);
+//            transaction.commit();
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_weather_container);

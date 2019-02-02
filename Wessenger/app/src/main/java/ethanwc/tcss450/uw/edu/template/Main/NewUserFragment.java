@@ -2,9 +2,11 @@ package ethanwc.tcss450.uw.edu.template.Main;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
@@ -19,9 +25,11 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewUserFragment extends Fragment implements View.OnClickListener{
+public class NewUserFragment extends WaitFragment {
     private OnNewUserFragmentButtonAction mListener;
     View mView;
+    private EditText edit_email, edit_pass1, edit_pass2, edit_fn, edit_ln, edit_username;
+    private Credentials mCredentials;
     public NewUserFragment() {
         // Required empty public constructor
     }
@@ -33,104 +41,23 @@ public class NewUserFragment extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_new_user, container, false);
         TextView txtLoginClick = mView.findViewById(R.id.textview_newuser_login);
-        txtLoginClick.setOnClickListener(this);
+        txtLoginClick.setOnClickListener(this::goBack);
 
 
         Button btnRegister = mView.findViewById(R.id.button_newuser_register);
-        btnRegister.setOnClickListener(this);
+        btnRegister.setOnClickListener(this::register);
+
+        edit_email = ((EditText) mView.findViewById(R.id.edittext_newuser_email));
+        edit_pass1 = ((EditText) mView.findViewById(R.id.edittext_newuser_password));
+        edit_pass2 = ((EditText) mView.findViewById(R.id.edittext_newuser_password2));
+        edit_fn = ((EditText) mView.findViewById(R.id.edittext_newuser_first));
+        edit_ln = ((EditText) mView.findViewById(R.id.edittext_newuser_last));
+        edit_username = ((EditText) mView.findViewById(R.id.edittext_newuser_nickname));
 
         return mView;
     }
 
-    /**
-     * These buttons are to handle the button click of New USer.
-     * It handles for Register and Login
-     * @param view
-     */
-    @Override
-    public void onClick(View view) {
 
-        if (mListener != null) {
-            switch ((view.getId())) {
-                case R.id.textview_newuser_login:
-                    mListener.loginButtonAction();
-                    break;
-
-                case R.id.button_newuser_register:
-                    EditText nickName_text = (EditText) mView.findViewById(R.id.edittext_newuser_nickname);
-                    EditText firstName_text = (EditText) mView.findViewById(R.id.edittext_newuser_first);
-                    EditText lastName_text = (EditText) mView.findViewById(R.id.edittext_newuser_last);
-                    EditText email_text = (EditText) mView.findViewById(R.id.edittext_newuser_email);
-                    EditText pwd_text = (EditText) mView.findViewById(R.id.edittext_newuser_password);
-                    EditText re_pwd_text = (EditText) mView.findViewById(R.id.edittext_newuser_password2);
-                    String nickName = nickName_text.getText().toString();
-                    String firstName = firstName_text.getText().toString();
-                    String lastName = lastName_text.getText().toString();
-
-                    String email = email_text.getText().toString();
-                    String password = pwd_text.getText().toString();
-                    String re_password = re_pwd_text.getText().toString();
-                    if (!email.isEmpty() && (!password.isEmpty()) && (!re_password.isEmpty())
-                            && (!nickName.isEmpty()) && (!firstName.isEmpty()) && (!lastName.isEmpty())) {
-
-                        if (!checkspecialcharacter(email)) {
-                            email_text.setError("email should contain @");
-                        }
-                        if (!password.equals(re_password)) {
-                            re_pwd_text.setError("Password not match");
-                        }
-                        if (password.length() < 6) {
-                            pwd_text.setError("password lenght smaller than 6");
-                        }
-                        if((checkspecialcharacter(email)) && (password.equals(re_password)) && (password.length() > 5)){
-                            Credentials credentials = new Credentials.Builder(email,password).build();
-                            mListener.registerSuccess(credentials);
-
-
-                        }
-                    }else{
-                        if (email.isEmpty()) {
-                            email_text.setError("Email is empty");
-                        }
-                        if(password.isEmpty()) {
-                            pwd_text.setError("Password is empty");
-                        }
-                        if(re_password.isEmpty()){
-                            re_pwd_text.setError("Re-Password is empty");
-                        }
-                        if(firstName.isEmpty()){
-                            firstName_text.setError("First Name is empty");
-                        }
-                        if(lastName.isEmpty()){
-                            lastName_text.setError("Last Name is empty");
-                        }
-                        if(nickName.isEmpty()){
-                            nickName_text.setError("Nick Name is empty");
-                        }
-                    }
-                    break;
-
-            }
-
-
-        }
-    }
-    /**
-     * method to check if the string contains @
-     * @param email
-     * @return
-     */
-    public boolean checkspecialcharacter(String email){
-        char a;
-        for(int i=0; i<email.length(); i++){
-            a = email.charAt(i);
-            if(Character.toString(a).equals("@")){
-                return true;
-            }
-
-        }
-        return false;
-    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -149,19 +76,125 @@ public class NewUserFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    public void goBack(View view) {
+        mListener.loginButtonAction();
+    }
+
+
+    public void register(View view) {
+
+        //no empty fields, passwords must match, password >= 6 chars
+        String email = edit_email.getText().toString();
+        String pass1 = edit_pass1.getText().toString();
+        String pass2 = edit_pass2.getText().toString();
+        String fn = edit_fn.getText().toString();
+        String ln = edit_ln.getText().toString();
+        String username = edit_username.getText().toString();
+
+
+        Boolean at = email.contains("@");
+        Boolean match = pass1.equals(pass2);
+
+        int length = pass1.length();
+
+        if (at && match && length > 5) {
+            if (mListener != null) {
+                mCredentials = new Credentials.Builder(email, pass1)
+                        .addFirstName(fn)
+                        .addLastName(ln)
+                        .addUsername(username)
+                        .build();
+                attemptRegister();
+            }
+        }
+
+        if (!email.contains("@")) edit_email.setError("Invalid e-mail");
+
+        if (email.length() < 1 || pass1.length() < 1 || pass2.length() < 1) edit_pass1.setError("Please fill all forms");
+
+        if (!pass1.equals(pass2)) edit_pass2.setError("Passwords do not match");
+
+        if (pass1.length() < 6 || pass2.length() < 6) edit_pass1.setError("Password must be at least 6 characters");
+
+
+    }
+
+
+
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     *
+     * Handle onPostExecute of the AsynceTask. The result from our webservice is
+     * a JSON formatted String. Parse it for success or failure.
+     * @param result the JSON formatted String response from the web service
      */
-    public interface OnNewUserFragmentButtonAction {
-        // TODO: Update argument type and name
+    private void handleRegisterOnPost(String result) {
+        try {
+            JSONObject resultsJSON = new JSONObject(result);
+            boolean success =
+                    resultsJSON.getBoolean(
+                            getString(R.string.keys_json_login_success));
+            if (success) {
+                //Login was successful. Switch to the loadSuccessFragment.
+                mListener.registerSuccess(mCredentials);
+                return;
+            } else {
+                //Login was unsuccessful. Don’t switch fragments and
+                // inform the user
+                ((TextView) getView().findViewById(R.id.edittext_newuser_email))
+                        .setError("Login Unsuccessful1");
+            }
+            mListener.onWaitFragmentInteractionHide();
+        } catch (JSONException e) {
+            //It appears that the web service did not return a JSON formatted
+            //String or it did not have what we expected in it.
+            Log.e("JSON_PARSE_ERROR", result
+                    + System.lineSeparator()
+                    + e.getMessage());
+            mListener.onWaitFragmentInteractionHide();
+            ((TextView) getView().findViewById(R.id.edittext_newuser_email))
+                    .setError("Login Unsuccessful2");
+        }
+    }
+
+    private void attemptRegister() {
+
+        Credentials credentials = mCredentials;
+        //build the web service URL
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_register))
+                .build();
+        //build the JSONObject
+        JSONObject msg = credentials.asJSONObject();
+        mCredentials = credentials;
+        //instantiate and execute the AsyncTask.
+        new SendPostAsyncTask.Builder(uri.toString(), msg)
+                .onPreExecute(this::handleLoginOnPre)
+                .onPostExecute(this::handleRegisterOnPost)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+
+    /**
+     * Handle errors that may occur during the AsyncTask.
+     * @param result the error message provide from the AsyncTask
+     */
+    private void handleErrorsInTask(String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+    /**
+     * Handle the setup of the UI before the HTTP call to the webservice.
+     */
+    private void handleLoginOnPre() {
+        mListener.onWaitFragmentInteractionShow();
+    }
+
+
+
+
+    public interface OnNewUserFragmentButtonAction extends WaitFragment.OnFragmentInteractionListener{
         void registerSuccess(Credentials credentials);
         void loginButtonAction();
     }
