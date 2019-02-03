@@ -13,24 +13,30 @@
         android:id="@+id/edittext_newuser_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="8dp"
+
+        android:drawableStart="@drawable/ic_mail_outline_black_24dp"
         android:ems="10"
+        android:gravity="center_horizontal"
         android:hint="@string/login_emailHint"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_last" />
 
     <EditText
         android:id="@+id/edittext_newuser_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:drawableStart="@drawable/ic_lock_black_24dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/login_passwordHint"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_email" />
 
@@ -38,11 +44,14 @@
         android:id="@+id/edittext_newuser_password2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:drawableStart="@drawable/ic_lock_black_24dp"
+        android:layout_marginTop="4dp"
         android:ems="10"
         android:hint="@string/login_passwordHint"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_password" />
 
@@ -50,24 +59,32 @@
         android:id="@+id/edittext_newuser_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="80dp"
+
+        android:drawableStart="@drawable/ic_person_black_24dp"
         android:ems="10"
+        android:gravity="center_horizontal"
         android:hint="@string/new_user_first_name"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_password2" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edittext_newuser_last"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:drawableStart="@drawable/ic_person_black_24dp"
         android:ems="10"
+        android:gravity="center_horizontal"
         android:hint="@string/new_user_last_name"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_first" />
 
@@ -78,20 +95,23 @@
         android:layout_marginStart="85dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="84dp"
+        android:drawableStart="@drawable/ic_person_black_24dp"
         android:ems="10"
+        android:gravity="center_horizontal"
         android:hint="@string/new_user_nickname"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_last" />
+        app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_password2" />
 
     <Button
         android:id="@+id/button_newuser_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="36dp"
         android:background="@drawable/round"
         android:text="@string/new_user_register"
+        android:textColor="@color/weatherText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_newuser_nickname" />
@@ -115,4 +135,5 @@
         android:text="@string/login_help"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

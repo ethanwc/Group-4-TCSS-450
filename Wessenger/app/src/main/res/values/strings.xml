@@ -33,7 +33,7 @@
     <string name="title_activity_weather_home">Weather</string>
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
-
+    <string name="new_user_registration_view">Registration</string>
 
     <string name="Menu_Weather">Weather</string>
     <string name="Menu_Home">Home</string>

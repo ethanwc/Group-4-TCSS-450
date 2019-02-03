@@ -6,12 +6,18 @@
         <item name="android:background">@color/backgroundDark</item>
         <item name="android:textColorHint">@color/messageText</item>
         <item name="android:textColor">@color/messageText</item>
+
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/messageText</item>
         <item name="android:textColorSecondary">@color/messageText</item>
+        <item name="editTextStyle">@style/App_EditTextStyle</item>
 
     </style>
 
+    <style name="App_EditTextStyle" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/weatherText</item>
+
+    </style>
 
     <style name="WeatherTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
@@ -30,7 +36,10 @@
         <item name="android:background">@color/backgroundDark</item>
         <item name="android:textColorHint">@color/colorAccent</item>
         <item name="android:textColor">@color/colorAccent</item>
+
         <item name="windowActionBar">false</item>
+        <item name="editTextStyle">@style/App_EditTextStyle</item>
+
 
     </style>
 
