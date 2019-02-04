@@ -10,5 +10,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-    tools:context=".ConversationFragment"
+    tools:context=".Messenger.ConversationFragment"
     tools:listitem="@layout/fragment_conversation" />

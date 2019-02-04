@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import ethanwc.tcss450.uw.edu.template.InvitationsFragment.OnListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.Messenger.InvitationsFragment.OnListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 
 import java.util.List;

@@ -10,5 +10,5 @@
     android:layout_marginRight="16dp"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
     android:theme="@style/AppTheme"
-    tools:context=".RequestsFragment"
+    tools:context=".Messenger.RequestsFragment"
     tools:listitem="@layout/fragment_requests" />

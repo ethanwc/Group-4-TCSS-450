@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template;
+package ethanwc.tcss450.uw.edu.template.Weather;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import ethanwc.tcss450.uw.edu.template.ConversationFragment.OnListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 
 import java.util.List;
@@ -17,12 +18,12 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyConversationRecyclerViewAdapter.ViewHolder> {
+public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MySavedLocationRecyclerViewAdapter.ViewHolder> {
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyConversationRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MySavedLocationRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -31,15 +32,15 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
     @NonNull
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_conversation, parent, false);
+                .inflate(R.layout.fragment_savedlocation, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        //holder.mIdView.setText(mValues.get(position).id);
-        //holder.mContentView.setText(mValues.get(position).content);
+//        holder.mIdView.setText(mValues.get(position).id);
+//        holder.mContentView.setText(mValues.get(position).content);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,8 +72,8 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
             mContentView = view.findViewById(R.id.content);
         }
 
-        @Override
         @NonNull
+        @Override
         public String toString() {
             return super.toString() + " '" + mContentView.getText() + "'";
         }

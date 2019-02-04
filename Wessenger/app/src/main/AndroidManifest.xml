@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
-            android:name=".MainActivity"
+            android:name=".Main.MainActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,15 +18,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MessagingHomeActivity"
+            android:name=".Messenger.MessagingHomeActivity"
             android:label="@string/title_activity_messaging_home"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".WeatherHomeActivity"
+            android:name=".Weather.WeatherHomeActivity"
             android:label="@string/title_activity_weather_home"
             android:theme="@style/AppTheme">
 
         </activity>
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
 </manifest>
