@@ -12,10 +12,14 @@
         <item name="android:textColorSecondary">@color/messageText</item>
         <item name="editTextStyle">@style/App_EditTextStyle</item>
 
+
+
     </style>
 
     <style name="App_EditTextStyle" parent="@android:style/Widget.EditText">
         <item name="android:textColor">@color/weatherText</item>
+        <item name="android:backgroundTint">@color/messageText</item>
+
 
     </style>
 
@@ -39,6 +43,7 @@
 
         <item name="windowActionBar">false</item>
         <item name="editTextStyle">@style/App_EditTextStyle</item>
+
 
 
     </style>
