@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template.Weather;
+package ethanwc.tcss450.uw.edu.template.weather;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -69,7 +69,7 @@ public class SavedLocationFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MySavedLocationRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.weather.MySavedLocationRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
         return view;
     }

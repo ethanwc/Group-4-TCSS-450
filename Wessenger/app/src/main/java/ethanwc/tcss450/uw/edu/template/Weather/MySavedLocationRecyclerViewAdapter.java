@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template.Weather;
+package ethanwc.tcss450.uw.edu.template.weather;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment.OnListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 
 import java.util.List;
