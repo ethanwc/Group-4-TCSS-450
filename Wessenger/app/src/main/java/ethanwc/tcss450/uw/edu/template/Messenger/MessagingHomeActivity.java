@@ -1,6 +1,7 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -17,16 +18,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
-import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
-import ethanwc.tcss450.uw.edu.template.Weather.WeatherHomeActivity;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
+import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
+import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment;
+import ethanwc.tcss450.uw.edu.template.weather.WeatherHome;
 
 public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
-        SavedLocationFragment.OnListFragmentInteractionListener {
+        SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,33 +109,48 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         if (id == R.id.nav_weather_home) {
 
+            WeatherHome weatherHome = new WeatherHome();
 
-            Intent intent = new Intent(MessagingHomeActivity.this, WeatherHomeActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_Change_Locations) {
-//            loadFragment(new ChangeLocationsFragment());
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_messaging_container, new ChangeLocationsFragment())
+                    .replace(R.id.fragment_messaging_container, weatherHome)
                     .addToBackStack(null);
+            getSupportActionBar().setTitle("Weather Home");
+            transaction.commit();
+//            Intent intent = new Intent(MessagingHomeActivity.this, WeatherHomeActivity.class);
+//            startActivity(intent);
+        } else if (id == R.id.nav_Change_Locations) {
+//            loadFragment(new ChangeLocationsFragment());
+
+            ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
+
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_messaging_container, changeLocationsFragment)
+                    .addToBackStack(null);
+            getSupportActionBar().setTitle("Change Location");
+            transaction.commit();
 
         } else if (id == R.id.nav_View_Saved_Location) {
+//            loadFragment(new SavedLocationFragment());
             SavedLocationFragment locationFragment = new SavedLocationFragment();
 
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_messaging_container, locationFragment)
                     .addToBackStack(null);
+            getSupportActionBar().setTitle("Saved Location");
             transaction.commit();
         } else if (id == R.id.nav_chat_home) {
-            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
+//            startActivity(intent);
 
             ConversationFragment conversationFragment = new ConversationFragment();
             FragmentTransaction transaction = getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_messaging_container, conversationFragment)
                     .addToBackStack(null);
+            getSupportActionBar().setTitle("Messaging Home");
             transaction.commit();
         } else if (id == R.id.nav_chat_view_connections) {
             ConnectionsFragment connectionsFragment = new ConnectionsFragment();
@@ -141,6 +158,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .beginTransaction()
                     .replace(R.id.fragment_messaging_container, connectionsFragment)
                     .addToBackStack(null);
+            getSupportActionBar().setTitle("Connections");
             transaction.commit();
 
         } else if (id == R.id.nav_Request_Invitations) {
@@ -152,6 +170,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .replace(R.id.fragment_messaging_container, invitationsFragment)
                     //.replace(R.id.secondFragmentContainer, requestsFragment)
                     .addToBackStack(null);
+            getSupportActionBar().setTitle("Requests/Invitations");
             transaction.commit();
         }
 
@@ -159,7 +178,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
+//
     @Override
     public void onSendFragmentInteraction() {
         MessageViewFragment messageView = new MessageViewFragment();
@@ -175,6 +194,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }

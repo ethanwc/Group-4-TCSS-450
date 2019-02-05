@@ -21,12 +21,6 @@
             android:name=".Messenger.MessagingHomeActivity"
             android:label="@string/title_activity_messaging_home"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Weather.WeatherHomeActivity"
-            android:label="@string/title_activity_weather_home"
-            android:theme="@style/AppTheme">
-
-        </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 

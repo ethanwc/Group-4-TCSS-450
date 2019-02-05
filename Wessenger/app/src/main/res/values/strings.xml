@@ -47,4 +47,8 @@
     <string name="Chat_Home">Home</string>
     <string name="Chat_View_Connections">View Connections</string>
     <string name="Chat_requests_Invitations">Requests/Invitations</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
