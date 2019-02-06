@@ -34,6 +34,13 @@ public class NewUserFragment extends WaitFragment {
     private Boolean mHasNumber= false;
     private Boolean mHasAlphabet = false;
     private Boolean mPasswordContain = false;
+    private int authenticationCode = 0;
+    private String email;
+    private String pass1;
+    private String pass2;
+    private String username;
+    private String fn;
+    private String ln;
     public NewUserFragment() {
         // Required empty public constructor
     }
@@ -88,12 +95,12 @@ public class NewUserFragment extends WaitFragment {
     public void register(View view) {
 
         //no empty fields, passwords must match, password >= 6 chars
-        String email = edit_email.getText().toString();
-        String pass1 = edit_pass1.getText().toString();
-        String pass2 = edit_pass2.getText().toString();
-        String fn = edit_fn.getText().toString();
-        String ln = edit_ln.getText().toString();
-        String username = edit_username.getText().toString();
+        email = edit_email.getText().toString();
+        pass1 = edit_pass1.getText().toString();
+        pass2 = edit_pass2.getText().toString();
+        fn = edit_fn.getText().toString();
+        ln = edit_ln.getText().toString();
+        username = edit_username.getText().toString();
 
 
         Boolean at = email.contains("@");
@@ -132,7 +139,7 @@ public class NewUserFragment extends WaitFragment {
             System.out.println("has special"+ mHasSpecialCharacter);
             System.out.println("has number"+ mHasNumber);
             System.out.println("has alphabet"+ mHasAlphabet);
-            System.out.println("length of string"+pass1.length());
+            System.out.println("lenght of string"+pass1.length());
             System.out.println("ALl good----");
 
         }
@@ -183,39 +190,23 @@ System.out.println("++++++#####"+mPasswordContain);
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
             if (success) {
-                //Login was successful. Switch to the loadSuccessFragment.
-                Log.d("sucess ", " sucess");
+                authenticationCode =
+                        resultsJSON.getInt(
+                                getString(R.string.keys_json_authentication_code));
+                mCredentials = new Credentials.Builder(email, pass1)
+                        .addFirstName(fn)
+                        .addLastName(ln)
+                        .addUsername(username)
+                        .addCode(authenticationCode)
+                        .build();
+                //Register was successful. Switch to the loadSuccessFragment.
                 mListener.registerSuccess(mCredentials);
                 return;
             } else {
-                //Login was unsuccessful. Don’t switch fragments and
+                //Register was unsuccessful. Don’t switch fragments and
                 // inform the user
-                String error = (String) resultsJSON.get("error");
-                Log.d("error", " " + error);
-                if (error.equals("first")) {
-                    ((TextView) getView().findViewById(R.id.edittext_newuser_first))
-                            .setError("First Name Unsuccessful1");
-                } else if (error.equals("last")) {
-                    ((TextView) getView().findViewById(R.id.edittext_newuser_last))
-                            .setError("Last Name Unsuccessful1");
-                } else if (error.equals("email")) {
-                    ((TextView) getView().findViewById(R.id.edittext_newuser_email))
-                            .setError("Email Unsuccessful1");
-                } else if (error.equals("password")) {
-                    ((TextView) getView().findViewById(R.id.edittext_newuser_password))
-                            .setError("Password Unsuccessful1");
-                } else if (error.equals("username")) {
-                    ((TextView) getView().findViewById(R.id.edittext_newuser_nickname))
-                            .setError("Nickname Unsuccessful1");
-                } else if (error.contains("username")) {
-                    ((TextView) getView().findViewById(R.id.edittext_newuser_nickname))
-                            .setError("Nickname Already exits");
-                    Log.d("error"," " + result);
-                } else if (error.contains("email")) {
-                    ((TextView) getView().findViewById(R.id.edittext_newuser_email))
-                            .setError("Email Already Been Used");
-                    Log.d("error"," " + result);
-                }
+                ((TextView) getView().findViewById(R.id.edittext_newuser_email))
+                        .setError("Login Unsuccessful1");
             }
             mListener.onWaitFragmentInteractionHide();
         } catch (JSONException e) {

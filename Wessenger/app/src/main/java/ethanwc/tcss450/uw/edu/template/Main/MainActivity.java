@@ -12,7 +12,7 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
-        LoginFragment.OnLoginFragmentInteractionListener {
+        LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +56,24 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
     @Override
     public void registerSuccess(Credentials credentials) {
-        LoginFragment loginFragment;
-        loginFragment = new LoginFragment();
+        AuthenticationFragment authenticationFragment;
+        authenticationFragment = new AuthenticationFragment();
         Bundle args = new Bundle();
         args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
         args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
-        loginFragment.setArguments(args);
+        args.putSerializable(getString(R.string.keys_json_authentication_code), credentials.getCode());
+        authenticationFragment.setArguments(args);
+        loadFragment(authenticationFragment);
 
-        loadFragment(loginFragment);
+
+//        LoginFragment loginFragment;
+//        loginFragment = new LoginFragment();
+//        Bundle args = new Bundle();
+//        args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
+//        args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
+//        loginFragment.setArguments(args);
+//
+//        loadFragment(loginFragment);
 
     }
 
@@ -79,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     public void loadFragment(Fragment frag){
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main_container,  frag)
+                .addToBackStack(null)
                 .commit();
     }
 
@@ -110,6 +121,18 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
                 .beginTransaction()
                 .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
                 .commit();
+    }
+
+    @Override
+    public void authenticationSuccess(Credentials credentials) {
+        LoginFragment loginFragment;
+        loginFragment = new LoginFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
+        args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
+        loginFragment.setArguments(args);
+
+        loadFragment(loginFragment);
     }
 
 }

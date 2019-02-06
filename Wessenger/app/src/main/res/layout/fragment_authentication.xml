@@ -23,9 +23,11 @@
         android:id="@+id/button_authentication_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="272dp"
         android:layout_marginEnd="16dp"
+        android:onClick="authenticate"
         android:text="@string/authentication_submit"
+        android:textColor="@color/messageText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,6 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="92dp"
         android:text="@string/authentication"
+        android:textColor="@color/messageText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +61,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="@string/authenticationHeader"
+        android:textColor="@color/messageText"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/textview_authentication_prompt"
         app:layout_constraintEnd_toEndOf="parent"
