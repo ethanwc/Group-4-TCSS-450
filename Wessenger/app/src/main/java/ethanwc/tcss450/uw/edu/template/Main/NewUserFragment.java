@@ -132,7 +132,7 @@ public class NewUserFragment extends WaitFragment {
             System.out.println("has special"+ mHasSpecialCharacter);
             System.out.println("has number"+ mHasNumber);
             System.out.println("has alphabet"+ mHasAlphabet);
-            System.out.println("lenght of string"+pass1.length());
+            System.out.println("length of string"+pass1.length());
             System.out.println("ALl good----");
 
         }
@@ -207,6 +207,14 @@ System.out.println("++++++#####"+mPasswordContain);
                 } else if (error.equals("username")) {
                     ((TextView) getView().findViewById(R.id.edittext_newuser_nickname))
                             .setError("Nickname Unsuccessful1");
+                } else if (error.contains("username")) {
+                    ((TextView) getView().findViewById(R.id.edittext_newuser_nickname))
+                            .setError("Nickname Already exits");
+                    Log.d("error"," " + result);
+                } else if (error.contains("email")) {
+                    ((TextView) getView().findViewById(R.id.edittext_newuser_email))
+                            .setError("Email Already Been Used");
+                    Log.d("error"," " + result);
                 }
             }
             mListener.onWaitFragmentInteractionHide();
