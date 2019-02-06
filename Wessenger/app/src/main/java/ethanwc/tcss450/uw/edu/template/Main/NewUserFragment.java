@@ -30,6 +30,10 @@ public class NewUserFragment extends WaitFragment {
     View mView;
     private EditText edit_email, edit_pass1, edit_pass2, edit_fn, edit_ln, edit_username;
     private Credentials mCredentials;
+    private Boolean mHasSpecialCharacter = false;
+    private Boolean mHasNumber= false;
+    private Boolean mHasAlphabet = false;
+    private Boolean mPasswordContain = false;
     public NewUserFragment() {
         // Required empty public constructor
     }
@@ -97,7 +101,43 @@ public class NewUserFragment extends WaitFragment {
 
         int length = pass1.length();
 
-        if (at && match && length > 5) {
+
+
+        if (!email.contains("@")) edit_email.setError("Invalid e-mail");
+
+        if (email.length() < 1 || pass1.length() < 1 || pass2.length() < 1) edit_pass1.setError("Please fill all forms");
+
+        if (!pass1.equals(pass2)) edit_pass2.setError("Passwords do not match");
+
+//for checking special character, number & alphabet of password
+
+        if(pass1.length()>0) {
+            for (int i = 0; i < pass1.length(); i++) {
+
+                mHasSpecialCharacter = isSpecialCharater(pass1.charAt(i));
+                mHasAlphabet = ismHasAlphabet(pass1.charAt(i));
+                mHasNumber = isHasNumber(pass1.charAt(i));
+            }
+        }
+        mPasswordContain = (pass1.length() > 5 && mHasSpecialCharacter==true && mHasAlphabet==true && mHasNumber==true);
+        if (!(pass1.length() > 5 && mHasSpecialCharacter==true && mHasAlphabet==true && mHasNumber==true)) {
+            System.out.println("---ALl NOT good----");
+            System.out.println("has special"+ mHasSpecialCharacter);
+            System.out.println("has number"+ mHasNumber);
+            System.out.println("has alphabet"+ mHasAlphabet);
+            edit_pass1.setError("Password must be at least 6 characters, special character");
+
+        }else{
+            System.out.println((pass1.length() > 5 && mHasSpecialCharacter==true));
+            System.out.println("has special"+ mHasSpecialCharacter);
+            System.out.println("has number"+ mHasNumber);
+            System.out.println("has alphabet"+ mHasAlphabet);
+            System.out.println("lenght of string"+pass1.length());
+            System.out.println("ALl good----");
+
+        }
+System.out.println("++++++#####"+mPasswordContain);
+        if (mPasswordContain && at && match && length > 5) {
             if (mListener != null) {
                 mCredentials = new Credentials.Builder(email, pass1)
                         .addFirstName(fn)
@@ -108,15 +148,25 @@ public class NewUserFragment extends WaitFragment {
             }
         }
 
-        if (!email.contains("@")) edit_email.setError("Invalid e-mail");
+    }
+    public boolean isHasNumber(Character c){
+        if((c > 47 && c < 58)){
+            mHasNumber = true;
+        }
+        return  mHasNumber;
+    }
+    public boolean ismHasAlphabet(Character c){
+        if((c > 64 && c < 91) || (c > 96 && c < 123)){
+            mHasAlphabet = true;
+        }
+        return mHasAlphabet;
 
-        if (email.length() < 1 || pass1.length() < 1 || pass2.length() < 1) edit_pass1.setError("Please fill all forms");
-
-        if (!pass1.equals(pass2)) edit_pass2.setError("Passwords do not match");
-
-        if (pass1.length() < 6 || pass2.length() < 6) edit_pass1.setError("Password must be at least 6 characters");
-
-
+    }
+    public boolean isSpecialCharater(Character c){
+        if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){
+            mHasSpecialCharacter =  true;
+        }
+        return mHasSpecialCharacter;
     }
 
 
