@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 
 
@@ -76,6 +77,7 @@ public class ChangeLocationsFragment extends Fragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
             if (getArguments() != null) {
                 mParam1 = getArguments().getString(ARG_PARAM1);
                 mParam2 = getArguments().getString(ARG_PARAM2);
@@ -86,6 +88,7 @@ public class ChangeLocationsFragment extends Fragment {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             // Inflate the layout for this fragment
+
             return inflater.inflate(R.layout.fragment_weather_home, container, false);
         }
 
