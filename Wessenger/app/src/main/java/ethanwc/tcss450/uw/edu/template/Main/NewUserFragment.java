@@ -184,13 +184,30 @@ System.out.println("++++++#####"+mPasswordContain);
                             getString(R.string.keys_json_login_success));
             if (success) {
                 //Login was successful. Switch to the loadSuccessFragment.
+                Log.d("sucess ", " sucess");
                 mListener.registerSuccess(mCredentials);
                 return;
             } else {
                 //Login was unsuccessful. Don’t switch fragments and
                 // inform the user
-                ((TextView) getView().findViewById(R.id.edittext_newuser_email))
-                        .setError("Login Unsuccessful1");
+                String error = (String) resultsJSON.get("error");
+                Log.d("error", " " + error);
+                if (error.equals("first")) {
+                    ((TextView) getView().findViewById(R.id.edittext_newuser_first))
+                            .setError("First Name Unsuccessful1");
+                } else if (error.equals("last")) {
+                    ((TextView) getView().findViewById(R.id.edittext_newuser_last))
+                            .setError("Last Name Unsuccessful1");
+                } else if (error.equals("email")) {
+                    ((TextView) getView().findViewById(R.id.edittext_newuser_email))
+                            .setError("Email Unsuccessful1");
+                } else if (error.equals("password")) {
+                    ((TextView) getView().findViewById(R.id.edittext_newuser_password))
+                            .setError("Password Unsuccessful1");
+                } else if (error.equals("username")) {
+                    ((TextView) getView().findViewById(R.id.edittext_newuser_nickname))
+                            .setError("Nickname Unsuccessful1");
+                }
             }
             mListener.onWaitFragmentInteractionHide();
         } catch (JSONException e) {
