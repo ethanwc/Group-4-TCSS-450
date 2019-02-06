@@ -34,6 +34,13 @@ public class NewUserFragment extends WaitFragment {
     private Boolean mHasNumber= false;
     private Boolean mHasAlphabet = false;
     private Boolean mPasswordContain = false;
+    private int authenticationCode = 0;
+    private String email;
+    private String pass1;
+    private String pass2;
+    private String username;
+    private String fn;
+    private String ln;
     public NewUserFragment() {
         // Required empty public constructor
     }
@@ -88,12 +95,12 @@ public class NewUserFragment extends WaitFragment {
     public void register(View view) {
 
         //no empty fields, passwords must match, password >= 6 chars
-        String email = edit_email.getText().toString();
-        String pass1 = edit_pass1.getText().toString();
-        String pass2 = edit_pass2.getText().toString();
-        String fn = edit_fn.getText().toString();
-        String ln = edit_ln.getText().toString();
-        String username = edit_username.getText().toString();
+        email = edit_email.getText().toString();
+        pass1 = edit_pass1.getText().toString();
+        pass2 = edit_pass2.getText().toString();
+        fn = edit_fn.getText().toString();
+        ln = edit_ln.getText().toString();
+        username = edit_username.getText().toString();
 
 
         Boolean at = email.contains("@");
@@ -136,7 +143,7 @@ public class NewUserFragment extends WaitFragment {
             System.out.println("ALl good----");
 
         }
-System.out.println("++++++#####"+mPasswordContain);
+        System.out.println("++++++#####"+mPasswordContain);
         if (mPasswordContain && at && match && length > 5) {
             if (mListener != null) {
                 mCredentials = new Credentials.Builder(email, pass1)
@@ -183,11 +190,20 @@ System.out.println("++++++#####"+mPasswordContain);
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
             if (success) {
-                //Login was successful. Switch to the loadSuccessFragment.
+                authenticationCode =
+                        resultsJSON.getInt(
+                                getString(R.string.keys_json_authentication_code));
+                mCredentials = new Credentials.Builder(email, pass1)
+                        .addFirstName(fn)
+                        .addLastName(ln)
+                        .addUsername(username)
+                        .addCode(authenticationCode)
+                        .build();
+                //Register was successful. Switch to the loadSuccessFragment.
                 mListener.registerSuccess(mCredentials);
                 return;
             } else {
-                //Login was unsuccessful. Don’t switch fragments and
+                //Register was unsuccessful. Don’t switch fragments and
                 // inform the user
                 ((TextView) getView().findViewById(R.id.edittext_newuser_email))
                         .setError("Login Unsuccessful1");

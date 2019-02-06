@@ -32,6 +32,8 @@
     <string name="change_location_zip_code">Enter zip code</string>
     <string name="title_activity_weather_home">Weather</string>
     <string name="keys_json_login_success">success</string>
+    <string name="keys_json_authentication_code">code</string>
+
     <string name="keys_json_login_jwt">token</string>
     <string name="new_user_registration_view">Registration</string>
 
