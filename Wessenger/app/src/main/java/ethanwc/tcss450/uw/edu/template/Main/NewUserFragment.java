@@ -142,7 +142,7 @@ public class NewUserFragment extends WaitFragment {
         mPasswordContain = (pass1.length() > 5 && mHasSpecialCharacter==true && mHasAlphabet==true && mHasNumber==true);
 
 System.out.println("++++++#####"+mPasswordContain);
-        if (mPasswordContain && at && match && length > 5 && (!fn.isEmpty()) && (!ln.isEmpty())) {
+        if (mPasswordContain && at && match && length > 5 && (!fn.isEmpty()) && (!ln.isEmpty()) && pass1.length() > 5) {
             if (mListener != null) {
                 mCredentials = new Credentials.Builder(email, pass1)
                         .addFirstName(fn)
