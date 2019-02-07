@@ -55,6 +55,7 @@ public class NewUserFragment extends WaitFragment {
         txtLoginClick.setOnClickListener(this::goBack);
 
 
+
         Button btnRegister = mView.findViewById(R.id.button_newuser_register);
         btnRegister.setOnClickListener(this::register);
 
@@ -90,6 +91,7 @@ public class NewUserFragment extends WaitFragment {
     public void goBack(View view) {
         mListener.loginButtonAction();
     }
+
 
 
     public void register(View view) {
@@ -206,7 +208,7 @@ System.out.println("++++++#####"+mPasswordContain);
                 //Register was unsuccessful. Don’t switch fragments and
                 // inform the user
                 ((TextView) getView().findViewById(R.id.edittext_newuser_email))
-                        .setError("Login Unsuccessful1");
+                        .setError("Email has already been registered.");
             }
             mListener.onWaitFragmentInteractionHide();
         } catch (JSONException e) {
@@ -263,5 +265,6 @@ System.out.println("++++++#####"+mPasswordContain);
     public interface OnNewUserFragmentButtonAction extends WaitFragment.OnFragmentInteractionListener{
         void registerSuccess(Credentials credentials);
         void loginButtonAction();
+
     }
 }

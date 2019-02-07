@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         loadFragment(new LoginFragment());
     }
 
+
+
     /**
      * This method is to load fragment
      * @param frag, fragment
