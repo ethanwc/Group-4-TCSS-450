@@ -143,15 +143,24 @@ public class LoginFragment extends WaitFragment {
             boolean success =
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
+            boolean error = resultsJSON.getBoolean("error");
+
+
             if (success) {
                 //Login was successful. Switch to the loadSuccessFragment.
                 mListener.onLoginSuccess(mCredentials);
                 return;
             } else {
-                //Login was unsuccessful. Don’t switch fragments and
-                // inform the user
-                ((TextView) getView().findViewById(R.id.edittext_login_email))
-                        .setError("Login Unsuccessful");
+                if (error) {
+                    //Login was unsuccessful. Don’t switch fragments and
+                    // inform the user
+                    ((TextView) getView().findViewById(R.id.edittext_login_email))
+                            .setError("Email does not exist.");
+                } else {
+                    ((TextView) getView().findViewById(R.id.edittext_login_password))
+                            .setError("Password is incorrect.");
+                }
+
             }
             mListener.onWaitFragmentInteractionHide();
         } catch (JSONException e) {
@@ -160,9 +169,13 @@ public class LoginFragment extends WaitFragment {
             Log.e("JSON_PARSE_ERROR", result
                     + System.lineSeparator()
                     + e.getMessage());
+
             mListener.onWaitFragmentInteractionHide();
+
+
+            String error = e.getMessage();
             ((TextView) getView().findViewById(R.id.edittext_login_email))
-                    .setError("Login Unsuccessful");
+                    .setError("Email does not exist in the system.");
         }
     }
     private void attemptLogin() {
