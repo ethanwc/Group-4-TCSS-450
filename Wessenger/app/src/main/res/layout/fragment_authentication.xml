@@ -9,16 +9,6 @@
     tools:context=".Main.AuthenticationFragment">
 
 
-    <TextView
-        android:id="@+id/textview_authentication_help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/login_help"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <Button
         android:id="@+id/button_authentication_submit"
         android:layout_width="wrap_content"

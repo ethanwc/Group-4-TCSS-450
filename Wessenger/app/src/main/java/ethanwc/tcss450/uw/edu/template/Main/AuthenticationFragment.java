@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
@@ -27,14 +28,9 @@ public class AuthenticationFragment extends Fragment {
     View mView;
     private Credentials mCredentials;
     private OnAuthenticationFragmentButtonAction mListener;
-
-    private String fn;
-    private String ln;
+    private EditText edit_email, edit_pw;
     private String email;
-    private String pass1;
-    private String pass2;
-    private String username;
-
+    private String pass;
     public AuthenticationFragment() {
         // Required empty public constructor
     }
@@ -48,6 +44,8 @@ public class AuthenticationFragment extends Fragment {
         Button btnLogin = (Button) mView.findViewById(R.id.button_authentication_submit);
         btnLogin.setOnClickListener(this::authenticate);
 
+        email = getArguments().getString("email");
+        pass = getArguments().getString("password");
         return mView;
     }
 
@@ -68,16 +66,13 @@ public class AuthenticationFragment extends Fragment {
 
         if (inputCode == code) {
 
-            mCredentials = new Credentials.Builder(email, pass1)
-                    .addFirstName(fn)
-                    .addLastName(ln)
-                    .addUsername(username)
-                    .build();
+            mCredentials = new Credentials.Builder(email, pass).build();
             //Register was successful. Switch to the loadSuccessFragment.
             mListener.authenticationSuccess(mCredentials);
             return;
         } else {
-            Log.e("Didn't make it", "Secret: " + code + ", Input: " + inputCode);
+            ((EditText) getView().findViewById(R.id.edittext_authentication_codeinput))
+                    .setError("Incorrect code input, please check provided email.");
         }
 
     }
