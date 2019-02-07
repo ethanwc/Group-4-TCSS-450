@@ -111,10 +111,17 @@ public class NewUserFragment extends WaitFragment {
         int length = pass1.length();
 
 
+        if (fn.isEmpty()) edit_fn.setError("First name must be entered.");
+
+        if (ln.isEmpty()) edit_ln.setError("Last name must be entered.");
+
+        if (pass2.isEmpty()) edit_pass2.setError("Password must be entered.");
+
+        if (username.isEmpty()) edit_username.setError("Nickname must be entered.");
 
         if (!email.contains("@")) edit_email.setError("Invalid e-mail");
+        if (pass1.length() < 6) edit_pass1.setError("Password must be at least 6 characters including numeric, alphabetic, and special characters.");
 
-        if (email.length() < 1 || pass1.length() < 1 || pass2.length() < 1) edit_pass1.setError("Please fill all forms");
 
         if (!pass1.equals(pass2)) edit_pass2.setError("Passwords do not match");
 
@@ -128,25 +135,14 @@ public class NewUserFragment extends WaitFragment {
                 mHasNumber = isHasNumber(pass1.charAt(i));
             }
         }
+
+        if (!mHasSpecialCharacter) edit_pass1.setError("Password must contain a special character(!,@,#,...)");
+        if (!mHasAlphabet) edit_pass1.setError("Password must contain an alphabetic character(a,b,c,...)");
+        if (!mHasNumber) edit_pass1.setError("Password must contain a numeric character(1,2,3,...)");
         mPasswordContain = (pass1.length() > 5 && mHasSpecialCharacter==true && mHasAlphabet==true && mHasNumber==true);
-        if (!(pass1.length() > 5 && mHasSpecialCharacter==true && mHasAlphabet==true && mHasNumber==true)) {
-            System.out.println("---ALl NOT good----");
-            System.out.println("has special"+ mHasSpecialCharacter);
-            System.out.println("has number"+ mHasNumber);
-            System.out.println("has alphabet"+ mHasAlphabet);
-            edit_pass1.setError("Password must be at least 6 characters, special character");
 
-        }else{
-            System.out.println((pass1.length() > 5 && mHasSpecialCharacter==true));
-            System.out.println("has special"+ mHasSpecialCharacter);
-            System.out.println("has number"+ mHasNumber);
-            System.out.println("has alphabet"+ mHasAlphabet);
-            System.out.println("lenght of string"+pass1.length());
-            System.out.println("ALl good----");
-
-        }
 System.out.println("++++++#####"+mPasswordContain);
-        if (mPasswordContain && at && match && length > 5) {
+        if (mPasswordContain && at && match && length > 5 && (!fn.isEmpty()) && (!ln.isEmpty())) {
             if (mListener != null) {
                 mCredentials = new Credentials.Builder(email, pass1)
                         .addFirstName(fn)
