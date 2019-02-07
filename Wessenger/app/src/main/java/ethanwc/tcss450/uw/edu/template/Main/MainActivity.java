@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         Bundle args = new Bundle();
         args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
         args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
+        args.putSerializable("first", credentials.getFirstName());
+        args.putSerializable("last", credentials.getLastName());
+        args.putSerializable("username", credentials.getUsername());
         args.putSerializable(getString(R.string.keys_json_authentication_code), credentials.getCode());
         authenticationFragment.setArguments(args);
         loadFragment(authenticationFragment);
