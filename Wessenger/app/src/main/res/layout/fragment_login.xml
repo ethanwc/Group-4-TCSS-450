@@ -32,7 +32,6 @@
         android:gravity="center_horizontal"
         android:hint="@string/login_emailHint"
         android:inputType="textEmailAddress"
-        android:text="steve@dead.com"
         app:layout_constraintEnd_toEndOf="parent"
 
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +49,6 @@
         android:gravity="center_horizontal"
         android:hint="@string/login_passwordHint"
         android:inputType="textPassword"
-        android:text="password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edittext_login_email" />

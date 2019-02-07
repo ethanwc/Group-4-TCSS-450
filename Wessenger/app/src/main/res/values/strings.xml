@@ -6,6 +6,7 @@
 
     <string name="login_emailHint">E-mail Address</string>
     <string name="login_passwordHint">Password</string>
+    <string name="login_password_confirmHint">Confirm Password</string>
     <string name="login_signIn">Sign In</string>
     <string name="login_newUser">New User?</string>
     <string name="login_help">Help?</string>
