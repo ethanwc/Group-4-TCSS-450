@@ -25,6 +25,7 @@ public class Credentials implements Serializable {
     private final String mLastName;
     private final String mEmail;
     private final int mCode;
+    private final String mtempPwd;
 
 
 
@@ -42,6 +43,7 @@ public class Credentials implements Serializable {
         private String mLastName = "";
         private String mUsername = "";
         private int mCode = 0;
+        private String mtempPwd ="";
 
         /**
          * Constructs a new Builder.
@@ -92,6 +94,10 @@ public class Credentials implements Serializable {
             mCode = val;
             return this;
         }
+        public Builder addtempPwd(final String val) {
+            mtempPwd = val;
+            return this;
+        }
 
         public Credentials build() {
             return new Credentials(this);
@@ -110,6 +116,7 @@ public class Credentials implements Serializable {
         mLastName = builder.mLastName;
         mEmail = builder.mEmail;
         mCode = builder.mCode;
+        mtempPwd = builder.mtempPwd;
     }
 
     /**
@@ -153,6 +160,7 @@ public class Credentials implements Serializable {
     }
 
     public int getCode() { return mCode; }
+    public String getTempPwd() { return mtempPwd; }
     /**
      * Get all of the fields in a single JSON object. Note, if no values were provided for the
      * optional fields via the Builder, the JSON object will include the empty string for those
@@ -172,6 +180,7 @@ public class Credentials implements Serializable {
             msg.put("last", getLastName());
             msg.put("email", getEmail());
             msg.put("code", getCode());
+            msg.put("tempPwd", getTempPwd());
         } catch (JSONException e) {
             Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
         }

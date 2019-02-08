@@ -159,6 +159,7 @@ System.out.println("++++++#####"+mPasswordContain);
 
     }
     public boolean isHasNumber(Character c){
+        System.out.println(c);
         if((c > 47 && c < 58)){
             mHasNumber = true;
         }
@@ -265,6 +266,26 @@ System.out.println("++++++#####"+mPasswordContain);
     public interface OnNewUserFragmentButtonAction extends WaitFragment.OnFragmentInteractionListener{
         void registerSuccess(Credentials credentials);
         void loginButtonAction();
+
+    }
+
+    /**
+     * A simple {@link Fragment} subclass.
+     */
+    public static class ResetPassword extends Fragment {
+
+
+        public ResetPassword() {
+            // Required empty public constructor
+        }
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            // Inflate the layout for this fragment
+            return inflater.inflate(R.layout.fragment_reset_password, container, false);
+        }
 
     }
 }
