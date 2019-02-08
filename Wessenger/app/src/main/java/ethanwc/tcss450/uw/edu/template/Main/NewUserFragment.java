@@ -122,7 +122,9 @@ public class NewUserFragment extends WaitFragment {
 
         if (username.isEmpty()) edit_username.setError("Nickname must be entered.");
 
-        if (!email.contains("@")) edit_email.setError("Invalid e-mail");
+        if (!email.contains("@")) edit_email.setError("Please enter valid e-mail('@' required).");
+
+        if (email.isEmpty()) edit_email.setError("Please enter an email");
         if(pass1.length()>0) {
             for (int i = 0; i < pass1.length(); i++) {
 
@@ -132,7 +134,7 @@ public class NewUserFragment extends WaitFragment {
             }
         }
 
-        mPasswordContain = (pass1.length() > 5 && mHasSpecialCharacter==true && mHasAlphabet==true && mHasNumber==true);
+        mPasswordContain = (pass1.length() > 5 && mHasSpecialCharacter && mHasAlphabet && mHasNumber && !username.isEmpty());
         boolean passLength = pass1.length() > 5;
 
          if (!passLength) {
