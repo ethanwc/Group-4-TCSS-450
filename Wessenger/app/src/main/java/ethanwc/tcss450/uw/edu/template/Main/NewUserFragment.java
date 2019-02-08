@@ -96,6 +96,9 @@ public class NewUserFragment extends WaitFragment {
 
     public void register(View view) {
 
+        mHasSpecialCharacter = false;
+        mHasAlphabet = false;
+        mHasNumber = false;
         //no empty fields, passwords must match, password >= 6 chars
         email = edit_email.getText().toString();
         pass1 = edit_pass1.getText().toString();
@@ -120,13 +123,6 @@ public class NewUserFragment extends WaitFragment {
         if (username.isEmpty()) edit_username.setError("Nickname must be entered.");
 
         if (!email.contains("@")) edit_email.setError("Invalid e-mail");
-        if (pass1.length() < 6) edit_pass1.setError("Password must be at least 6 characters including numeric, alphabetic, and special characters.");
-
-
-        if (!pass1.equals(pass2)) edit_pass2.setError("Passwords do not match");
-
-//for checking special character, number & alphabet of password
-
         if(pass1.length()>0) {
             for (int i = 0; i < pass1.length(); i++) {
 
@@ -136,10 +132,61 @@ public class NewUserFragment extends WaitFragment {
             }
         }
 
-        if (!mHasSpecialCharacter) edit_pass1.setError("Password must contain a special character(!,@,#,...)");
-        if (!mHasAlphabet) edit_pass1.setError("Password must contain an alphabetic character(a,b,c,...)");
-        if (!mHasNumber) edit_pass1.setError("Password must contain a numeric character(1,2,3,...)");
         mPasswordContain = (pass1.length() > 5 && mHasSpecialCharacter==true && mHasAlphabet==true && mHasNumber==true);
+        boolean passLength = pass1.length() > 5;
+
+         if (!passLength) {
+            edit_pass1.setError("Password must be at least 6 characters.");
+        }
+        if (!mHasAlphabet) {
+            edit_pass1.setError("Password must contain alphabetic(a,b,c,...) characters.");
+        }
+        if (!mHasNumber) {
+            edit_pass1.setError("Password must contain numeric(1,2,3,...) characters.");
+        }
+        if (!mHasSpecialCharacter) {
+            edit_pass1.setError("Password must contain special(!,@,#,...) characters");
+        }
+        if (!mHasAlphabet && !mHasNumber) {
+             edit_pass1.setError("Password must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
+         }
+         if (!mHasAlphabet && !mHasSpecialCharacter) {
+             edit_pass1.setError("Password must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
+         }
+         if (!passLength && !mHasAlphabet) {
+             edit_pass1.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) characters.");
+         }
+         if (!passLength && !mHasNumber) {
+             edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) characters.");
+         }
+         if (!passLength && !mHasSpecialCharacter) {
+             edit_pass1.setError("Password must be at least 6 characters and must include special(!,@,#,...) characters.");
+         }
+         if (!mHasNumber && !mHasSpecialCharacter) {
+             edit_pass1.setError("Password must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
+         }
+         if (!passLength && !mHasAlphabet && !mHasNumber) {
+            edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
+        }
+        if (!passLength && !mHasAlphabet && !mHasSpecialCharacter) {
+            edit_pass1.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
+        }
+        if (!passLength && !mHasNumber && !mHasSpecialCharacter) {
+            edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
+        }
+        if (!mHasAlphabet && !mHasNumber && !mHasSpecialCharacter) {
+            edit_pass1.setError("Password must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
+        }
+        if (!passLength && !mHasAlphabet && !mHasNumber && !mHasSpecialCharacter) {
+            edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
+        }
+
+
+        if (!pass1.equals(pass2)) edit_pass2.setError("Passwords do not match");
+
+//for checking special character, number & alphabet of password
+
+
 
 System.out.println("++++++#####"+mPasswordContain);
         if (mPasswordContain && at && match && length > 5 && (!fn.isEmpty()) && (!ln.isEmpty()) && pass1.length() > 5) {
@@ -169,6 +216,8 @@ System.out.println("++++++#####"+mPasswordContain);
     }
     public boolean isSpecialCharater(Character c){
         if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){
+            Log.e("adam!", "" + c);
+
             mHasSpecialCharacter =  true;
         }
         return mHasSpecialCharacter;
