@@ -31,6 +31,8 @@ public class LoginFragment extends WaitFragment {
 
     private EditText edit_email, edit_pass;
 
+    private boolean password = true;
+
     View mView;
 
     private OnLoginFragmentInteractionListener mListener;
@@ -143,25 +145,14 @@ public class LoginFragment extends WaitFragment {
             boolean success =
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
-            boolean error = resultsJSON.getBoolean("error");
 
 
             if (success) {
                 //Login was successful. Switch to the loadSuccessFragment.
                 mListener.onLoginSuccess(mCredentials);
                 return;
-            } else {
-                if (error) {
-                    //Login was unsuccessful. Don’t switch fragments and
-                    // inform the user
-                    ((TextView) getView().findViewById(R.id.edittext_login_email))
-                            .setError("Email does not exist.");
-                } else {
-                    ((TextView) getView().findViewById(R.id.edittext_login_password))
-                            .setError("Password is incorrect.");
-                }
-
             }
+
             mListener.onWaitFragmentInteractionHide();
         } catch (JSONException e) {
             //It appears that the web service did not return a JSON formatted
@@ -175,7 +166,7 @@ public class LoginFragment extends WaitFragment {
 
             String error = e.getMessage();
             ((TextView) getView().findViewById(R.id.edittext_login_email))
-                    .setError("Email does not exist in the system.");
+                    .setError("Incorrect format returned.");
         }
     }
     private void attemptLogin() {
