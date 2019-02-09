@@ -82,22 +82,32 @@ public class AuthenticationFragment extends WaitFragment {
 
 
 
-        Credentials credentials = mCredentials;
-        //build the web service URL
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_authenticate))
-                .build();
-        //build the JSONObject
-        JSONObject msg = credentials.asJSONObject();
-        mCredentials = credentials;
-        //instantiate and execute the AsyncTask.
-        new SendPostAsyncTask.Builder(uri.toString(), msg)
-                .onPreExecute(this::handleLoginOnPre)
-                .onPostExecute(this::handleAuthenticateOnPost)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
+        EditText edit = getActivity().findViewById(R.id.edittext_authentication_codeinput);
+        inputCode = Integer.parseInt(edit.getText().toString());
+
+        if (inputCode == code) {
+
+            Credentials credentials = mCredentials;
+            //build the web service URL
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_authenticate))
+                    .build();
+            //build the JSONObject
+            JSONObject msg = credentials.asJSONObject();
+            mCredentials = credentials;
+            //instantiate and execute the AsyncTask.
+            new SendPostAsyncTask.Builder(uri.toString(), msg)
+                    .onPreExecute(this::handleLoginOnPre)
+                    .onPostExecute(this::handleAuthenticateOnPost)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+        } else {
+            edit.setError("Incorrect authentication code input.");
+        }
+
+
 
 
     }
