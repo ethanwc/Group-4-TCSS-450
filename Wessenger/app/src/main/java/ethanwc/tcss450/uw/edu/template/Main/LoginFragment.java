@@ -151,6 +151,13 @@ public class LoginFragment extends WaitFragment {
                 //Login was successful. Switch to the loadSuccessFragment.
                 mListener.onLoginSuccess(mCredentials);
                 return;
+            } else {
+                if (resultsJSON.getString("error").equals("true")){
+                    edit_email.setError("Email does not exist in the system.");
+                } else {
+                    edit_pass.setError(resultsJSON.getString("error"));
+                }
+
             }
 
             mListener.onWaitFragmentInteractionHide();
