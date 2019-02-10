@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
@@ -27,8 +29,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
-        SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener {
+        SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener,
+        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener{
 
+    private Bundle mArgs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,9 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         NavigationView navigationView =  findViewById(R.id.navview_messanging_nav);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Intent intent = getIntent();
+        mArgs = intent.getExtras();
 
         ConversationFragment conversationFragment = new ConversationFragment();
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -96,6 +103,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_change_password) {
+            ChangePasswordFragment changePasswordFragment
+                    = new ChangePasswordFragment();
+            changePasswordFragment.setArguments(mArgs);
+            loadFragment(changePasswordFragment);
         }
 
         return super.onOptionsItemSelected(item);
@@ -200,5 +212,33 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onChangePasswordClicked() {
+        loadFragment(new ConversationFragment());
+        /*ConversationFragment conversationFragment = new ConversationFragment();
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_messaging_container, conversationFragment)
+                .addToBackStack(null);
+        getSupportActionBar().setTitle("Messaging Home");
+        transaction.commit();*/
+    }
+
+    @Override
+    public void onWaitFragmentInteractionShow() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_change_password, new WaitFragment(), "WAIT")
+                .commit();
+    }
+
+    @Override
+    public void onWaitFragmentInteractionHide() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
+                .commit();
     }
 }

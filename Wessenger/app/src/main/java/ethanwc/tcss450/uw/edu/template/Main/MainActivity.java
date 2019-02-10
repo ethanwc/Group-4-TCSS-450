@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction,
         TemoraryPasswordSend.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener{
 
+    public static final String EXTRA_MESSAGE = "email";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     @Override
     public void onLoginSuccess(Credentials credentials) {
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
             startActivity(intent);
     }
 
