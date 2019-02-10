@@ -13,6 +13,7 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
         LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction {
+    public static final String EXTRA_MESSAGE = "email";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     @Override
     public void onLoginSuccess(Credentials credentials) {
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
             startActivity(intent);
     }
 

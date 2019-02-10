@@ -32,6 +32,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener,
         ChangePasswordFragment.OnChangePasswordFragmentInteractionListener{
 
+    private Bundle mArgs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,9 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         NavigationView navigationView =  findViewById(R.id.navview_messanging_nav);
         navigationView.setNavigationItemSelectedListener(this);
+
+        Intent intent = getIntent();
+        mArgs = intent.getExtras();
 
         ConversationFragment conversationFragment = new ConversationFragment();
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -100,7 +104,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_change_password) {
-            loadFragment(new ChangePasswordFragment());
+            ChangePasswordFragment changePasswordFragment
+                    = new ChangePasswordFragment();
+            changePasswordFragment.setArguments(mArgs);
+            loadFragment(changePasswordFragment);
         }
 
         return super.onOptionsItemSelected(item);
@@ -209,17 +216,21 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onChangePasswordClicked() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_change_password, new ConversationFragment());
-        transaction.commit();
+        loadFragment(new ConversationFragment());
+        /*ConversationFragment conversationFragment = new ConversationFragment();
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_messaging_container, conversationFragment)
+                .addToBackStack(null);
+        getSupportActionBar().setTitle("Messaging Home");
+        transaction.commit();*/
     }
 
     @Override
     public void onWaitFragmentInteractionShow() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.activity_weather_container, new WaitFragment(), "WAIT")
-                .addToBackStack(null)
+                .replace(R.id.fragment_change_password, new WaitFragment(), "WAIT")
                 .commit();
     }
 
