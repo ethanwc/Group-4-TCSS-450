@@ -93,7 +93,7 @@ public class TemoraryPasswordSend extends Fragment{
                 EditText editTextEmail = getActivity().findViewById((R.id.editText_temporarypassword_email));
                 String email = editTextEmail.getText().toString();
                 if(email.length()<2){
-                    editTextEmail.setError("please enter your email.");
+                    editTextEmail.setError("Please enter your email.");
                 }else{
                     Credentials credentials = new Credentials.Builder(email,email).build();
 
@@ -149,7 +149,7 @@ public class TemoraryPasswordSend extends Fragment{
                         //Login was unsuccessful. Don’t switch fragments and
                         // inform the user
                         ((TextView) getView().findViewById(R.id.editText_temporarypassword_email))
-                                .setError("Email not exist");
+                                .setError("Email does not exist.");
                         System.out.println("--------not success---------");
                     }
                     mListener.onWaitFragmentInteractionHide();

@@ -55,7 +55,7 @@
 <string name="temoraryPassword_reset">Reset</string>
     <string name="edittext_temporarypassword">Temporary Password</string>
     <string name="btn_reset_password_change">Change Password</string>
-    <string name="txt_login_forgotPassword">Forgot Password???</string>
+    <string name="txt_login_forgotPassword">Forgot Password?</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
