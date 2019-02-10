@@ -1,6 +1,8 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -94,7 +96,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            logout();
             return true;
         }
 
@@ -178,7 +181,30 @@ public class MessagingHomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-//
+
+    /**
+     * Method to logout of the app, and delete saved password information
+     */
+
+    private void logout() {
+        SharedPreferences prefs =
+                getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        //remove the saved credentials from StoredPrefs
+        prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
+        //close the app
+        finishAndRemoveTask();
+        //or close this activity and bring back the Login
+// Intent i = new Intent(this, MainActivity.class);
+// startActivity(i);
+// //Ends this Activity and removes it from the Activity back stack.
+// finish();
+    }
+
+
+    //
     @Override
     public void onSendFragmentInteraction() {
         MessageViewFragment messageView = new MessageViewFragment();

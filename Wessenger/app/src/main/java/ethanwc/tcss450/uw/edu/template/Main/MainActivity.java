@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import java.io.Serializable;
+
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
@@ -100,9 +102,12 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
 
     @Override
-    public void onLoginSuccess(Credentials credentials) {
+    public void onLoginSuccess(Credentials credentials, String jwt) {
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
-            startActivity(intent);
+        intent.putExtra(getString(R.string.email_registerToLogin), (Serializable) credentials);
+        intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
+        startActivity(intent);
+            finish();
     }
 
     @Override
@@ -136,7 +141,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
         args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
         loginFragment.setArguments(args);
-
         loadFragment(loginFragment);
     }
 
