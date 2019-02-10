@@ -197,7 +197,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private void loadFragment(Fragment frag){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_messaging_container, frag )
+                .replace(R.id.fragment_messaging_container, frag )
                 .addToBackStack(null);
         transaction.commit();
     }
@@ -215,13 +215,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onChangePasswordClicked() {
         loadFragment(new ConversationFragment());
-        /*ConversationFragment conversationFragment = new ConversationFragment();
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.activity_messaging_container, conversationFragment)
-                .addToBackStack(null);
-        getSupportActionBar().setTitle("Messaging Home");
-        transaction.commit();*/
+
     }
 
     @Override
