@@ -30,9 +30,9 @@
     <string name="authentication_submit">Submit</string>
     <string name="authentication_code">Code</string>
     <string name="authentication_code_prompt">Authentication Code</string>
-    <string name="authentication">Please check email for authentication code</string>
+    <string name="authentication">Please check your email for authentication code</string>
     <string name="authenticationHeader">Authentication Code Sent</string>
-
+    <string name="password_recovery_email_prompt">Plese check your email for new temporary password.</string>
     <string name="new_message_send">Send</string>
     <string name="menu_chat">Messenger</string>
     <string name="menu_nav_home">Home</string>
@@ -56,8 +56,8 @@
     <string name="Chat_Home">Home</string>
     <string name="Chat_View_Connections">View Connections</string>
     <string name="Chat_requests_Invitations">Requests/Invitations</string>
-
-<string name="temoraryPassword_reset">Reset</string>
+    <string name="password_reset_prompt">Please enter the email for your account.</string>
+    <string name="temoraryPassword_reset">Send Code</string>
     <string name="edittext_temporarypassword">Temporary Password</string>
     <string name="btn_reset_password_change">Change Password</string>
     <string name="txt_login_forgotPassword">Forgot Password?</string>

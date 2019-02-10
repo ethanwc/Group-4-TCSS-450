@@ -20,7 +20,7 @@
             android:icon="@drawable/ic_saved_location"
             android:title="@string/Menu_View_Saved_Locations" />
     </menu>
-</item>
+    </item>
 
     <item android:title="@string/menu_chat">
         <menu>

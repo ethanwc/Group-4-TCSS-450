@@ -22,10 +22,6 @@
         app:srcCompat="@drawable/logo" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
         android:id="@+id/textview_weathernavheader_appname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
