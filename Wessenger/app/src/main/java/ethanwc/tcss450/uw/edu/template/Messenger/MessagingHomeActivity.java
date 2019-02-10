@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -19,17 +20,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
+import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
 import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.weather.WeatherHome;
+import me.pushy.sdk.Pushy;
 
 public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
-        SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener {
+        SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener, WaitFragment.OnFragmentInteractionListener {
 
 
     @Override
@@ -62,12 +66,18 @@ public class MessagingHomeActivity extends AppCompatActivity
         NavigationView navigationView =  findViewById(R.id.navview_messanging_nav);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ConversationFragment conversationFragment = new ConversationFragment();
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_messaging_container, conversationFragment)
-                .addToBackStack(null);
-        transaction.commit();
+        Fragment fragment;
+        if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_msg), false)) {
+            fragment = new ChatFragment();
+        } else {
+            fragment = new ConversationFragment();
+        }
+
+
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_messaging_container, fragment)
+                .commit();
 
     }
 
@@ -109,7 +119,27 @@ public class MessagingHomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        if (id == R.id.nav_global_chat) {
 
+
+            String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
+            Credentials c = (Credentials) getIntent().getExtras().getSerializable(getString(R.string.email_registerToLogin));
+            String email = c.getEmail();
+
+            Bundle args = new Bundle();
+            args.putString("jwt_token", jwt);
+            args.putString("email_token_123", email);
+            Fragment chatFrag = new ChatFragment();
+            chatFrag.setArguments(args);
+
+
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.activity_messaging_container, chatFrag)
+                    .addToBackStack(null);
+            // Commit the transaction
+            transaction.commit();
+        }
         if (id == R.id.nav_weather_home) {
 
             WeatherHome weatherHome = new WeatherHome();
@@ -187,6 +217,8 @@ public class MessagingHomeActivity extends AppCompatActivity
      */
 
     private void logout() {
+        new DeleteTokenAsyncTask().execute();
+
         SharedPreferences prefs =
                 getSharedPreferences(
                         getString(R.string.keys_shared_prefs),
@@ -203,6 +235,20 @@ public class MessagingHomeActivity extends AppCompatActivity
 // finish();
     }
 
+    public void onWaitFragmentInteractionShow() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.activity_messaging_container, new WaitFragment(), "WAIT")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void onWaitFragmentInteractionHide() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
+                .commit();
+    }
 
     //
     @Override
@@ -226,5 +272,39 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+    // Deleting the Pushy device token must be done asynchronously. Good thing
+    // we have something that allows us to do that.
+    class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            onWaitFragmentInteractionShow();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            //since we are already doing stuff in the background, go ahead
+            //and remove the credentials from shared prefs here.
+            SharedPreferences prefs =
+                    getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+            prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
+            prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
+            //unregister the device from the Pushy servers
+            Pushy.unregister(MessagingHomeActivity.this);
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            //close the app
+            finishAndRemoveTask();
+            //or close this activity and bring back the Login
+// Intent i = new Intent(this, MainActivity.class);
+// startActivity(i);
+// //Ends this Activity and removes it from the Activity back stack.
+// finish();
+        }
     }
 }

@@ -40,11 +40,13 @@
 
     <string name="keys_json_authentication_code">code</string>
 
+    <string name="keys_intent_notification_msg">was app started from message notification?</string>
 
     <string name="keys_intent_credentials">intent key for creds</string>
     <string name="keys_intent_jwt">intent key for jwt</string>
 
     <string name="new_user_registration_view">Registration</string>
+
 
     <string name="Menu_Weather">Weather</string>
     <string name="Menu_Home">Home</string>

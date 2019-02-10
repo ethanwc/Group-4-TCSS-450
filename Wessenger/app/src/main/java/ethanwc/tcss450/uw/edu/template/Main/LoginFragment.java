@@ -4,6 +4,7 @@ package ethanwc.tcss450.uw.edu.template.Main;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import me.pushy.sdk.Pushy;
 
 
 /**
@@ -200,8 +202,9 @@ public class LoginFragment extends WaitFragment {
                 mJwt = resultsJSON.getString(
                         getString(R.string.keys_json_login_jwt));
 
-                saveCredentials(mCredentials);
-                mListener.onLoginSuccess(mCredentials, mJwt);
+                new RegisterForPushNotificationsAsync().execute();
+
+
 
                 return;
             } else {
@@ -282,6 +285,32 @@ public class LoginFragment extends WaitFragment {
         prefs.edit().putString(getString(R.string.keys_prefs_password), credentials.getPassword()).apply();
     }
 
+    private void handlePushyTokenOnPost(String result) {
+        try {
+            Log.d("JSON result",result);
+            JSONObject resultsJSON = new JSONObject(result);
+            boolean success = resultsJSON.getBoolean("success");
+            if (success) {
+                saveCredentials(mCredentials);
+                mListener.onLoginSuccess(mCredentials, mJwt);
+                return;
+            } else {
+                //Saving the token wrong. Don’t switch fragments and inform the user
+                ((TextView) getView().findViewById(R.id.edittext_login_email))
+                        .setError("Login Unsuccessful");
+            }
+            mListener.onWaitFragmentInteractionHide();
+        } catch (JSONException e) {
+            //It appears that the web service didn’t return a JSON formatted String
+            //or it didn’t have what we expected in it.
+            Log.e("JSON_PARSE_ERROR", result
+                    + System.lineSeparator()
+                    + e.getMessage());
+            mListener.onWaitFragmentInteractionHide();
+            ((TextView) getView().findViewById(R.id.edittext_login_email))
+                    .setError("Login Unsuccessful");
+        }
+    }
 
 
     public interface OnLoginFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener {
@@ -290,4 +319,55 @@ public class LoginFragment extends WaitFragment {
         void onRegisterClicked();
 
     }
+    private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String>
+    {
+        protected String doInBackground(Void... params) {
+            String deviceToken = "";
+            try {
+                // Assign a unique token to this device
+                deviceToken = Pushy.register(getActivity().getApplicationContext());
+                //subscribe to a topic (this is a Blocking call)
+                Pushy.subscribe("all", getActivity().getApplicationContext());
+            }
+            catch (Exception exc) {
+                cancel(true);
+                // Return exc to onCancelled
+                return exc.getMessage();
+            }
+            // Success
+            return deviceToken;
+        }
+        @Override
+        protected void onCancelled(String errorMsg) {
+            super.onCancelled(errorMsg);
+            Log.d("PhishApp", "Error getting Pushy Token: " + errorMsg);
+        }
+        @Override
+        protected void onPostExecute(String deviceToken) {
+            // Log it for debugging purposes
+            Log.d("PhishApp", "Pushy device token: " + deviceToken);
+            //build the web service URL
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_pushy))
+                    .appendPath(getString(R.string.ep_token))
+                    .build();
+            //build the JSONObject
+            JSONObject msg = mCredentials.asJSONObject();
+            try {
+                msg.put("token", deviceToken);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            //instantiate and execute the AsyncTask.
+            new SendPostAsyncTask.Builder(uri.toString(), msg)
+                    .onPostExecute(LoginFragment.this::handlePushyTokenOnPost)
+                    .onCancelled(LoginFragment.this::handleErrorsInTask)
+                    .addHeaderField("authorization", mJwt)
+                    .build().execute();
+        }
+
+    }
+
 }

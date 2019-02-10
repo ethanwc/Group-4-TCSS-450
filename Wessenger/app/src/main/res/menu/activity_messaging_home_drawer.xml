@@ -25,6 +25,10 @@
     <item android:title="@string/menu_chat">
         <menu>
             <item
+                android:id="@+id/nav_global_chat"
+                android:icon="@drawable/ic_message_black_24dp"
+                android:title="Global Chat" />
+            <item
                 android:id="@+id/nav_chat_home"
                 android:icon="@drawable/ic_home"
                 android:title="@string/Chat_Home" />
