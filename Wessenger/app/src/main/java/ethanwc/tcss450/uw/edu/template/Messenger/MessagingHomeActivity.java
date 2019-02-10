@@ -101,9 +101,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_change_password) {
+        if (id == R.id.action_change_password) {
             ChangePasswordFragment changePasswordFragment
                     = new ChangePasswordFragment();
             changePasswordFragment.setArguments(mArgs);
