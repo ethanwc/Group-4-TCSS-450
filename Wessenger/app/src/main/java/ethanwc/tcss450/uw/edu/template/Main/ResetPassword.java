@@ -31,9 +31,9 @@ private OnFragmentInteractionListener mListener;
 private String mEmail;
 private View mView;
 private Credentials mCredentials;
-    private boolean mHasAlphabet=false;
-    private boolean mHasNumber=false;
-    private boolean mHasSymbol=false;
+    private boolean mHasAlphabet;
+    private boolean mHasNumber;
+    private boolean mHasSymbol;
     private String mPassword;
     private String mPassword2;
     private String mTempPwd;
@@ -48,14 +48,20 @@ private Credentials mCredentials;
         // Inflate the layout for this fragment
         mView= inflater.inflate(R.layout.fragment_reset_password, container, false);
 
+
         Button changePasswordBtn = (Button) mView.findViewById(R.id.btn_resetpwd_changepwd) ;
         changePasswordBtn.setOnClickListener(new View.OnClickListener(){
+
 
             @Override
             public void onClick(View v) {
                 changePassword();
             }
             public  void changePassword(){
+
+                mHasAlphabet = false;
+                mHasNumber = false;
+                mHasSymbol = false;
                 EditText tmpPwd = (EditText) getActivity().findViewById(R.id.editText_resetPassword_temorarypassword);
                 EditText pwd = (EditText) getActivity().findViewById(R.id.edittext_resetPassword_newPassword);
                 EditText pwd2 = (EditText) getActivity().findViewById(R.id.editText_resetPwd_passwordAgain);
@@ -65,10 +71,7 @@ private Credentials mCredentials;
                 if(mPassword.equals(mPassword2)){
                     checkPasswordCorrect(mPassword);
                     if(mPassword.length() >5 && mHasNumber==true && mHasAlphabet==true && mHasSymbol==true){
-                        System.out.println("has Number "+mHasNumber);
-                        System.out.println("has Symbol "+mHasSymbol);
-                        System.out.println("has alphabet "+mHasAlphabet);
-                        //
+
 
                         Credentials credentials = new Credentials.Builder(mEmail,mPassword).addtempPwd(mTempPwd).build();
 
@@ -88,7 +91,55 @@ private Credentials mCredentials;
 
                     }
                     else {
-                    pwd.setError("Password should be more than 5 character long, and must have symbol, number, alphabet");
+
+
+                        boolean passLength = mPassword.length() > 5;
+
+                        if (!passLength) {
+                            pwd.setError("Password must be at least 6 characters.");
+                        }
+                        if (!mHasAlphabet) {
+                            pwd.setError("Password must contain alphabetic(a,b,c,...) characters.");
+                        }
+                        if (!mHasNumber) {
+                            pwd.setError("Password must contain numeric(1,2,3,...) characters.");
+                        }
+                        if (!mHasSymbol) {
+                            pwd.setError("Password must contain special(!,@,#,...) characters");
+                        }
+                        if (!mHasAlphabet && !mHasNumber) {
+                            pwd.setError("Password must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
+                        }
+                        if (!mHasAlphabet && !mHasSymbol) {
+                            pwd.setError("Password must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
+                        }
+                        if (!passLength && !mHasAlphabet) {
+                            pwd.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) characters.");
+                        }
+                        if (!passLength && !mHasNumber) {
+                            pwd.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) characters.");
+                        }
+                        if (!passLength && !mHasSymbol) {
+                            pwd.setError("Password must be at least 6 characters and must include special(!,@,#,...) characters.");
+                        }
+                        if (!mHasNumber && !mHasSymbol) {
+                            pwd.setError("Password must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
+                        }
+                        if (!passLength && !mHasAlphabet && !mHasNumber) {
+                            pwd.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
+                        }
+                        if (!passLength && !mHasAlphabet && !mHasSymbol) {
+                            pwd.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
+                        }
+                        if (!passLength && !mHasNumber && !mHasSymbol) {
+                            pwd.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
+                        }
+                        if (!mHasAlphabet && !mHasNumber && !mHasSymbol) {
+                            pwd.setError("Password must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
+                        }
+                        if (!passLength && !mHasAlphabet && !mHasNumber && !mHasSymbol) {
+                            pwd.setError("Password must be at least 6 characters and must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
+                        }
                     }
                 }else{
                     pwd2.setError("Password not match");
@@ -149,31 +200,13 @@ private Credentials mCredentials;
                 if(passwrd.length()>0) {
                     for (int i = 0; i < passwrd.length(); i++) {
 
-                        mHasAlphabet = isSpecialCharater(passwrd.charAt(i));
-                        mHasSymbol = ismHasAlphabet(passwrd.charAt(i));
+                        mHasSymbol = isSpecialCharater(passwrd.charAt(i));
+                        mHasAlphabet = ismHasAlphabet(passwrd.charAt(i));
                         mHasNumber = isHasNumber(passwrd.charAt(i));
                     }
                 }
             }
-            public boolean isHasNumber(Character c){
-                if((c > 47 && c < 58)){
-                    mHasNumber = true;
-                }
-                return  mHasNumber;
-            }
-            public boolean ismHasAlphabet(Character c){
-                if((c > 64 && c < 91) || (c > 96 && c < 123)){
-                    mHasAlphabet = true;
-                }
-                return mHasAlphabet;
 
-            }
-            public boolean isSpecialCharater(Character c){
-                if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){
-                    mHasSymbol =  true;
-                }
-                return mHasSymbol;
-            }
 
         } );
 
@@ -224,4 +257,28 @@ private Credentials mCredentials;
         // TODO: Update argument type and name
         void onResetPassword(Credentials credentials);
     }
+
+    public boolean isHasNumber(Character c){
+        System.out.println(c);
+        if((c > 47 && c < 58)){
+            mHasNumber = true;
+        }
+        return  mHasNumber;
+    }
+    public boolean ismHasAlphabet(Character c){
+        if((c > 64 && c < 91) || (c > 96 && c < 123)){
+            mHasAlphabet = true;
+        }
+        return mHasAlphabet;
+
+    }
+    public boolean isSpecialCharater(Character c){
+        if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){
+            Log.e("adam!", "" + c);
+
+            mHasSymbol =  true;
+        }
+        return mHasSymbol;
+    }
+
 }
