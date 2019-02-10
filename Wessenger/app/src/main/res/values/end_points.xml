@@ -3,6 +3,8 @@
     <string name="ep_base_url">tcss450-group4.herokuapp.com</string>
     <string name="ep_hello">hello</string>
     <string name="ep_login">login</string>
+    <string name="ep_resetpwd">resetpassword</string>
+    <string name="ep_resetDone">resetDone</string>
     <string name="ep_register">register</string>
     <string name="ep_hello_args">params</string>
     <string name="ep_hello_delay">wait</string>

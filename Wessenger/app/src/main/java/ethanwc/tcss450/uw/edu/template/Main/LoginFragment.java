@@ -68,6 +68,9 @@ public class LoginFragment extends WaitFragment {
         TextView newUser = (TextView) mView.findViewById(R.id.testview_login_newuser);
         newUser.setOnClickListener(this::register);
 
+        TextView forgotPassword = (TextView) mView.findViewById(R.id.txt_login_forgetPassword);
+        forgotPassword.setOnClickListener(this :: forgotPassword);
+
 
 
         edit_email = (EditText) mView.findViewById(R.id.edittext_login_email);
@@ -77,6 +80,7 @@ public class LoginFragment extends WaitFragment {
         return mView;
 
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -116,6 +120,13 @@ public class LoginFragment extends WaitFragment {
 
         if (mListener != null) mListener.onRegisterClicked();
 
+    }
+    private void forgotPassword(View view) {
+        if(mListener != null) {
+            if (view.getId() == R.id.txt_login_forgetPassword) {
+                mListener.onForgotPasswordClicked();
+            }
+        }
     }
 
 
@@ -217,6 +228,7 @@ public class LoginFragment extends WaitFragment {
 
         void onLoginSuccess(Credentials credentials);
         void onRegisterClicked();
+        void onForgotPasswordClicked();
 
     }
 }

@@ -1,6 +1,7 @@
 package ethanwc.tcss450.uw.edu.template.Main;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +13,8 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
-        LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction {
+        LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction,
+        TemoraryPasswordSend.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
     }
 
+
+
     @Override
     public void onWaitFragmentInteractionShow() {
         getSupportFragmentManager()
@@ -127,7 +131,10 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
                 .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
                 .commit();
     }
-
+    @Override
+    public void onForgotPasswordClicked() {
+        loadFragment(new TemoraryPasswordSend());
+    }
     @Override
     public void authenticationSuccess(Credentials credentials) {
         LoginFragment loginFragment;
@@ -139,5 +146,27 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
         loadFragment(loginFragment);
     }
+//this is from temporary password send
+    @Override
+    public void onSendTemporaryPassword(Credentials credentials) {
+        System.out.println(credentials.getEmail());
+        ResetPassword resetPassword = new ResetPassword();
+        Bundle args = new Bundle();
+        args.putSerializable((getString(R.string.email_registerToLogin)),credentials.getEmail());
+        resetPassword.setArguments(args);
+        loadFragment(resetPassword);
 
+    }
+
+    @Override
+    public void onResetPassword(Credentials credentials) {
+        LoginFragment loginFragment = new LoginFragment();
+        Bundle args = new Bundle();
+        args.putSerializable((getString(R.string.email_registerToLogin)),credentials.getEmail());
+        args.putSerializable((getString(R.string.password_registerToLogin)),credentials.getPassword());
+        loginFragment.setArguments(args);
+
+        loadFragment(loginFragment);
+
+    }
 }
