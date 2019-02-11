@@ -17,7 +17,7 @@ import me.pushy.sdk.Pushy;
 
 public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
         LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction,
-        TemoraryPasswordSend.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener{
+        TemoraryPasswordSend.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener {
 
     public static final String EXTRA_MESSAGE = "email";
 
@@ -106,14 +106,14 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     }
 
 
-
     /**
      * This method is to load fragment
+     *
      * @param frag, fragment
      */
-    public void loadFragment(Fragment frag){
+    public void loadFragment(Fragment frag) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.activity_main_container,  frag)
+                .replace(R.id.activity_main_container, frag)
                 .addToBackStack(null)
                 .commit();
     }
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
         intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
-            startActivity(intent);
+        startActivity(intent);
         startActivity(intent);
         finish();
     }
@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         loadFragment(new NewUserFragment());
 
     }
-
 
 
     @Override
@@ -155,10 +154,12 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
                 .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
                 .commit();
     }
+
     @Override
     public void onForgotPasswordClicked() {
         loadFragment(new TemoraryPasswordSend());
     }
+
     @Override
     public void authenticationSuccess(Credentials credentials) {
         LoginFragment loginFragment;
@@ -169,13 +170,14 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         loginFragment.setArguments(args);
         loadFragment(loginFragment);
     }
-//this is from temporary password send
+
+    //this is from temporary password send
     @Override
     public void onSendTemporaryPassword(Credentials credentials) {
         System.out.println(credentials.getEmail());
         ResetPassword resetPassword = new ResetPassword();
         Bundle args = new Bundle();
-        args.putSerializable((getString(R.string.email_registerToLogin)),credentials.getEmail());
+        args.putSerializable((getString(R.string.email_registerToLogin)), credentials.getEmail());
         resetPassword.setArguments(args);
         loadFragment(resetPassword);
 
@@ -185,10 +187,11 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     public void onResetPassword(Credentials credentials) {
         LoginFragment loginFragment = new LoginFragment();
         Bundle args = new Bundle();
-        args.putSerializable((getString(R.string.email_registerToLogin)),credentials.getEmail());
-        args.putSerializable((getString(R.string.password_registerToLogin)),credentials.getPassword());
+        args.putSerializable((getString(R.string.email_registerToLogin)), credentials.getEmail());
+        args.putSerializable((getString(R.string.password_registerToLogin)), credentials.getPassword());
         loginFragment.setArguments(args);
 
         loadFragment(loginFragment);
 
+    }
 }

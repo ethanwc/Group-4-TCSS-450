@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
+import ethanwc.tcss450.uw.edu.template.Main.WaitFragment.OnFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
@@ -34,9 +35,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
-        SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener, WaitFragment.OnFragmentInteractionListener {
         SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener,
-        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener{
+        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener {
+
 
     private Bundle mArgs;
 
@@ -62,20 +63,21 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                transaction.commit();
 //            }
 //        });
-        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadFragment(new NewMessageFragment());
-            }
-            private void loadFragment(Fragment frag){
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_messaging_container, frag )
-                        .addToBackStack(null);
-                getSupportActionBar().setTitle("New Message");
-                transaction.commit();
-            }
-        });
+
+//        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                loadFragment(new NewMessageFragment());
+//            }
+//            private void loadFragment(Fragment frag){
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragment_messaging_container, frag )
+//                        .addToBackStack(null);
+//                getSupportActionBar().setTitle("New Message");
+//                transaction.commit();
+//            }
+//        });
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -132,6 +134,8 @@ public class MessagingHomeActivity extends AppCompatActivity
             changePasswordFragment.setArguments(mArgs);
             getSupportActionBar().setTitle("Change Password");
             loadFragment(changePasswordFragment);
+        }
+
         if (id == R.id.action_logout) {
             logout();
             return true;
@@ -149,9 +153,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
-            Credentials c = (Credentials) getIntent().getExtras().getSerializable(getString(R.string.email_registerToLogin));
-            String email = c.getEmail();
-
+            String email = getIntent().getExtras().getString(("email"));
             Bundle args = new Bundle();
             args.putString("jwt_token", jwt);
             args.putString("email_token_123", email);
@@ -300,26 +302,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
     }
 
-    @Override
+//    @Override
     public void onChangePasswordClicked() {
         getSupportActionBar().setTitle("Conversation");
         loadFragment(new ConversationFragment());
 
-    }
-
-    @Override
-    public void onWaitFragmentInteractionShow() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_change_password, new WaitFragment(), "WAIT")
-                .commit();
-    }
-
-    @Override
-    public void onWaitFragmentInteractionHide() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
-                .commit();
     }
 }
