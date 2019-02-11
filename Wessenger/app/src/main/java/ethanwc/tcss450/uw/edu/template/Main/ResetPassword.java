@@ -26,56 +26,59 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
  * A simple {@link Fragment} subclass.
  */
 public class ResetPassword extends Fragment {
-private Credentials mCredential;
-private OnFragmentInteractionListener mListener;
-private String mEmail;
-private View mView;
-private Credentials mCredentials;
+    private Credentials mCredential;
+    private OnFragmentInteractionListener mListener;
+    private String mEmail;
+    private View mView;
+    private Credentials mCredentials;
     private boolean mHasAlphabet;
     private boolean mHasNumber;
     private boolean mHasSymbol;
     private String mPassword;
     private String mPassword2;
     private String mTempPwd;
+
     public ResetPassword() {
         // Required empty public constructor
     }
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+@Override
+public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        mView= inflater.inflate(R.layout.fragment_reset_password, container, false);
+    // Inflate the layout for this fragment
+    mView= inflater.inflate(R.layout.fragment_reset_password, container, false);
 
+    Button changePasswordBtn = (Button) mView.findViewById(R.id.btn_resetpwd_changepwd) ;
+    changePasswordBtn.setOnClickListener(new View.OnClickListener(){
+        @Override
+         /**
+         * to handle button clicked in change password fragment
+         *@param, v the button
+         */
+        public void onClick(View v) {
+            changePassword();
+        }
 
-        Button changePasswordBtn = (Button) mView.findViewById(R.id.btn_resetpwd_changepwd) ;
-        changePasswordBtn.setOnClickListener(new View.OnClickListener(){
+         /**
+         * handle the action on change password button clicked
+         */
+         public  void changePassword(){
 
-
-            @Override
-            public void onClick(View v) {
-                changePassword();
-            }
-            public  void changePassword(){
-
-                mHasAlphabet = false;
-                mHasNumber = false;
-                mHasSymbol = false;
-                EditText tmpPwd = (EditText) getActivity().findViewById(R.id.editText_resetPassword_temorarypassword);
-                EditText pwd = (EditText) getActivity().findViewById(R.id.edittext_resetPassword_newPassword);
-                EditText pwd2 = (EditText) getActivity().findViewById(R.id.editText_resetPwd_passwordAgain);
-                mPassword = pwd.getText().toString();
-                mPassword2 = pwd2.getText().toString();
-                mTempPwd = tmpPwd.getText().toString();
-                if(mPassword.equals(mPassword2)){
-                    checkPasswordCorrect(mPassword);
+             mHasAlphabet = false;
+             mHasNumber = false;
+             mHasSymbol = false;
+             EditText tmpPwd = (EditText) getActivity().findViewById(R.id.editText_resetPassword_temorarypassword);
+             EditText pwd = (EditText) getActivity().findViewById(R.id.edittext_resetPassword_newPassword);
+             EditText pwd2 = (EditText) getActivity().findViewById(R.id.editText_resetPwd_passwordAgain);
+             mPassword = pwd.getText().toString();
+             mPassword2 = pwd2.getText().toString();
+             mTempPwd = tmpPwd.getText().toString();
+             if(mPassword.equals(mPassword2)){
+                 checkPasswordCorrect(mPassword);
                     if(mPassword.length() >5 && mHasNumber==true && mHasAlphabet==true && mHasSymbol==true){
 
-
                         Credentials credentials = new Credentials.Builder(mEmail,mPassword).addtempPwd(mTempPwd).build();
-
-
                         Uri uri = new Uri.Builder().scheme("https")
                                 .appendPath(getString(R.string.ep_base_url))
                                 .appendPath(getString(R.string.ep_resetDone)).build();
@@ -91,10 +94,8 @@ private Credentials mCredentials;
 
                     }
                     else {
-
-
                         boolean passLength = mPassword.length() > 5;
-
+                        // condition to check the password criteria
                         if (!passLength) {
                             pwd.setError("Password must be at least 6 characters.");
                         }
@@ -171,18 +172,17 @@ private Credentials mCredentials;
                     boolean success =
                             resultsJSON.getBoolean(
                                     getString(R.string.keys_json_login_success));
+                    //condition on succsessfully reset password
                     if (success) {
-                        //Login was successful. Switch to the loadSuccessFragment.
+                        //on successfully reset password
                         mListener.onResetPassword(mCredentials);
-//                        return;
-                        System.out.println("password reset");
+
 
                     } else {
-                        //Login was unsuccessful. Don’t switch fragments and
-                        // inform the user
+                        //set Error if user enters wrong temporary password code
                         ((TextView) getView().findViewById(R.id.editText_resetPassword_temorarypassword))
-                                .setError("Please enter right code");
-                        System.out.println("--------not success---------");
+                                .setError("Please enter the right temporary password code");
+
                     }
                     mListener.onWaitFragmentInteractionHide();
                 } catch (JSONException e) {
@@ -213,6 +213,9 @@ private Credentials mCredentials;
         return mView;
     }
 
+    /**
+     * on start of fragment
+     */
     public void onStart(){
         super.onStart();
         if(getArguments()!= null){
@@ -220,7 +223,7 @@ private Credentials mCredentials;
 
         }
     }
-//    // TODO: Rename method, update argument and hook method into UI event
+    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onResetPassword(mCredential);
@@ -258,6 +261,11 @@ private Credentials mCredentials;
         void onResetPassword(Credentials credentials);
     }
 
+    /**
+     * Method to check if string has number
+     * @param c, character
+     * @return, boolean
+     */
     public boolean isHasNumber(Character c){
         System.out.println(c);
         if((c > 47 && c < 58)){
@@ -265,6 +273,11 @@ private Credentials mCredentials;
         }
         return  mHasNumber;
     }
+    /**
+     * Method to check if string has Alphabet
+     * @param c, character
+     * @return, boolean
+     */
     public boolean ismHasAlphabet(Character c){
         if((c > 64 && c < 91) || (c > 96 && c < 123)){
             mHasAlphabet = true;
@@ -272,6 +285,11 @@ private Credentials mCredentials;
         return mHasAlphabet;
 
     }
+    /**
+     * Method to check if string has special character
+     * @param c, character
+     * @return, boolean
+     */
     public boolean isSpecialCharater(Character c){
         if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){
             Log.e("adam!", "" + c);

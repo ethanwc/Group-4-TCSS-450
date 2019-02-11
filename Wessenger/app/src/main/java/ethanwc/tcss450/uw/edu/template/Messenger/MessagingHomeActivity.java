@@ -49,8 +49,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             }
             private void loadFragment(Fragment frag){
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_messaging_container, frag )
+                        .replace(R.id.fragment_messaging_container, frag )
                         .addToBackStack(null);
+                getSupportActionBar().setTitle("New Message");
                 transaction.commit();
             }
         });
@@ -105,6 +106,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             ChangePasswordFragment changePasswordFragment
                     = new ChangePasswordFragment();
             changePasswordFragment.setArguments(mArgs);
+            getSupportActionBar().setTitle("Change Password");
             loadFragment(changePasswordFragment);
         }
 
@@ -120,68 +122,30 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (id == R.id.nav_weather_home) {
 
             WeatherHome weatherHome = new WeatherHome();
-
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_messaging_container, weatherHome)
-                    .addToBackStack(null);
             getSupportActionBar().setTitle("Weather Home");
-            transaction.commit();
-//            Intent intent = new Intent(MessagingHomeActivity.this, WeatherHomeActivity.class);
-//            startActivity(intent);
+            loadFragment(weatherHome);
         } else if (id == R.id.nav_Change_Locations) {
-//            loadFragment(new ChangeLocationsFragment());
-
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
-
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_messaging_container, changeLocationsFragment)
-                    .addToBackStack(null);
             getSupportActionBar().setTitle("Change Location");
-            transaction.commit();
+            loadFragment(changeLocationsFragment);
 
         } else if (id == R.id.nav_View_Saved_Location) {
-//            loadFragment(new SavedLocationFragment());
             SavedLocationFragment locationFragment = new SavedLocationFragment();
-
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_messaging_container, locationFragment)
-                    .addToBackStack(null);
             getSupportActionBar().setTitle("Saved Location");
-            transaction.commit();
+            loadFragment(locationFragment);
         } else if (id == R.id.nav_chat_home) {
-//            Intent intent = new Intent(MessagingHomeActivity.this, MessagingHomeActivity.class);
-//            startActivity(intent);
-
             ConversationFragment conversationFragment = new ConversationFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_messaging_container, conversationFragment)
-                    .addToBackStack(null);
             getSupportActionBar().setTitle("Messaging Home");
-            transaction.commit();
+            loadFragment(conversationFragment);
         } else if (id == R.id.nav_chat_view_connections) {
             ConnectionsFragment connectionsFragment = new ConnectionsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_messaging_container, connectionsFragment)
-                    .addToBackStack(null);
             getSupportActionBar().setTitle("Connections");
-            transaction.commit();
+            loadFragment(connectionsFragment);
 
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
-            //RequestsFragment requestsFragment = new RequestsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-
-                    .replace(R.id.fragment_messaging_container, invitationsFragment)
-                    //.replace(R.id.secondFragmentContainer, requestsFragment)
-                    .addToBackStack(null);
             getSupportActionBar().setTitle("Requests/Invitations");
-            transaction.commit();
+            loadFragment(invitationsFragment);
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
@@ -195,6 +159,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         loadFragment(messageView);
     }
 
+    /**
+     * Load the desire fragment
+     * @param frag
+     */
     private void loadFragment(Fragment frag){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_messaging_container, frag )
@@ -214,6 +182,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onChangePasswordClicked() {
+        getSupportActionBar().setTitle("Conversation");
         loadFragment(new ConversationFragment());
 
     }
