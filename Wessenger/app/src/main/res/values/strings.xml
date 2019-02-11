@@ -33,16 +33,26 @@
     <string name="authentication">Please check your email for authentication code</string>
     <string name="authenticationHeader">Authentication Code Sent</string>
     <string name="password_recovery_email_prompt">Please check your email for the new temporary password.</string>
+    <string name="action_logout">Logout</string>
+
+
     <string name="new_message_send">Send</string>
     <string name="menu_chat">Messenger</string>
     <string name="menu_nav_home">Home</string>
     <string name="change_location_zip_code">Enter zip code</string>
     <string name="title_activity_weather_home">Weather</string>
     <string name="keys_json_login_success">success</string>
+    <string name="keys_json_login_jwt">token</string>
+
     <string name="keys_json_authentication_code">code</string>
 
-    <string name="keys_json_login_jwt">token</string>
+    <string name="keys_intent_notification_msg">was app started from message notification?</string>
+
+    <string name="keys_intent_credentials">intent key for creds</string>
+    <string name="keys_intent_jwt">intent key for jwt</string>
+
     <string name="new_user_registration_view">Registration</string>
+
 
     <string name="Menu_Weather">Weather</string>
     <string name="Menu_Home">Home</string>
@@ -61,4 +71,12 @@
     <string name="edittext_temporarypassword">Temporary Password</string>
     <string name="btn_reset_password_change">Change Password</string>
     <string name="txt_login_forgotPassword">Forgot Password?</string>
+
+    <string name="keys_shared_prefs">edu.uw.tcss450.wessenger.PREFS</string>
+    <string name="keys_prefs_email">traffic_light_wont_let_me_through</string>
+    <string name="keys_prefs_password">see_the_city_see_the_zoo</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

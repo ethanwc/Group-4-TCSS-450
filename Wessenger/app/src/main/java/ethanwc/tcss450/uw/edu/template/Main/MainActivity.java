@@ -8,9 +8,12 @@ import android.os.Bundle;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import java.io.Serializable;
+
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import me.pushy.sdk.Pushy;
 
 public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
         LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction,
@@ -18,10 +21,23 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
     public static final String EXTRA_MESSAGE = "email";
 
+    private boolean mLoadFromChatNotification = false;
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Pushy.listen(this);
+
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey("type")) {
+                mLoadFromChatNotification = getIntent().getExtras().getString("type").equals("msg");
+            }
+        }
+
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -104,10 +120,15 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
 
     @Override
-    public void onLoginSuccess(Credentials credentials) {
+    public void onLoginSuccess(Credentials credentials, String jwt) {
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
+        intent.putExtra(getString(R.string.email_registerToLogin), (Serializable) credentials);
+        intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
+        intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
             startActivity(intent);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -146,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
         args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
         loginFragment.setArguments(args);
-
         loadFragment(loginFragment);
     }
 //this is from temporary password send
@@ -171,5 +191,4 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
         loadFragment(loginFragment);
 
-    }
 }

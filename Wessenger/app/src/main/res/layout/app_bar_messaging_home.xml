@@ -22,15 +22,17 @@
 
     <include layout="@layout/content_messaging_home" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_messenging_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:background="@color/messageText"
-        android:tint="@color/messageText"
-        app:backgroundTint="@color/weatherText"
-        app:srcCompat="@android:drawable/ic_input_add" />
+    <!--//TODO: Implement this correctly-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab_messenging_fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--android:background="@color/messageText"-->
+        <!--android:tint="@color/messageText"-->
+        <!--app:backgroundTint="@color/weatherText"-->
+        <!--app:srcCompat="@android:drawable/ic_input_add" />-->
 
 </android.support.design.widget.CoordinatorLayout>
