@@ -10,6 +10,7 @@
         android:supportsRtl="true">
         <activity
             android:name=".Main.MainActivity"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/Theme.AppCompat.NoActionBar">>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +21,7 @@
         <activity
             android:name=".Messenger.MessagingHomeActivity"
             android:label="@string/title_activity_messaging_home"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme" />
         <!-- Pushy Declarations -->
         <!-- Pushy Notification Receiver -->

@@ -43,19 +43,21 @@ public class MessagingHomeActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadFragment(new NewMessageFragment());
-            }
-            private void loadFragment(Fragment frag){
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.activity_messaging_container, frag )
-                        .addToBackStack(null);
-                transaction.commit();
-            }
-        });
+        //TODO: Implement this correctly
+
+//        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                loadFragment(new NewMessageFragment());
+//            }
+//            private void loadFragment(Fragment frag){
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.activity_messaging_container, frag )
+//                        .addToBackStack(null);
+//                transaction.commit();
+//            }
+//        });
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

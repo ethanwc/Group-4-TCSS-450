@@ -60,6 +60,11 @@ public class ChatFragment extends Fragment {
     }
 
 
+    @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(false);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
