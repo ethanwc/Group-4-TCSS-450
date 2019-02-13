@@ -161,12 +161,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             chatFrag.setArguments(args);
 
 
-            FragmentTransaction transaction = getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.activity_messaging_container, chatFrag)
-                    .addToBackStack(null);
-            // Commit the transaction
-            transaction.commit();
+            loadFragment(chatFrag);
         }
         if (id == R.id.nav_weather_home) {
 
