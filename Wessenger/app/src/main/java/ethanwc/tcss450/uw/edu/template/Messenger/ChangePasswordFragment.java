@@ -165,6 +165,7 @@ public class ChangePasswordFragment extends WaitFragment {
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
             if (success) {
+                mListener.onWaitFragmentInteractionHide();
                 //Change password was successful. Switch to the loadSuccessFragment.
                 mListener.onChangePasswordClicked();
                 return;
