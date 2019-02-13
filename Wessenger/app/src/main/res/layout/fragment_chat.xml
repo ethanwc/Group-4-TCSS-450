@@ -49,5 +49,4 @@
             android:src="@drawable/ic_menu_send" />
 
     </RelativeLayout>
-
 </LinearLayout>

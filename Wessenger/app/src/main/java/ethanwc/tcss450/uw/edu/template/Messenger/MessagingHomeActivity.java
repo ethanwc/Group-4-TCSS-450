@@ -297,7 +297,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onChangePasswordClicked() {
-        getSupportActionBar().setTitle("Conversation");
+        getSupportActionBar().setTitle("Messaging");
         loadFragment(new ConversationFragment());
     }
 }
