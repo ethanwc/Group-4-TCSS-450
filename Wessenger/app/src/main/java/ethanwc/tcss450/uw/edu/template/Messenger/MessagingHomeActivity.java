@@ -135,9 +135,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             changePasswordFragment.setArguments(mArgs);
             getSupportActionBar().setTitle("Change Password");
             loadFragment(changePasswordFragment);
-        }
-
-        if (id == R.id.action_logout) {
+        } else if (id == R.id.action_logout) {
             logout();
             return true;
         }
@@ -204,7 +202,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private void logout() {
         new DeleteTokenAsyncTask().execute();
-
         SharedPreferences prefs =
                 getSharedPreferences(
                         getString(R.string.keys_shared_prefs),
