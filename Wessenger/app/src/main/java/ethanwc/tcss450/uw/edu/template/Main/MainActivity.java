@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
         Log.e("mainactivity: ", " " + credentials.getEmail());
         startActivity(intent);
-        startActivity(intent);
         finish();
     }
 

@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment.OnFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -210,12 +211,12 @@ public class MessagingHomeActivity extends AppCompatActivity
         prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
         prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
         //close the app
-        finishAndRemoveTask();
+        //finishAndRemoveTask();
         //or close this activity and bring back the Login
-// Intent i = new Intent(this, MainActivity.class);
-// startActivity(i);
-// //Ends this Activity and removes it from the Activity back stack.
-// finish();
+ Intent i = new Intent(this, MainActivity.class);
+ startActivity(i);
+ //Ends this Activity and removes it from the Activity back stack.
+ finish();
     }
 
     public void onWaitFragmentInteractionShow() {
