@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
         intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
+        Log.e("mainactivity: ", " " + credentials.getEmail());
         startActivity(intent);
         startActivity(intent);
         finish();

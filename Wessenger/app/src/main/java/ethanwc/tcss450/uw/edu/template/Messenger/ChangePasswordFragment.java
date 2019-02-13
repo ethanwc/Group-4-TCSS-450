@@ -44,6 +44,7 @@ public class ChangePasswordFragment extends WaitFragment {
         super.onStart();
         if (getArguments() != null) {
             mEmail = (String) getArguments().getSerializable("email");
+            Log.e("email:", " " + mEmail);
         }
     }
 
@@ -80,7 +81,7 @@ public class ChangePasswordFragment extends WaitFragment {
         String currentPwString = currentPw.getText().toString();
         String newPwString = newPw.getText().toString();
         String newPw2String = newPw2.getText().toString();
-
+        Log.e("password: ", " " + currentPwString);
         if (currentPwString.length() == 0 ||
                 newPwString.length() == 0 || newPw2String.length() == 0) {
             if (currentPwString.length() == 0) {
@@ -163,7 +164,6 @@ public class ChangePasswordFragment extends WaitFragment {
             boolean success =
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
-
             if (success) {
                 //Change password was successful. Switch to the loadSuccessFragment.
                 mListener.onChangePasswordClicked();

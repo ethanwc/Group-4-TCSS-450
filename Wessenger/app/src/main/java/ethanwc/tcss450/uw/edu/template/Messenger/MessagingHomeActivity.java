@@ -131,6 +131,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (id == R.id.action_change_password) {
             ChangePasswordFragment changePasswordFragment
                     = new ChangePasswordFragment();
+            mArgs = getIntent().getExtras();
             changePasswordFragment.setArguments(mArgs);
             getSupportActionBar().setTitle("Change Password");
             loadFragment(changePasswordFragment);
@@ -297,10 +298,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
     }
 
-//    @Override
+    @Override
     public void onChangePasswordClicked() {
         getSupportActionBar().setTitle("Conversation");
         loadFragment(new ConversationFragment());
-
     }
 }
