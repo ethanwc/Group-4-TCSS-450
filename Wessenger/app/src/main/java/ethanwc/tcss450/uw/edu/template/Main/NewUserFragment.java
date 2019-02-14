@@ -23,53 +23,75 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used to represent the registration page.
+ * Has-A wait fragment.
+ * Has-A OnNewUserFragmentButtonAction
  */
 public class NewUserFragment extends WaitFragment {
+    //Local variables to NewUserFragment.
     private OnNewUserFragmentButtonAction mListener;
-    View mView;
-    private EditText edit_email, edit_pass1, edit_pass2, edit_fn, edit_ln, edit_username;
+    private View mView;
+    private EditText mEditEmail, mEditPass, mEditSecondPass, mEditFirstName, mEditLastName, mEditUsername;
     private Credentials mCredentials;
     private Boolean mHasSpecialCharacter = false;
     private Boolean mHasNumber= false;
     private Boolean mHasAlphabet = false;
     private Boolean mPasswordContain = false;
-    private int authenticationCode = 0;
-    private String email;
-    private String pass1;
-    private String pass2;
-    private String username;
-    private String fn;
-    private String ln;
+    private int mAuthenticationCode = Integer.MIN_VALUE;
+    private String mEmail;
+    private String mPass;
+    private String mSecondPass;
+    private String mUsername;
+    private String mFirstName;
+    private String mLastName;
+    private Boolean mHasAt;
+    private Boolean mPassMatch;
+    private Boolean mPassLength;
+
+    /**
+     * Required empty public constructor.
+     */
     public NewUserFragment() {
         // Required empty public constructor
     }
 
-
+    /**
+     * OnCreateView used to instantiate relevant items to the AuthenticationFragment.
+     *
+     * @param inflater LayoutInflater used to inflate the layout for the fragment.
+     * @param container ViewGroup used as a container to hold the items in AuthenticationFragment.
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_new_user, container, false);
+
+        //Add a listener to login button which directs to goBack method.
         TextView txtLoginClick = mView.findViewById(R.id.textview_newuser_login);
         txtLoginClick.setOnClickListener(this::goBack);
 
-
-
+        //Add a listener to register button which directs to register method.
         Button btnRegister = mView.findViewById(R.id.button_newuser_register);
         btnRegister.setOnClickListener(this::register);
 
-        edit_email = ((EditText) mView.findViewById(R.id.edittext_newuser_email));
-        edit_pass1 = ((EditText) mView.findViewById(R.id.edittext_newuser_password));
-        edit_pass2 = ((EditText) mView.findViewById(R.id.edittext_newuser_password2));
-        edit_fn = ((EditText) mView.findViewById(R.id.edittext_newuser_first));
-        edit_ln = ((EditText) mView.findViewById(R.id.edittext_newuser_last));
-        edit_username = ((EditText) mView.findViewById(R.id.edittext_newuser_nickname));
+        //Store edit text objects as local varaibles
+        mEditEmail = ((EditText) mView.findViewById(R.id.edittext_newuser_email));
+        mEditPass = ((EditText) mView.findViewById(R.id.edittext_newuser_password));
+        mEditSecondPass = ((EditText) mView.findViewById(R.id.edittext_newuser_password2));
+        mEditFirstName = ((EditText) mView.findViewById(R.id.edittext_newuser_first));
+        mEditLastName = ((EditText) mView.findViewById(R.id.edittext_newuser_last));
+        mEditUsername = ((EditText) mView.findViewById(R.id.edittext_newuser_nickname));
 
         return mView;
     }
 
-
+    /**
+     * OnAttach used to check whether the correct listeners have been implemented.
+     * @param context Context of the current ui situation.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -81,127 +103,137 @@ public class NewUserFragment extends WaitFragment {
         }
     }
 
+    /**
+     * OnDetach used to clear the ButtonAction.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
-
+    /**
+     * Helper used to route to login screen on button press.
+     * @param view Required view for method call.
+     */
     public void goBack(View view) {
         mListener.loginButtonAction();
     }
 
-
-
+    /**
+     * Helper used to route to authentication page on button press.
+     * Handles warning user client-side of improper field inputs.
+     * @param view Required view for method call.
+     */
     public void register(View view) {
-
+        //Flags used for password input checks
         mHasSpecialCharacter = false;
         mHasAlphabet = false;
         mHasNumber = false;
-        //no empty fields, passwords must match, password >= 6 chars
-        email = edit_email.getText().toString();
-        pass1 = edit_pass1.getText().toString();
-        pass2 = edit_pass2.getText().toString();
-        fn = edit_fn.getText().toString();
-        ln = edit_ln.getText().toString();
-        username = edit_username.getText().toString();
+        mHasAt = false;
+        mPassMatch = false;
+        mPassLength = false;
+        //Store user input values to variables
+        mEmail = mEditEmail.getText().toString();
+        mPass = mEditPass.getText().toString();
+        mSecondPass = mEditSecondPass.getText().toString();
+        mFirstName = mEditFirstName.getText().toString();
+        mLastName = mEditLastName.getText().toString();
+        mUsername = mEditUsername.getText().toString();
 
+        //Run checks on user input
+        mHasAt = mEmail.contains("@");
+        mPassMatch = mPass.equals(mSecondPass);
 
-        Boolean at = email.contains("@");
-        Boolean match = pass1.equals(pass2);
+        int length = mPass.length();
+        if(mPass.length()>0) {
+            for (int i = 0; i < mPass.length(); i++) {
 
-        int length = pass1.length();
-
-
-        if (fn.isEmpty()) edit_fn.setError("First name must be entered.");
-
-        if (ln.isEmpty()) edit_ln.setError("Last name must be entered.");
-
-        if (pass2.isEmpty()) edit_pass2.setError("Password must be entered.");
-
-        if (username.isEmpty()) edit_username.setError("Nickname must be entered.");
-
-        if (!email.contains("@")) edit_email.setError("Please enter valid e-mail('@' required).");
-
-        if (email.isEmpty()) edit_email.setError("Please enter an email");
-        if(pass1.length()>0) {
-            for (int i = 0; i < pass1.length(); i++) {
-
-                mHasSpecialCharacter = isSpecialCharater(pass1.charAt(i));
-                mHasAlphabet = ismHasAlphabet(pass1.charAt(i));
-                mHasNumber = isHasNumber(pass1.charAt(i));
+                mHasSpecialCharacter = isSpecialCharater(mPass.charAt(i));
+                mHasAlphabet = ismHasAlphabet(mPass.charAt(i));
+                mHasNumber = isHasNumber(mPass.charAt(i));
             }
         }
+        mPasswordContain = (mPass.length() > 5 && mHasSpecialCharacter && mHasAlphabet && mHasNumber && !mUsername.isEmpty());
+        mPassLength = mPass.length() > 5;
 
-        mPasswordContain = (pass1.length() > 5 && mHasSpecialCharacter && mHasAlphabet && mHasNumber && !username.isEmpty());
-        boolean passLength = pass1.length() > 5;
+        //Send user warnings to textfields with specific information.
+        if (mFirstName.isEmpty()) mEditFirstName.setError("First name must be entered.");
 
-         if (!passLength) {
-            edit_pass1.setError("Password must be at least 6 characters.");
+        if (mLastName.isEmpty()) mEditLastName.setError("Last name must be entered.");
+
+        if (mSecondPass.isEmpty()) mEditSecondPass.setError("Password must be entered.");
+
+        if (mUsername.isEmpty()) mEditUsername.setError("Nickname must be entered.");
+
+        if (!mEmail.contains("@")) mEditEmail.setError("Please enter valid e-mail('@' required).");
+
+        if (mEmail.isEmpty()) mEditEmail.setError("Please enter an mEmail");
+
+        if (!mPassLength) {
+            mEditPass.setError("Password must be at least 6 characters.");
         }
         if (!mHasAlphabet) {
-            edit_pass1.setError("Password must contain alphabetic(a,b,c,...) characters.");
+            mEditPass.setError("Password must contain alphabetic(a,b,c,...) characters.");
         }
         if (!mHasNumber) {
-            edit_pass1.setError("Password must contain numeric(1,2,3,...) characters.");
+            mEditPass.setError("Password must contain numeric(1,2,3,...) characters.");
         }
         if (!mHasSpecialCharacter) {
-            edit_pass1.setError("Password must contain special(!,@,#,...) characters");
+            mEditPass.setError("Password must contain special(!,@,#,...) characters");
         }
         if (!mHasAlphabet && !mHasNumber) {
-             edit_pass1.setError("Password must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
+             mEditPass.setError("Password must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
          }
          if (!mHasAlphabet && !mHasSpecialCharacter) {
-             edit_pass1.setError("Password must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
+             mEditPass.setError("Password must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
          }
-         if (!passLength && !mHasAlphabet) {
-             edit_pass1.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) characters.");
+         if (!mPassLength && !mHasAlphabet) {
+             mEditPass.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) characters.");
          }
-         if (!passLength && !mHasNumber) {
-             edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) characters.");
+         if (!mPassLength && !mHasNumber) {
+             mEditPass.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) characters.");
          }
-         if (!passLength && !mHasSpecialCharacter) {
-             edit_pass1.setError("Password must be at least 6 characters and must include special(!,@,#,...) characters.");
+         if (!mPassLength && !mHasSpecialCharacter) {
+             mEditPass.setError("Password must be at least 6 characters and must include special(!,@,#,...) characters.");
          }
          if (!mHasNumber && !mHasSpecialCharacter) {
-             edit_pass1.setError("Password must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
+             mEditPass.setError("Password must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
          }
-         if (!passLength && !mHasAlphabet && !mHasNumber) {
-            edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
+         if (!mPassLength && !mHasAlphabet && !mHasNumber) {
+            mEditPass.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and alphabetic(a,b,c,...) characters.");
         }
-        if (!passLength && !mHasAlphabet && !mHasSpecialCharacter) {
-            edit_pass1.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
+        if (!mPassLength && !mHasAlphabet && !mHasSpecialCharacter) {
+            mEditPass.setError("Password must be at least 6 characters and must include alphabetic(a,b,c,...) and special(!,@,#,...) characters.");
         }
-        if (!passLength && !mHasNumber && !mHasSpecialCharacter) {
-            edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
+        if (!mPassLength && !mHasNumber && !mHasSpecialCharacter) {
+            mEditPass.setError("Password must be at least 6 characters and must include numeric(1,2,3,...) and special(!,@,#,...) characters.");
         }
         if (!mHasAlphabet && !mHasNumber && !mHasSpecialCharacter) {
-            edit_pass1.setError("Password must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
+            mEditPass.setError("Password must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
         }
-        if (!passLength && !mHasAlphabet && !mHasNumber && !mHasSpecialCharacter) {
-            edit_pass1.setError("Password must be at least 6 characters and must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
+        if (!mPassLength && !mHasAlphabet && !mHasNumber && !mHasSpecialCharacter) {
+            mEditPass.setError("Password must be at least 6 characters and must include numeric(1,2,3,...), alphabetic(a,b,c,...), and special(!,@,#,...) characters.");
         }
 
+        if (!mPass.equals(mSecondPass)) mEditSecondPass.setError("Passwords do not match");
 
-        if (!pass1.equals(pass2)) edit_pass2.setError("Passwords do not match");
-
-//for checking special character, number & alphabet of password
-
-
-
-System.out.println("++++++#####"+mPasswordContain);
-        if (mPasswordContain && at && match && length > 5 && (!fn.isEmpty()) && (!ln.isEmpty()) && pass1.length() > 5) {
+        //If clientside checks pass, build credentials and attempt registration serverside
+        if (mPasswordContain && mHasAt && mPassMatch && length > 5 && (!mFirstName.isEmpty()) && (!mLastName.isEmpty()) && mPass.length() > 5) {
             if (mListener != null) {
-                mCredentials = new Credentials.Builder(email, pass1)
-                        .addFirstName(fn)
-                        .addLastName(ln)
-                        .addUsername(username)
+                mCredentials = new Credentials.Builder(mEmail, mPass)
+                        .addFirstName(mFirstName)
+                        .addLastName(mLastName)
+                        .addUsername(mUsername)
                         .build();
                 attemptRegister();
             }
         }
-
+    /**
+     * Helper method used to check if a character is a number.
+     * @param c Character that is being checked.
+     * @return Boolean which represent whether the character is a number.
+     */
     }
     public boolean isHasNumber(Character c){
         System.out.println(c);
@@ -210,6 +242,12 @@ System.out.println("++++++#####"+mPasswordContain);
         }
         return  mHasNumber;
     }
+
+    /**
+     * Helper method used to check if a character is alphabetic.
+     * @param c Character that is being checked.
+     * @return Boolean which represents whether the character is alphabetic.
+     */
     public boolean ismHasAlphabet(Character c){
         if((c > 64 && c < 91) || (c > 96 && c < 123)){
             mHasAlphabet = true;
@@ -217,6 +255,12 @@ System.out.println("++++++#####"+mPasswordContain);
         return mHasAlphabet;
 
     }
+
+    /**
+     * Helper method used to check if a character is a special character.
+     * @param c Character that is being checked.
+     * @return Boolean which represents whether the character is a special character.
+     */
     public boolean isSpecialCharater(Character c){
         if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){
             Log.e("adam!", "" + c);
@@ -239,22 +283,22 @@ System.out.println("++++++#####"+mPasswordContain);
             boolean success =
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
+            //Set up the authentication fragment.
             if (success) {
-                authenticationCode =
+                mAuthenticationCode =
                         resultsJSON.getInt(
                                 getString(R.string.keys_json_authentication_code));
-                mCredentials = new Credentials.Builder(email, pass1)
-                        .addFirstName(fn)
-                        .addLastName(ln)
-                        .addUsername(username)
-                        .addCode(authenticationCode)
+                mCredentials = new Credentials.Builder(mEmail, mPass)
+                        .addFirstName(mFirstName)
+                        .addLastName(mLastName)
+                        .addUsername(mUsername)
+                        .addCode(mAuthenticationCode)
                         .build();
                 //Register was successful. Switch to the loadSuccessFragment.
                 mListener.registerSuccess(mCredentials);
                 return;
+            //Notify user that web service returned unsuccessful.
             } else {
-                //Register was unsuccessful. Don’t switch fragments and
-                // inform the user
                 ((TextView) getView().findViewById(R.id.edittext_newuser_email))
                         .setError("Email has already been registered.");
             }
@@ -267,12 +311,14 @@ System.out.println("++++++#####"+mPasswordContain);
                     + e.getMessage());
             mListener.onWaitFragmentInteractionHide();
             ((TextView) getView().findViewById(R.id.edittext_newuser_email))
-                    .setError("Login Unsuccessful2");
+                    .setError("Login Unsuccessful");
         }
     }
 
+    /**
+     * Helper method used to attempt registration through an async task.
+     */
     private void attemptRegister() {
-
         Credentials credentials = mCredentials;
         //build the web service URL
         Uri uri = new Uri.Builder()
@@ -308,31 +354,14 @@ System.out.println("++++++#####"+mPasswordContain);
     }
 
 
-
-
-    public interface OnNewUserFragmentButtonAction extends WaitFragment.OnFragmentInteractionListener{
-        void registerSuccess(Credentials credentials);
-        void loginButtonAction();
-
-    }
-
     /**
-     * A simple {@link Fragment} subclass.
+     * Internal interface used to handle successful registration and login button.
      */
-    public static class ResetPassword extends Fragment {
-
-
-        public ResetPassword() {
-            // Required empty public constructor
-        }
-
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            // Inflate the layout for this fragment
-            return inflater.inflate(R.layout.fragment_reset_password, container, false);
-        }
+    public interface OnNewUserFragmentButtonAction extends WaitFragment.OnFragmentInteractionListener{
+        /** Method used to handle successful registration. */
+        void registerSuccess(Credentials credentials);
+        /** Method used to handle login button click. */
+        void loginButtonAction();
 
     }
 }
