@@ -1,15 +1,11 @@
 package ethanwc.tcss450.uw.edu.template.Main;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-
-import java.io.Serializable;
+import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -42,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().containsKey("type")) {
-                mLoadFromChatNotification = getIntent().getExtras().getString("type").equals("msg");
+                mLoadFromChatNotification = Objects.requireNonNull(getIntent().getExtras().getString("type")).equals("msg");
             }
         }
 
@@ -108,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
         //Bundle user information from input into intent and send to messaging home activity.
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
-        intent.putExtra(getString(R.string.email_registerToLogin), (Serializable) credentials);
+        intent.putExtra(getString(R.string.email_registerToLogin), credentials);
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
         intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
@@ -145,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     public void onWaitFragmentInteractionHide() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
+                .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("WAIT")))
                 .commit();
     }
 

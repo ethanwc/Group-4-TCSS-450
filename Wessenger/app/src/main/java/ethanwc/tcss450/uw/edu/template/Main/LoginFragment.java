@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,8 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -35,7 +36,6 @@ public class LoginFragment extends WaitFragment {
     //Local variables
     private Credentials mCredentials;
     private EditText mEditEmail, mEditPass;
-    private View mView;
     private String mJwt;
     private OnLoginFragmentInteractionListener mListener;
 
@@ -62,7 +62,7 @@ public class LoginFragment extends WaitFragment {
 
         //Handle auto login
         SharedPreferences prefs =
-                getActivity().getSharedPreferences(
+                Objects.requireNonNull(getActivity()).getSharedPreferences(
                         getString(R.string.keys_shared_prefs),
                         Context.MODE_PRIVATE);
         //retrieve the stored credentials from SharedPrefs
@@ -92,7 +92,7 @@ public class LoginFragment extends WaitFragment {
      * @param thePass String used to represent the password.
      */
     public void updateContent(String theEmail, String thePass) {
-        EditText editText_email = getActivity().findViewById(R.id.edittext_login_email);
+        EditText editText_email = Objects.requireNonNull(getActivity()).findViewById(R.id.edittext_login_email);
         editText_email.setText(theEmail);
         EditText editText_pwd = getActivity().findViewById(R.id.edittext_login_password);
         editText_pwd.setText(thePass);
@@ -110,19 +110,19 @@ public class LoginFragment extends WaitFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment.
-        mView = inflater.inflate(R.layout.fragment_login, container, false);
+        View mView = inflater.inflate(R.layout.fragment_login, container, false);
         //Add listener to sign in button.
-        Button btnLogin = (Button) mView.findViewById(R.id.button_login_login);
+        Button btnLogin = mView.findViewById(R.id.button_login_login);
         btnLogin.setOnClickListener(this::signIn);
         //Add listener to register button.
-        TextView newUser = (TextView) mView.findViewById(R.id.testview_login_newuser);
+        TextView newUser = mView.findViewById(R.id.testview_login_newuser);
         newUser.setOnClickListener(this::register);
         //Add listener to forgotten password button.
-        TextView forgotPassword = (TextView) mView.findViewById(R.id.txt_login_forgetPassword);
+        TextView forgotPassword = mView.findViewById(R.id.txt_login_forgetPassword);
         forgotPassword.setOnClickListener(this :: forgotPassword);
 
-        mEditEmail = (EditText) mView.findViewById(R.id.edittext_login_email);
-        mEditPass =  (EditText) mView.findViewById(R.id.edittext_login_password);
+        mEditEmail = mView.findViewById(R.id.edittext_login_email);
+        mEditPass = mView.findViewById(R.id.edittext_login_password);
 
 
         return mView;
@@ -240,8 +240,7 @@ public class LoginFragment extends WaitFragment {
             mListener.onWaitFragmentInteractionHide();
 
 
-            String error = e.getMessage();
-            ((TextView) getView().findViewById(R.id.edittext_login_email))
+            ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.edittext_login_email))
                     .setError("Incorrect format returned.");
         }
     }
@@ -290,7 +289,7 @@ public class LoginFragment extends WaitFragment {
 
     private void saveCredentials(final Credentials credentials) {
         SharedPreferences prefs =
-                getActivity().getSharedPreferences(
+                Objects.requireNonNull(getActivity()).getSharedPreferences(
                         getString(R.string.keys_shared_prefs),
                         Context.MODE_PRIVATE);
         //Store the credentials in SharedPrefs
@@ -309,7 +308,7 @@ public class LoginFragment extends WaitFragment {
                 return;
             } else {
                 //Saving the token wrong. Don’t switch fragments and inform the user
-                ((TextView) getView().findViewById(R.id.edittext_login_email))
+                ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.edittext_login_email))
                         .setError("Login Unsuccessful");
             }
             mListener.onWaitFragmentInteractionHide();
@@ -320,7 +319,7 @@ public class LoginFragment extends WaitFragment {
                     + System.lineSeparator()
                     + e.getMessage());
             mListener.onWaitFragmentInteractionHide();
-            ((TextView) getView().findViewById(R.id.edittext_login_email))
+            ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.edittext_login_email))
                     .setError("Login Unsuccessful");
         }
     }
@@ -336,10 +335,10 @@ public class LoginFragment extends WaitFragment {
     private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String>
     {
         protected String doInBackground(Void... params) {
-            String deviceToken = "";
+            String deviceToken;
             try {
                 // Assign a unique token to this device
-                deviceToken = Pushy.register(getActivity().getApplicationContext());
+                deviceToken = Pushy.register(Objects.requireNonNull(getActivity()).getApplicationContext());
                 //subscribe to a topic (this is a Blocking call)
                 Pushy.subscribe("all", getActivity().getApplicationContext());
             }

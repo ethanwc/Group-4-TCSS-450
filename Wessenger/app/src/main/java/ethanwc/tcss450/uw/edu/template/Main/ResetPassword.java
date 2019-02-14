@@ -27,10 +27,8 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
  */
 public class ResetPassword extends Fragment {
     //Local variables
-    private Credentials mCredential;
     private OnFragmentInteractionListener mListener;
     private String mEmail;
-    private View mView;
     private Credentials mCredentials;
     private boolean mHasAlphabet;
     private boolean mHasNumber;
@@ -58,7 +56,7 @@ public class ResetPassword extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    mView= inflater.inflate(R.layout.fragment_reset_password, container, false);
+        View mView = inflater.inflate(R.layout.fragment_reset_password, container, false);
     //Add a listener to change password button.
     Button changePasswordBtn = mView.findViewById(R.id.btn_resetpwd_changepwd);
     changePasswordBtn.setOnClickListener(new View.OnClickListener(){
@@ -213,7 +211,7 @@ public class ResetPassword extends Fragment {
          * Helper method used to check if the input password was correct format.
          * @param passwrd String used to represent the user's input password.
          */
-        public void checkPasswordCorrect(String passwrd){
+        void checkPasswordCorrect(String passwrd){
                 if(passwrd.length()>0) {
                     for (int i = 0; i < passwrd.length(); i++) {
 

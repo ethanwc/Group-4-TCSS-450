@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,23 +29,16 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 public class NewUserFragment extends WaitFragment {
     //Local variables to NewUserFragment.
     private OnNewUserFragmentButtonAction mListener;
-    private View mView;
     private EditText mEditEmail, mEditPass, mEditSecondPass, mEditFirstName, mEditLastName, mEditUsername;
     private Credentials mCredentials;
     private Boolean mHasSpecialCharacter = false;
     private Boolean mHasNumber= false;
     private Boolean mHasAlphabet = false;
-    private Boolean mPasswordContain = false;
-    private int mAuthenticationCode = Integer.MIN_VALUE;
     private String mEmail;
     private String mPass;
-    private String mSecondPass;
     private String mUsername;
     private String mFirstName;
     private String mLastName;
-    private Boolean mHasAt;
-    private Boolean mPassMatch;
-    private Boolean mPassLength;
 
     /**
      * Required empty public constructor.
@@ -67,7 +59,7 @@ public class NewUserFragment extends WaitFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_new_user, container, false);
+        View mView = inflater.inflate(R.layout.fragment_new_user, container, false);
 
         //Add a listener to login button which directs to goBack method.
         TextView txtLoginClick = mView.findViewById(R.id.textview_newuser_login);
@@ -78,12 +70,12 @@ public class NewUserFragment extends WaitFragment {
         btnRegister.setOnClickListener(this::register);
 
         //Store edit text objects as local varaibles
-        mEditEmail = ((EditText) mView.findViewById(R.id.edittext_newuser_email));
-        mEditPass = ((EditText) mView.findViewById(R.id.edittext_newuser_password));
-        mEditSecondPass = ((EditText) mView.findViewById(R.id.edittext_newuser_password2));
-        mEditFirstName = ((EditText) mView.findViewById(R.id.edittext_newuser_first));
-        mEditLastName = ((EditText) mView.findViewById(R.id.edittext_newuser_last));
-        mEditUsername = ((EditText) mView.findViewById(R.id.edittext_newuser_nickname));
+        mEditEmail = mView.findViewById(R.id.edittext_newuser_email);
+        mEditPass = mView.findViewById(R.id.edittext_newuser_password);
+        mEditSecondPass = mView.findViewById(R.id.edittext_newuser_password2);
+        mEditFirstName = mView.findViewById(R.id.edittext_newuser_first);
+        mEditLastName = mView.findViewById(R.id.edittext_newuser_last);
+        mEditUsername = mView.findViewById(R.id.edittext_newuser_nickname);
 
         return mView;
     }
@@ -130,13 +122,13 @@ public class NewUserFragment extends WaitFragment {
         mHasSpecialCharacter = false;
         mHasAlphabet = false;
         mHasNumber = false;
-        mHasAt = false;
-        mPassMatch = false;
-        mPassLength = false;
+        Boolean mHasAt;
+        Boolean mPassMatch;
+        Boolean mPassLength;
         //Store user input values to variables
         mEmail = mEditEmail.getText().toString();
         mPass = mEditPass.getText().toString();
-        mSecondPass = mEditSecondPass.getText().toString();
+        String mSecondPass = mEditSecondPass.getText().toString();
         mFirstName = mEditFirstName.getText().toString();
         mLastName = mEditLastName.getText().toString();
         mUsername = mEditUsername.getText().toString();
@@ -154,7 +146,7 @@ public class NewUserFragment extends WaitFragment {
                 mHasNumber = isHasNumber(mPass.charAt(i));
             }
         }
-        mPasswordContain = (mPass.length() > 5 && mHasSpecialCharacter && mHasAlphabet && mHasNumber && !mUsername.isEmpty());
+        Boolean mPasswordContain = (mPass.length() > 5 && mHasSpecialCharacter && mHasAlphabet && mHasNumber && !mUsername.isEmpty());
         mPassLength = mPass.length() > 5;
 
         //Send user warnings to textfields with specific information.
@@ -229,12 +221,13 @@ public class NewUserFragment extends WaitFragment {
                 attemptRegister();
             }
         }
+
+    }
     /**
      * Helper method used to check if a character is a number.
      * @param c Character that is being checked.
      * @return Boolean which represent whether the character is a number.
      */
-    }
     public boolean isHasNumber(Character c){
         System.out.println(c);
         if((c > 47 && c < 58)){
@@ -285,9 +278,8 @@ public class NewUserFragment extends WaitFragment {
                             getString(R.string.keys_json_login_success));
             //Set up the authentication fragment.
             if (success) {
-                mAuthenticationCode =
-                        resultsJSON.getInt(
-                                getString(R.string.keys_json_authentication_code));
+                int mAuthenticationCode = resultsJSON.getInt(
+                        getString(R.string.keys_json_authentication_code));
                 mCredentials = new Credentials.Builder(mEmail, mPass)
                         .addFirstName(mFirstName)
                         .addLastName(mLastName)

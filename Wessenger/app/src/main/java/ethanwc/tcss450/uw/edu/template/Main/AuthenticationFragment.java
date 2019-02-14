@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +15,8 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -31,8 +32,6 @@ public class AuthenticationFragment extends WaitFragment {
 
     //Local variables
     private int mActualCode = 0;
-    private int mInputCode = 1;
-    private View mView;
     private Credentials mCredentials;
     private OnAuthenticationFragmentButtonAction mListener;
     private String mEmail;
@@ -61,17 +60,17 @@ public class AuthenticationFragment extends WaitFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment.
-        mView = inflater.inflate(R.layout.fragment_authentication, container, false);
+        View mView = inflater.inflate(R.layout.fragment_authentication, container, false);
 
         //Store user's information sent from NewUser fragment into local variables.
-        mEmail = getArguments().getString("mEmail");
+        mEmail = Objects.requireNonNull(getArguments()).getString("mEmail");
         mPass = getArguments().getString("password");
         mFirstName = getArguments().getString("first");
         mLastName = getArguments().getString("last");
         mUsername = getArguments().getString("mUsername");
 
         //Build credentials to send to login fragment.
-        Button btnLogin = (Button) mView.findViewById(R.id.button_authentication_submit);
+        Button btnLogin = mView.findViewById(R.id.button_authentication_submit);
         mCredentials = new Credentials.Builder(mEmail, mPass)
                 .addFirstName(mFirstName)
                 .addLastName(mLastName)
@@ -90,11 +89,7 @@ public class AuthenticationFragment extends WaitFragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (getArguments() != null) {
-            mActualCode = getArguments().getInt("mActualCode");
-
-
-        }
+        if (getArguments() != null) mActualCode = getArguments().getInt("mActualCode");
     }
 
     /**
@@ -104,7 +99,7 @@ public class AuthenticationFragment extends WaitFragment {
     public void authenticate(View view) {
         //Store input code and check against existing code.
         EditText edit = getActivity().findViewById(R.id.edittext_authentication_codeinput);
-        mInputCode = Integer.parseInt(edit.getText().toString());
+        int mInputCode = Integer.parseInt(edit.getText().toString());
 
         if (mActualCode == mInputCode) {
 
