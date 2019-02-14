@@ -23,7 +23,14 @@ public class NewMessageFragment extends Fragment {
         // Required empty public constructor
     }
 
-
+    /**
+     * OnCreateView used to instantiate relevant items to the fragment.
+     *
+     * @param inflater LayoutInflater used to inflate the layout for the fragment.
+     * @param container ViewGroup used as a container to hold the items in the fragment.
+     * @param savedInstanceState bundle.
+     * @return inflated fragment
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,6 +48,11 @@ public class NewMessageFragment extends Fragment {
         });
         return v;
     }
+
+    /**
+     * OnAttach used to check whether the correct listeners have been implemented.
+     * @param context Context of the current ui situation.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

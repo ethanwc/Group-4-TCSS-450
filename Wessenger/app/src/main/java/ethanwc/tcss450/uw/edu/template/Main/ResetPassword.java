@@ -5,6 +5,7 @@ package ethanwc.tcss450.uw.edu.template.Main
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,20 +43,24 @@ public class ResetPassword extends Fragment {
         // Required empty public constructor
     }
 
-
+    /**
+     * OnCreateView used to instantiate relevant items to the fragment.
+     *
+     * @param inflater LayoutInflater used to inflate the layout for the fragment.
+     * @param container ViewGroup used as a container to hold the items in the fragment.
+     * @param savedInstanceState bundle.
+     * @return inflated fragment
+     */
 @Override
-public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                         Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     mView= inflater.inflate(R.layout.fragment_reset_password, container, false);
 
-    Button changePasswordBtn = (Button) mView.findViewById(R.id.btn_resetpwd_changepwd) ;
+    Button changePasswordBtn = mView.findViewById(R.id.btn_resetpwd_changepwd);
     changePasswordBtn.setOnClickListener(new View.OnClickListener(){
         @Override
-         /**
-         * to handle button clicked in change password fragment
-         *@param, v the button
-         */
+
         public void onClick(View v) {
             changePassword();
         }
@@ -63,20 +68,20 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
          /**
          * handle the action on change password button clicked
          */
-         public  void changePassword(){
+         void changePassword(){
 
              mHasAlphabet = false;
              mHasNumber = false;
              mHasSymbol = false;
-             EditText tmpPwd = (EditText) getActivity().findViewById(R.id.editText_resetPassword_temorarypassword);
-             EditText pwd = (EditText) getActivity().findViewById(R.id.edittext_resetPassword_newPassword);
-             EditText pwd2 = (EditText) getActivity().findViewById(R.id.editText_resetPwd_passwordAgain);
+             EditText tmpPwd = getActivity().findViewById(R.id.editText_resetPassword_temorarypassword);
+             EditText pwd =  getActivity().findViewById(R.id.edittext_resetPassword_newPassword);
+             EditText pwd2 = getActivity().findViewById(R.id.editText_resetPwd_passwordAgain);
              mPassword = pwd.getText().toString();
              mPassword2 = pwd2.getText().toString();
              mTempPwd = tmpPwd.getText().toString();
              if(mPassword.equals(mPassword2)){
                  checkPasswordCorrect(mPassword);
-                    if(mPassword.length() >5 && mHasNumber==true && mHasAlphabet==true && mHasSymbol==true){
+                    if(mPassword.length() >5 && mHasNumber && mHasAlphabet && mHasSymbol){
 
                         Credentials credentials = new Credentials.Builder(mEmail,mPassword).addtempPwd(mTempPwd).build();
                         Uri uri = new Uri.Builder().scheme("https")
@@ -223,13 +228,16 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
         }
     }
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onResetPassword(mCredential);
         }
     }
 
+    /**
+     * OnAttach used to check whether the correct listeners have been implemented.
+     * @param context Context of the current ui situation.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -257,14 +265,13 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener  extends WaitFragment.OnFragmentInteractionListener  {
-        // TODO: Update argument type and name
         void onResetPassword(Credentials credentials);
     }
 
     /**
      * Method to check if string has number
      * @param c, character
-     * @return, boolean
+     * @return boolean
      */
     public boolean isHasNumber(Character c){
         System.out.println(c);
@@ -276,7 +283,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     /**
      * Method to check if string has Alphabet
      * @param c, character
-     * @return, boolean
+     * @return boolean
      */
     public boolean ismHasAlphabet(Character c){
         if((c > 64 && c < 91) || (c > 96 && c < 123)){
@@ -288,7 +295,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     /**
      * Method to check if string has special character
      * @param c, character
-     * @return, boolean
+     * @return boolean
      */
     public boolean isSpecialCharater(Character c){
         if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){

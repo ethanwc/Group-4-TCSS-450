@@ -29,7 +29,6 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
  * create an instance of this fragment.
  */
 public class TemoraryPasswordSend extends Fragment{
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -37,7 +36,6 @@ public class TemoraryPasswordSend extends Fragment{
     private View mView;
 
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -55,7 +53,6 @@ public class TemoraryPasswordSend extends Fragment{
      * @param param2 Parameter 2.
      * @return A new instance of fragment TemoraryPasswordSend.
      */
-    // TODO: Rename and change types and number of parameters
     public static TemoraryPasswordSend newInstance(String param1, String param2) {
         TemoraryPasswordSend fragment = new TemoraryPasswordSend();
         Bundle args = new Bundle();
@@ -74,6 +71,14 @@ public class TemoraryPasswordSend extends Fragment{
         }
     }
 
+    /**
+     * OnCreateView used to instantiate relevant items to the fragment.
+     *
+     * @param inflater LayoutInflater used to inflate the layout for the fragment.
+     * @param container ViewGroup used as a container to hold the items in the fragment.
+     * @param savedInstanceState bundle.
+     * @return inflated fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -170,13 +175,16 @@ public class TemoraryPasswordSend extends Fragment{
         return mView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onSendTemporaryPassword(mCredentials);
         }
     }
 
+    /**
+     * OnAttach used to check whether the correct listeners have been implemented.
+     * @param context Context of the current ui situation.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -205,7 +213,6 @@ public class TemoraryPasswordSend extends Fragment{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener  extends WaitFragment.OnFragmentInteractionListener  {
-        // TODO: Update argument type and name
         void onSendTemporaryPassword(Credentials credentials);
     }
 }

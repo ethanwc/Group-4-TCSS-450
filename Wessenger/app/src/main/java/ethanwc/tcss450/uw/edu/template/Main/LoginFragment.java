@@ -26,38 +26,41 @@ import me.pushy.sdk.Pushy;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used to represent the login page.
+ * Has-A wait fragment
+ * Has-A OnLoginFragmentInteractionListener
  */
 public class LoginFragment extends WaitFragment {
 
+    //Local variables
     private Credentials mCredentials;
-
-    private EditText edit_email, edit_pass;
-
-    private boolean password = true;
-
-    View mView;
-
+    private EditText mEditEmail, mEditPass;
+    private View mView;
     private String mJwt;
-
-
     private OnLoginFragmentInteractionListener mListener;
+
+    /**
+     * Required empty public constructor.
+     */
     public LoginFragment() {
         // Required empty public constructor
     }
 
-
+    /**
+     * OnStart used to store the email and password if sent by authentication fragment.
+     */
     @Override
     public void onStart() {
         super.onStart();
 
+        //Store email and password if sent from authentication fragment.
         if(getArguments() != null) {
             String uname = getArguments().getString(getString(R.string.email_registerToLogin));
             String pwd = getArguments().getString(getString(R.string.password_registerToLogin));
-            System.out.println(uname +"------"+pwd);
             updateContent(uname, pwd);
         }
 
+        //Handle auto login
         SharedPreferences prefs =
                 getActivity().getSharedPreferences(
                         getString(R.string.keys_shared_prefs),
@@ -73,7 +76,7 @@ public class LoginFragment extends WaitFragment {
             EditText passwordEdit = getActivity().findViewById(R.id.edittext_login_password);
             passwordEdit.setText(password);
 
-
+            //login
             doLogin(new Credentials.Builder(
                     emailEdit.getText().toString(),
                     passwordEdit.getText().toString())
@@ -83,54 +86,53 @@ public class LoginFragment extends WaitFragment {
         }
     }
 
-
-//    public void onStart() {
-//        super.onStart();
-//
-//
-//
-//        if(getArguments() != null) {
-//            String uname = getArguments().getString(getString(R.string.email_registerToLogin));
-//            String pwd = getArguments().getString(getString(R.string.password_registerToLogin));
-//            System.out.println(uname +"------"+pwd);
-//            updateContent(uname, pwd);
-//        }
-//
-//    }
-
-
-    public void updateContent(String uname, String pwd) {
+    /**
+     * Helper method used to update the email and password fields.
+     * @param theEmail String used to represent the email.
+     * @param thePass String used to represent the password.
+     */
+    public void updateContent(String theEmail, String thePass) {
         EditText editText_email = getActivity().findViewById(R.id.edittext_login_email);
-        editText_email.setText(uname);
+        editText_email.setText(theEmail);
         EditText editText_pwd = getActivity().findViewById(R.id.edittext_login_password);
-        editText_pwd.setText(pwd);
+        editText_pwd.setText(thePass);
     }
 
+    /**
+     * OnCreateView used to instantiate relevant items to the fragment.
+     *
+     * @param inflater LayoutInflater used to inflate the layout for the fragment.
+     * @param container ViewGroup used as a container to hold the items in the fragment.
+     * @param savedInstanceState bundle.
+     * @return inflated fragment
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this fragment.
         mView = inflater.inflate(R.layout.fragment_login, container, false);
+        //Add listener to sign in button.
         Button btnLogin = (Button) mView.findViewById(R.id.button_login_login);
         btnLogin.setOnClickListener(this::signIn);
-
+        //Add listener to register button.
         TextView newUser = (TextView) mView.findViewById(R.id.testview_login_newuser);
         newUser.setOnClickListener(this::register);
-
+        //Add listener to forgotten password button.
         TextView forgotPassword = (TextView) mView.findViewById(R.id.txt_login_forgetPassword);
         forgotPassword.setOnClickListener(this :: forgotPassword);
 
-
-
-        edit_email = (EditText) mView.findViewById(R.id.edittext_login_email);
-        edit_pass =  (EditText) mView.findViewById(R.id.edittext_login_password);
+        mEditEmail = (EditText) mView.findViewById(R.id.edittext_login_email);
+        mEditPass =  (EditText) mView.findViewById(R.id.edittext_login_password);
 
 
         return mView;
 
     }
 
-
+    /**
+     * OnAttach used to check whether the correct listeners have been implemented.
+     * @param context Context of the current ui situation.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -153,15 +155,15 @@ public class LoginFragment extends WaitFragment {
 
         //no empty text fields, email must contain '@'
 
-        String email = edit_email.getText().toString();
-        String pass = edit_pass.getText().toString();
+        String email = mEditEmail.getText().toString();
+        String pass = mEditPass.getText().toString();
         Boolean at = email.contains("@");
 
         if (!email.isEmpty() && !pass.isEmpty() && at) attemptLogin();
 
-        if (!at) edit_email.setError("Please enter a valid email");
+        if (!at) mEditEmail.setError("Please enter a valid email");
 
-        if (pass.length() < 1 || email.length() < 1) edit_pass.setError("Please fill out the fields");
+        if (pass.length() < 1 || email.length() < 1) mEditPass.setError("Please fill out the fields");
 
     }
 
@@ -220,9 +222,9 @@ public class LoginFragment extends WaitFragment {
                 return;
             } else {
                 if (resultsJSON.getString("error").equals("true")){
-                    edit_email.setError("Email does not exist in the system.");
+                    mEditEmail.setError("Email does not exist in the system.");
                 } else {
-                    edit_pass.setError(resultsJSON.getString("error"));
+                    mEditPass.setError(resultsJSON.getString("error"));
                 }
 
             }
@@ -245,21 +247,21 @@ public class LoginFragment extends WaitFragment {
     }
     private void attemptLogin() {
         boolean hasError = false;
-        if (edit_email.getText().length() == 0) {
+        if (mEditEmail.getText().length() == 0) {
             hasError = true;
-            edit_email.setError("Field must not be empty.");
-        } else if (edit_email.getText().toString().chars().filter(ch -> ch == '@').count() != 1) {
+            mEditEmail.setError("Field must not be empty.");
+        } else if (mEditEmail.getText().toString().chars().filter(ch -> ch == '@').count() != 1) {
             hasError = true;
-            edit_email.setError("Field must contain a valid email address.");
+            mEditEmail.setError("Field must contain a valid email address.");
         }
-        if (edit_pass.getText().length() == 0) {
+        if (mEditPass.getText().length() == 0) {
             hasError = true;
-            edit_pass.setError("Field must not be empty.");
+            mEditPass.setError("Field must not be empty.");
         }
         if (!hasError) {
             doLogin(new Credentials.Builder(
-                    edit_email.getText().toString(),
-                    edit_pass.getText().toString())
+                    mEditEmail.getText().toString(),
+                    mEditPass.getText().toString())
                     .build());
         }
     }
