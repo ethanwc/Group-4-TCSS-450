@@ -1,5 +1,4 @@
-package ethanwc.tcss450.uw.edu.template.Main
-        ;
+package ethanwc.tcss450.uw.edu.template.Main;
 
 
 import android.content.Context;
@@ -24,9 +23,10 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used to represent the forgotten password reset password page.
  */
 public class ResetPassword extends Fragment {
+    //Local variables
     private Credentials mCredential;
     private OnFragmentInteractionListener mListener;
     private String mEmail;
@@ -39,6 +39,9 @@ public class ResetPassword extends Fragment {
     private String mPassword2;
     private String mTempPwd;
 
+    /**
+     * Required empty public constructor.
+     */
     public ResetPassword() {
         // Required empty public constructor
     }
@@ -51,16 +54,15 @@ public class ResetPassword extends Fragment {
      * @param savedInstanceState bundle.
      * @return inflated fragment
      */
-@Override
-public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     mView= inflater.inflate(R.layout.fragment_reset_password, container, false);
-
+    //Add a listener to change password button.
     Button changePasswordBtn = mView.findViewById(R.id.btn_resetpwd_changepwd);
     changePasswordBtn.setOnClickListener(new View.OnClickListener(){
         @Override
-
         public void onClick(View v) {
             changePassword();
         }
@@ -69,18 +71,24 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
          * handle the action on change password button clicked
          */
          void changePassword(){
-
+             //Reset error flags for every new entry
              mHasAlphabet = false;
              mHasNumber = false;
              mHasSymbol = false;
+             //Store user input.
              EditText tmpPwd = getActivity().findViewById(R.id.editText_resetPassword_temorarypassword);
              EditText pwd =  getActivity().findViewById(R.id.edittext_resetPassword_newPassword);
              EditText pwd2 = getActivity().findViewById(R.id.editText_resetPwd_passwordAgain);
              mPassword = pwd.getText().toString();
              mPassword2 = pwd2.getText().toString();
              mTempPwd = tmpPwd.getText().toString();
+             //Begin extensive checks for correct user input.
+             //Check passwords match.
              if(mPassword.equals(mPassword2)){
+                 //Preform extensive checks for correct password input.
                  checkPasswordCorrect(mPassword);
+
+                    //Send information to web service if correct information has been input.
                     if(mPassword.length() >5 && mHasNumber && mHasAlphabet && mHasSymbol){
 
                         Credentials credentials = new Credentials.Builder(mEmail,mPassword).addtempPwd(mTempPwd).build();
@@ -98,6 +106,7 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                                 .build().execute();
 
                     }
+                    //Inform user of why their input was incorrect.
                     else {
                         boolean passLength = mPassword.length() > 5;
                         // condition to check the password criteria
@@ -197,11 +206,14 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                             + System.lineSeparator()
                             + e.getMessage());
                     mListener.onWaitFragmentInteractionHide();
-//                    ((TextView) getView().findViewById(R.id.edittext_login_email))
-//                            .setError("Login Unsuccessful");
-                }
+               }
             }
-            public void checkPasswordCorrect(String passwrd){
+
+        /**
+         * Helper method used to check if the input password was correct format.
+         * @param passwrd String used to represent the user's input password.
+         */
+        public void checkPasswordCorrect(String passwrd){
                 if(passwrd.length()>0) {
                     for (int i = 0; i < passwrd.length(); i++) {
 
@@ -211,10 +223,7 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                     }
                 }
             }
-
-
         } );
-
         return mView;
     }
 
@@ -226,11 +235,6 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
         if(getArguments()!= null){
             mEmail = getArguments().getString(getString(R.string.email_registerToLogin));
 
-        }
-    }
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onResetPassword(mCredential);
         }
     }
 
@@ -249,6 +253,9 @@ public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
         }
     }
 
+    /**
+     * OnDetach used to remove the listener.
+     */
     @Override
     public void onDetach() {
         super.onDetach();

@@ -16,18 +16,26 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import me.pushy.sdk.Pushy;
 
+/**
+ * Activity which holds all of the login and registration fragments.
+ * Has-A AppCompatActivity
+ */
 public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
         LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction,
         TemoraryPasswordSend.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener {
 
     public static final String EXTRA_MESSAGE = "email";
-
+    //Local variables
     private boolean mLoadFromChatNotification = false;
-    private static final String TAG = MainActivity.class.getSimpleName();
 
+    /**
+     * OnCreate used to setup the fragment.
+     * @param savedInstanceState bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Pushy.listen(this);
 
         setContentView(R.layout.activity_main);
@@ -38,45 +46,23 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
             }
         }
 
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
+        //Set fragment in container
         if (findViewById(R.id.activity_main_container) != null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.activity_main_container, new LoginFragment())
                     .commit();
         }
 
-
     }
 
-//    /**
-//     * These buttons are to handle the button click of Main Login Fragment.
-//     * It handles for Sign in and New User
-//     * @param v View used to represent the view passed in.
-//     */
-//    @Override
-//    public void onClick(View v) {
-//        if (R.id.button_login_login == v.getId()) {
-//
-//            Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
-//            startActivity(intent);
-//
-//
-//        } else if (v.getId() == R.id.textview_newuser_login) {
-//            NewUserFragment newUser = new NewUserFragment();
-//            FragmentTransaction transaction = getSupportFragmentManager()
-//                    .beginTransaction().replace(R.id.activity_main_container, newUser).addToBackStack(null);
-//            transaction.commit();
-//
-//        }
-//    }
-
-
+    /**
+     * Method used to handle a successful registration.
+     * @param credentials Bundle of user information.
+     */
     @Override
     public void registerSuccess(Credentials credentials) {
+
+        //Bundle information from credentials and send to fragment
         AuthenticationFragment authenticationFragment;
         authenticationFragment = new AuthenticationFragment();
         Bundle args = new Bundle();
@@ -89,39 +75,38 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         authenticationFragment.setArguments(args);
         loadFragment(authenticationFragment);
 
-
-//        LoginFragment loginFragment;
-//        loginFragment = new LoginFragment();
-//        Bundle args = new Bundle();
-//        args.putSerializable(getString(R.string.email_registerToLogin), credentials.getEmail());
-//        args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
-//        loginFragment.setArguments(args);
-//
-//        loadFragment(loginFragment);
-
     }
 
+    /**
+     * Method used to load login fragment after login button is pressed.
+     */
     @Override
     public void loginButtonAction() {
         loadFragment(new LoginFragment());
     }
 
-
     /**
      * This method is to load fragment
      *
-     * @param frag, fragment
+     * @param frag, Fragment that is to be loaded in the container.
      */
     public void loadFragment(Fragment frag) {
+        //Replace container with input fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.activity_main_container, frag)
                 .addToBackStack(null)
                 .commit();
     }
 
-
+    /**
+     * Method used to hadle successful login.
+     * @param credentials Bundle of user information.
+     * @param jwt Token used for auto login verification.
+     */
     @Override
     public void onLoginSuccess(Credentials credentials, String jwt) {
+
+        //Bundle user information from input into intent and send to messaging home activity.
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
         intent.putExtra(getString(R.string.email_registerToLogin), (Serializable) credentials);
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
@@ -132,13 +117,18 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         finish();
     }
 
+    /**
+     * Method used to load registration fragment when new user button is clicked.
+     */
     @Override
     public void onRegisterClicked() {
         loadFragment(new NewUserFragment());
 
     }
 
-
+    /**
+     * Method used to display the wait fragment.
+     */
     @Override
     public void onWaitFragmentInteractionShow() {
         getSupportFragmentManager()
@@ -148,6 +138,9 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
                 .commit();
     }
 
+    /**
+     * Method used to remove the wait fragment.
+     */
     @Override
     public void onWaitFragmentInteractionHide() {
         getSupportFragmentManager()
@@ -156,13 +149,22 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
                 .commit();
     }
 
+    /**
+     * Method used to load temporary password send fragment when forgot password is clicked.
+     */
     @Override
     public void onForgotPasswordClicked() {
         loadFragment(new TemoraryPasswordSend());
     }
 
+    /**
+     * Method used to handle successful authentication of access to supplied email.
+     * @param credentials Bundle of user information.
+     */
     @Override
     public void authenticationSuccess(Credentials credentials) {
+
+        //Bundle the user information from input and send to login fragment.
         LoginFragment loginFragment;
         loginFragment = new LoginFragment();
         Bundle args = new Bundle();
@@ -172,10 +174,13 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         loadFragment(loginFragment);
     }
 
-    //this is from temporary password send
+    /**
+     * Method used to send a temporary password when send button is clicked.
+     * @param credentials Bundle of user information.
+     */
     @Override
     public void onSendTemporaryPassword(Credentials credentials) {
-        System.out.println(credentials.getEmail());
+        //Bundle email and send to reset password fragment.
         ResetPassword resetPassword = new ResetPassword();
         Bundle args = new Bundle();
         args.putSerializable((getString(R.string.email_registerToLogin)), credentials.getEmail());
@@ -184,15 +189,18 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
     }
 
+    /**
+     * Method used to handle successful password reset.
+     * @param credentials Bundle of user information.
+     */
     @Override
     public void onResetPassword(Credentials credentials) {
+        //Bundle user information and send to login fragment.
         LoginFragment loginFragment = new LoginFragment();
         Bundle args = new Bundle();
         args.putSerializable((getString(R.string.email_registerToLogin)), credentials.getEmail());
         args.putSerializable((getString(R.string.password_registerToLogin)), credentials.getPassword());
         loginFragment.setArguments(args);
-
         loadFragment(loginFragment);
-
     }
 }
