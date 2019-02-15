@@ -97,6 +97,9 @@ public class ConversationFragment extends Fragment {
         }
     }
 
+    /**
+     * OnDetach used to remove the listener.
+     */
     @Override
     public void onDetach() {
         super.onDetach();

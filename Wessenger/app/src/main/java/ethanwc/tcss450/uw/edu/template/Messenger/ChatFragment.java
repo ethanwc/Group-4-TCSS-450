@@ -22,11 +22,11 @@ import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.R;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used to represent an individual chat window.
  */
 public class ChatFragment extends Fragment {
+
     private static final String TAG = "CHAT_FRAG";
     private static final String CHAT_ID = "1";
     private TextView mMessageOutputTextView;
@@ -36,12 +36,16 @@ public class ChatFragment extends Fragment {
     private String mSendUrl;
     private PushMessageReceiver mPushMessageReciever;
 
-
-
+    /**
+     * Required empty public constructor.
+     */
     public ChatFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * OnResume handles push notifications.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -51,6 +55,10 @@ public class ChatFragment extends Fragment {
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
+
+    /**
+     * OnPause handles push notifications.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -59,7 +67,10 @@ public class ChatFragment extends Fragment {
         }
     }
 
-
+    /**
+     * OnCreate used to remove the options menu.
+     * @param savedInstanceState
+     */
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(false);
@@ -83,19 +94,19 @@ public class ChatFragment extends Fragment {
         return rootLayout;
     }
 
-
-
-
+    /**
+     * OnStart used to grab email and jwt token from arguments and set url string.
+     */
     @Override
     public void onStart() {
         super.onStart();
+        //Store arguments in variables.
         if (getArguments() != null) {
             mEmail = getArguments().getString("email_token_123");
             mJwToken = getArguments().getString("jwt_token");
         }
-        Log.d(TAG, "e: " + mEmail);
-        Log.d(TAG, "t: " + mJwToken);
-        //We will use this url every time the user hits send. Let's only build it once, ya?
+
+        //Store url in variable.
         mSendUrl = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -105,11 +116,14 @@ public class ChatFragment extends Fragment {
                 .toString();
     }
 
-
+    /**
+     * Helper method used to handle sending a message.
+     * @param theButton Button that was clicked to send message.
+     */
     private void handleSendClick(final View theButton) {
-        Log.d(TAG, mJwToken);
         String msg = mMessageInputEditText.getText().toString();
         JSONObject messageJson = new JSONObject();
+        //Build message for web service.
         try {
             messageJson.put("email", mEmail);
             messageJson.put("message", msg);
@@ -117,12 +131,18 @@ public class ChatFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        //Send message to web service.
         new SendPostAsyncTask.Builder(mSendUrl, messageJson)
                 .onPostExecute(this::endOfSendMsgTask)
                 .onCancelled(error -> Log.e(TAG, error))
                 .addHeaderField("authorization", mJwToken)
                 .build().execute();
     }
+
+    /**
+     * Helper method used to clear the input field.
+     * @param result JSON object returned from the web service.
+     */
     private void endOfSendMsgTask(final String result) {
         try {
             //This is the result from the web service

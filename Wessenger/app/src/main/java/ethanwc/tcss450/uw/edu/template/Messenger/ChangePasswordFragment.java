@@ -4,6 +4,7 @@ package ethanwc.tcss450.uw.edu.template.Messenger;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +24,9 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used to represent the change password page.
  */
 public class ChangePasswordFragment extends WaitFragment {
-
 
     private OnChangePasswordFragmentInteractionListener mListener;
     private Boolean mHasSpecialCharacter = false;
@@ -35,16 +35,22 @@ public class ChangePasswordFragment extends WaitFragment {
     private Boolean mPasswordContain = false;
     private String mEmail;
 
+    /**
+     * Required empty public constructor.
+     */
     public ChangePasswordFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * OnStart used to store the email for the user.
+     */
     @Override
     public void onStart() {
         super.onStart();
         if (getArguments() != null) {
             mEmail = (String) getArguments().getSerializable("email");
-            Log.e("email:", " " + mEmail);
+
         }
     }
 
@@ -72,24 +78,28 @@ public class ChangePasswordFragment extends WaitFragment {
      * @return inflated fragment
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_change_password, container, false);
-
+        //Add listener to change password button.
         Button btnChangePassword = v.findViewById(R.id.button_change_password);
-
         btnChangePassword.setOnClickListener(v1 ->changePasswordCheck(v));
 
         return v;
     }
 
+    /**
+     * Helper method used to check if the passwords match and the given password is correct.
+     * @param view Required view to call the method.
+     */
     private void changePasswordCheck(View view) {
-
+        //Store user input into variables
         EditText currentPw = view.findViewById(R.id.editText_changepassword_currentpw);
         EditText newPw = view.findViewById(R.id.editText_changepassword_newpw);
         EditText newPw2 = view.findViewById(R.id.editText_changepassword_newpw2);
 
+        //Begin checks
         String currentPwString = currentPw.getText().toString();
         String newPwString = newPw.getText().toString();
         String newPw2String = newPw2.getText().toString();
@@ -104,7 +114,7 @@ public class ChangePasswordFragment extends WaitFragment {
                         .setError("Please Enter Your New Password.");
             } else {
                 ((TextView) getView().findViewById(R.id.editText_changepassword_newpw2))
-                        .setError("Please Reentry Your Password.");
+                        .setError("Please Re Enter Your Password.");
             }
 
         } else if (!newPwString.equals(newPw2String)) {
@@ -118,6 +128,7 @@ public class ChangePasswordFragment extends WaitFragment {
             }
             mPasswordContain = (newPwString.length() > 5 && mHasSpecialCharacter && mHasAlphabet && mHasNumber);
         }
+        //Check change password with the web service.
         if (mPasswordContain){
             Credentials credentials = new Credentials.Builder(
                     mEmail, currentPwString)
@@ -130,7 +141,6 @@ public class ChangePasswordFragment extends WaitFragment {
                     .appendPath(getString(R.string.ep_change_password))
                     .build();
             //build the JSONObject
-
             JSONObject msg = credentials.asJSONObject();
 
             //instantiate and execute the AsyncTask.
@@ -139,12 +149,16 @@ public class ChangePasswordFragment extends WaitFragment {
                     .onPostExecute(this::handleLoginOnPost)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
+        //Change password unsuccessful.
         } else {
             warning(newPwString);
         }
 
     }
 
+    /**
+     * OnDetach used to remove the listener.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -176,6 +190,7 @@ public class ChangePasswordFragment extends WaitFragment {
             boolean success =
                     resultsJSON.getBoolean(
                             getString(R.string.keys_json_login_success));
+
             if (success) {
                 mListener.onWaitFragmentInteractionHide();
                 //Change password was successful. Switch to the loadSuccessFragment.
@@ -197,12 +212,23 @@ public class ChangePasswordFragment extends WaitFragment {
         }
     }
 
+    /**
+     * Helper method used to check if given character is a number.
+     * @param c Given character.
+     * @return Boolean which represents whether the character is a number.
+     */
     public boolean isHasNumber(Character c){
         if((c > 47 && c < 58)){
             mHasNumber = true;
         }
         return  mHasNumber;
     }
+
+    /**
+     * Helper method used to check if given character is alphabetic.
+     * @param c Given character.
+     * @return Boolean which represents whether the character is alphabetic.
+     */
     public boolean ismHasAlphabet(Character c){
         if((c > 64 && c < 91) || (c > 96 && c < 123)){
             mHasAlphabet = true;
@@ -210,6 +236,12 @@ public class ChangePasswordFragment extends WaitFragment {
         return mHasAlphabet;
 
     }
+
+    /**
+     * Helper method used to check if given character is a special character.
+     * @param c Given character.
+     * @return Boolean which represents whether the character is a special character.
+     */
     public boolean isSpecialCharater(Character c){
         if(c != 32 &&	 (c < 48 || c > 57) && 	(c < 65 || c > 90) && (c < 97 || c > 122)){
             mHasSpecialCharacter =  true;
@@ -217,6 +249,10 @@ public class ChangePasswordFragment extends WaitFragment {
         return mHasSpecialCharacter;
     }
 
+    /**
+     * Helper method used to check the numerous incorrect values for input password.
+     * @param string Represents the password.
+     */
     private void warning(String string) {
         Boolean passLength = string.length() > 5;
         if (!passLength) {
@@ -277,8 +313,11 @@ public class ChangePasswordFragment extends WaitFragment {
         }
     }
 
+    /**
+     * Internal interface used to handle changing password.
+     */
     public interface OnChangePasswordFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener {
-
+        /** Method used to handle change password button being clicked. */
         void onChangePasswordClicked();
     }
 
