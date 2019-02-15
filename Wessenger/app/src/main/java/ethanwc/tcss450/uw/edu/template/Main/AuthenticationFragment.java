@@ -30,7 +30,6 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
  */
 public class AuthenticationFragment extends WaitFragment {
 
-    //Local variables
     private int mActualCode = 0;
     private Credentials mCredentials;
     private OnAuthenticationFragmentButtonAction mListener;

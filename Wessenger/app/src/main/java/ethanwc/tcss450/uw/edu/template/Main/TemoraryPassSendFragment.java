@@ -21,55 +21,23 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TemoraryPasswordSend.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TemoraryPasswordSend#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment used to represent the page that sends the temporary password via email.
  */
-public class TemoraryPasswordSend extends Fragment{
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+public class TemoraryPassSendFragment extends Fragment{
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private Credentials mCredentials;
     private View mView;
-
-
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
-    public TemoraryPasswordSend() {
+    /**
+     * Required empty public constructor.
+     */
+    public TemoraryPassSendFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TemoraryPasswordSend.
-     */
-    public static TemoraryPasswordSend newInstance(String param1, String param2) {
-        TemoraryPasswordSend fragment = new TemoraryPasswordSend();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     /**
      * OnCreateView used to instantiate relevant items to the fragment.
@@ -83,25 +51,29 @@ public class TemoraryPasswordSend extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         mView= inflater.inflate(R.layout.fragment_temorary_password_send, container, false);
-
-        Button mbtnSend = (Button) mView.findViewById(R.id.btn_temporarypassword_reset);
+        //Set listener to send button
+        Button mbtnSend = mView.findViewById(R.id.btn_temporarypassword_reset);
         mbtnSend.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                resetPassword(mView);
+                resetPassword();
             }
 
-            public void resetPassword(final View theButton){
+            /**
+             * Helper method used to send an email with a temporary password.
+             */
+            public void resetPassword(){
+                //Save input email to a varialbe.
                 EditText editTextEmail = getActivity().findViewById((R.id.editText_temporarypassword_email));
                 String email = editTextEmail.getText().toString();
+                //Check if email is entered
                 if(email.length()<2){
                     editTextEmail.setError("Please enter your email.");
+                //Send temporary password to web service in async task
                 }else{
                     Credentials credentials = new Credentials.Builder(email,email).build();
-
                     Uri uri = new Uri.Builder().scheme("https")
                             .appendPath(getString(R.string.ep_base_url))
                             .appendPath(getString(R.string.ep_resetpwd)).build();
@@ -114,7 +86,6 @@ public class TemoraryPasswordSend extends Fragment{
                             .onPostExecute(this::handlePasswordSendOnPost)
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
-
                 }
 
             }
@@ -144,18 +115,13 @@ public class TemoraryPasswordSend extends Fragment{
                     boolean success =
                             resultsJSON.getBoolean(
                                     getString(R.string.keys_json_login_success));
+                    //Switch to password change fragment.
                     if (success) {
-                        //Login was successful. Switch to the loadSuccessFragment.
                         mListener.onSendTemporaryPassword(mCredentials);
-//                        return;
-                        System.out.println("--------success---------");
-
+                    //Provided email not accepted, inform user.
                     } else {
-                        //Login was unsuccessful. Don’t switch fragments and
-                        // inform the user
                         ((TextView) getView().findViewById(R.id.editText_temporarypassword_email))
                                 .setError("Email not registered.");
-                        System.out.println("--------not success---------");
                     }
                     mListener.onWaitFragmentInteractionHide();
                 } catch (JSONException e) {
@@ -165,20 +131,14 @@ public class TemoraryPasswordSend extends Fragment{
                             + System.lineSeparator()
                             + e.getMessage());
                     mListener.onWaitFragmentInteractionHide();
-//                    ((TextView) getView().findViewById(R.id.edittext_login_email))
-//                            .setError("Login Unsuccessful");
+                    ((TextView) getView().findViewById(R.id.editText_temporarypassword_email))
+                            .setError("Login Unsuccessful");
                 }
             }
         });
 
 
         return mView;
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onSendTemporaryPassword(mCredentials);
-        }
     }
 
     /**
@@ -196,6 +156,9 @@ public class TemoraryPasswordSend extends Fragment{
         }
     }
 
+    /**
+     * OnDetach used to clear the listener.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -213,6 +176,7 @@ public class TemoraryPasswordSend extends Fragment{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener  extends WaitFragment.OnFragmentInteractionListener  {
+        /** Method used to handle sending the temporary password. */
         void onSendTemporaryPassword(Credentials credentials);
     }
 }

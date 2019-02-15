@@ -25,7 +25,7 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 /**
  * Fragment used to represent the forgotten password reset password page.
  */
-public class ResetPassword extends Fragment {
+public class ResetPasswordFragment extends Fragment {
     //Local variables
     private OnFragmentInteractionListener mListener;
     private String mEmail;
@@ -40,7 +40,7 @@ public class ResetPassword extends Fragment {
     /**
      * Required empty public constructor.
      */
-    public ResetPassword() {
+    public ResetPasswordFragment() {
         // Required empty public constructor
     }
 

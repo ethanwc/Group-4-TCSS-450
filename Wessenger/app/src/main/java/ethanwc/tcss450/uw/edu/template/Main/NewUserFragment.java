@@ -27,7 +27,6 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
  * Has-A OnNewUserFragmentButtonAction
  */
 public class NewUserFragment extends WaitFragment {
-    //Local variables to NewUserFragment.
     private OnNewUserFragmentButtonAction mListener;
     private EditText mEditEmail, mEditPass, mEditSecondPass, mEditFirstName, mEditLastName, mEditUsername;
     private Credentials mCredentials;

@@ -33,7 +33,6 @@ import me.pushy.sdk.Pushy;
  */
 public class LoginFragment extends WaitFragment {
 
-    //Local variables
     private Credentials mCredentials;
     private EditText mEditEmail, mEditPass;
     private String mJwt;

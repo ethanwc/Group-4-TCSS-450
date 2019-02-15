@@ -10,10 +10,16 @@ import android.view.ViewGroup;
 
 import ethanwc.tcss450.uw.edu.template.R;
 
+/**
+ * Fragment used to represent the wait icon page.
+ */
 public class WaitFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Required empty public constructor.
+     */
     public WaitFragment() {
         // Required empty public constructor
     }
@@ -48,6 +54,9 @@ public class WaitFragment extends Fragment {
         }
     }
 
+    /**
+     * OnDetach used to clear the listener.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -65,7 +74,9 @@ public class WaitFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
+        /** Method used to show the wait fragment. */
         void onWaitFragmentInteractionShow();
+        /** Method used to remove the wait fragment. */
         void onWaitFragmentInteractionHide();
     }
 }

@@ -18,10 +18,9 @@ import me.pushy.sdk.Pushy;
  */
 public class MainActivity extends AppCompatActivity implements NewUserFragment.OnNewUserFragmentButtonAction,
         LoginFragment.OnLoginFragmentInteractionListener, AuthenticationFragment.OnAuthenticationFragmentButtonAction,
-        TemoraryPasswordSend.OnFragmentInteractionListener, ResetPassword.OnFragmentInteractionListener {
+        TemoraryPassSendFragment.OnFragmentInteractionListener, ResetPasswordFragment.OnFragmentInteractionListener {
 
     public static final String EXTRA_MESSAGE = "email";
-    //Local variables
     private boolean mLoadFromChatNotification = false;
 
     /**
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
      */
     @Override
     public void onForgotPasswordClicked() {
-        loadFragment(new TemoraryPasswordSend());
+        loadFragment(new TemoraryPassSendFragment());
     }
 
     /**
@@ -177,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     @Override
     public void onSendTemporaryPassword(Credentials credentials) {
         //Bundle email and send to reset password fragment.
-        ResetPassword resetPassword = new ResetPassword();
+        ResetPasswordFragment resetPassword = new ResetPasswordFragment();
         Bundle args = new Bundle();
         args.putSerializable((getString(R.string.email_registerToLogin)), credentials.getEmail());
         resetPassword.setArguments(args);
