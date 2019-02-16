@@ -1,6 +1,8 @@
 package ethanwc.tcss450.uw.edu.template.Main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
     }
 
+
+
     /**
      * Method used to handle a successful registration.
      * @param credentials Bundle of user information.
@@ -68,7 +72,10 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         args.putSerializable("username", credentials.getUsername());
         args.putSerializable(getString(R.string.keys_json_authentication_code), credentials.getCode());
         authenticationFragment.setArguments(args);
-        loadFragment(authenticationFragment);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main_container, authenticationFragment)
+
+                .commit();
 
     }
 
@@ -129,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.activity_main_container, new WaitFragment(), "WAIT")
-                .addToBackStack(null)
                 .commit();
     }
 
@@ -159,6 +165,19 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     @Override
     public void authenticationSuccess(Credentials credentials) {
 
+        //Remove user's stored information upon successful authentication
+        SharedPreferences prefs =
+                getSharedPreferences(
+                        getString(R.string.keys_shared_prefs_auth),
+                        Context.MODE_PRIVATE);
+        //remove the saved credentials from StoredPrefs
+        prefs.edit().remove(getString(R.string.keys_prefs_password_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_email_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_password2_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_username_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_first_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_last_auth)).apply();
+
         //Bundle the user information from input and send to login fragment.
         LoginFragment loginFragment;
         loginFragment = new LoginFragment();
@@ -167,6 +186,17 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         args.putSerializable(getString(R.string.password_registerToLogin), credentials.getPassword());
         loginFragment.setArguments(args);
         loadFragment(loginFragment);
+    }
+
+    @Override
+    public void backToRegister(Credentials theCreds) {
+        NewUserFragment newUser = new NewUserFragment();
+        loadFragment(newUser);
+    }
+
+    @Override
+    public void loginButtonActionAuth(Credentials credentials) {
+        loadFragment(new LoginFragment());
     }
 
     /**

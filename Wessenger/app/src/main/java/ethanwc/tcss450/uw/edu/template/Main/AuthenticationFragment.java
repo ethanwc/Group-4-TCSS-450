@@ -2,6 +2,7 @@ package ethanwc.tcss450.uw.edu.template.Main;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,6 +39,7 @@ public class AuthenticationFragment extends WaitFragment {
     private String mFirstName;
     private String mLastName;
     private String mUsername;
+    private int mErrorCount = 0;
 
     /**
      * Required empty public constructor
@@ -46,6 +48,19 @@ public class AuthenticationFragment extends WaitFragment {
         // Required empty public constructor
     }
 
+    /**
+     * Helper method used to save the error count even if the user closes app.
+     * @param credentials Bundle of user information.
+     */
+    private void saveCredentials(final Credentials credentials) {
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs_error),
+                        Context.MODE_PRIVATE);
+        //Store the credentials in SharedPrefs
+        prefs.edit().putInt(getString(R.string.keys_prefs_error), mErrorCount).apply();
+
+    }
 
     /**
      * OnCreateView used to instantiate relevant items to the fragment.
@@ -62,14 +77,16 @@ public class AuthenticationFragment extends WaitFragment {
         View mView = inflater.inflate(R.layout.fragment_authentication, container, false);
 
         //Store user's information sent from NewUser fragment into local variables.
-        mEmail = Objects.requireNonNull(getArguments()).getString("mEmail");
+        mEmail = getArguments().getString("email");
         mPass = getArguments().getString("password");
         mFirstName = getArguments().getString("first");
         mLastName = getArguments().getString("last");
-        mUsername = getArguments().getString("mUsername");
-
+        mUsername = getArguments().getString("username");
+        mActualCode = getArguments().getInt("code");
         //Build credentials to send to login fragment.
-        Button btnLogin = mView.findViewById(R.id.button_authentication_submit);
+        TextView btnLogin = mView.findViewById(R.id.textview_authentication_login_button);
+        TextView btnReg = mView.findViewById(R.id.textview_authentication_newuser_button);
+        Button btnAuth = mView.findViewById(R.id.button_authentication_submit);
         mCredentials = new Credentials.Builder(mEmail, mPass)
                 .addFirstName(mFirstName)
                 .addLastName(mLastName)
@@ -77,18 +94,80 @@ public class AuthenticationFragment extends WaitFragment {
                 .build();
 
         //Add listener to authentication button.
-        btnLogin.setOnClickListener(this::authenticate);
+        btnAuth.setOnClickListener(this::authenticate);
+        btnReg.setOnClickListener(this::loadRegister);
+        btnLogin.setOnClickListener(this::goBack);
 
         return mView;
     }
 
+
+
     /**
-     * OnStart used to store authentication code send from new user fragment.
+     * Helper used to route to login screen on button press.
+     * @param view Required view for method call.
      */
+    public void goBack(View view) {
+        saveCredentials(mCredentials);
+        mListener.loginButtonActionAuth(mCredentials);
+    }
+
+    /**
+     * Helper method used to handle with the new user button is clicked.
+     * @param theView Required view to call the method.
+     */
+    public void loadRegister(View theView) {
+        saveCredentials(mCredentials);
+        //Remove user's stored information upon successful authentication
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs_auth),
+                        Context.MODE_PRIVATE);
+        //remove the saved credentials from StoredPrefs
+        prefs.edit().remove(getString(R.string.keys_prefs_password_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_email_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_password2_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_username_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_first_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_last_auth)).apply();
+
+        mListener.backToRegister(mCredentials);
+    }
+
+    /**
+     * Overloaded helper method used load the register fragment.
+     */
+    public void loadRegister() {
+        saveCredentials(mCredentials);
+        //Remove user's stored information upon successful authentication
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs_auth),
+                        Context.MODE_PRIVATE);
+        //remove the saved credentials from StoredPrefs
+        prefs.edit().remove(getString(R.string.keys_prefs_password_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_email_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_password2_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_username_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_first_auth)).apply();
+        prefs.edit().remove(getString(R.string.keys_prefs_last_auth)).apply();
+
+        mListener.backToRegister(mCredentials);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        if (getArguments() != null) mActualCode = getArguments().getInt("mActualCode");
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs_error),
+                        Context.MODE_PRIVATE);
+        //retrieve the stored credentials from SharedPrefs
+        if (prefs.contains(getString(R.string.keys_prefs_error))) {
+            final int error = prefs.getInt(getString(R.string.keys_prefs_error), 0);
+            //Load the two login EditTexts with the credentials found in SharedPrefs
+            mErrorCount = error;
+        }
     }
 
     /**
@@ -111,7 +190,6 @@ public class AuthenticationFragment extends WaitFragment {
                     .build();
             //build the JSONObject
             JSONObject msg = credentials.asJSONObject();
-            mCredentials = credentials;
             //instantiate and execute the AsyncTask.
             new SendPostAsyncTask.Builder(uri.toString(), msg)
                     .onPreExecute(this::handleLoginOnPre)
@@ -120,7 +198,23 @@ public class AuthenticationFragment extends WaitFragment {
                     .build().execute();
         //Let user know the input incorrect code and handle incorrect password attempts to 5 guesses.
         } else {
-            edit.setError("Incorrect authentication code input.");
+            if (mErrorCount < 2) {
+                edit.setError("Incorrect code input.");
+                mErrorCount++;
+                saveCredentials(mCredentials);
+            } else if (mErrorCount == 2) {
+                edit.setError("3rd incorrect code input. 2 more and the code will become invalid.");
+                mErrorCount++;
+                saveCredentials(mCredentials);
+            } else if (mErrorCount == 3) {
+                edit.setError("4th incorrect code input. 1 more and the code will become invalid. YOU WILL BE DIRECTED BACK TO REGISTRATION.");
+                mErrorCount++;
+                saveCredentials(mCredentials);
+            } else if (mErrorCount == 4) {
+                mErrorCount = 0;
+                saveCredentials(mCredentials);
+                loadRegister();
+            }
         }
     }
 
@@ -130,6 +224,8 @@ public class AuthenticationFragment extends WaitFragment {
     public interface OnAuthenticationFragmentButtonAction extends WaitFragment.OnFragmentInteractionListener{
         /** Method used to handle successful authentication. */
         void authenticationSuccess(Credentials credentials);
+        void backToRegister(Credentials credentials);
+        void loginButtonActionAuth(Credentials credentials);
     }
 
     /**
@@ -168,12 +264,18 @@ public class AuthenticationFragment extends WaitFragment {
                         .addUsername(mUsername)
                         .build();
                 //Register was successful. Switch to the loadSuccessFragment.
+                SharedPreferences prefs =
+                        getActivity().getSharedPreferences(
+                                getString(R.string.keys_shared_prefs_error),
+                                Context.MODE_PRIVATE);
+                prefs.edit().remove(getString(R.string.keys_prefs_error)).apply();
                 mListener.authenticationSuccess(mCredentials);
                 return;
             //Inform user that web service returned unsuccessful.
             } else {
-                ((TextView) getView().findViewById(R.id.edittext_newuser_email))
-                        .setError("Email has already been registered.");
+//                mListener.onWaitFragmentInteractionHide();
+//                ((TextView) getView().findViewById(R.id.edittext_newuser_email))
+//                        .setError("Email has already been registered.");
             }
             mListener.onWaitFragmentInteractionHide();
         } catch (JSONException e) {
@@ -182,7 +284,7 @@ public class AuthenticationFragment extends WaitFragment {
             Log.e("JSON_PARSE_ERROR", result
                     + System.lineSeparator()
                     + e.getMessage());
-            mListener.onWaitFragmentInteractionHide();
+
             ((TextView) getView().findViewById(R.id.edittext_newuser_email))
                     .setError("Login Unsuccessful");
         }

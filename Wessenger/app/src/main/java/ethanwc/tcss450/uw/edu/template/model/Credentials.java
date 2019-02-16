@@ -27,7 +27,7 @@ public class Credentials implements Serializable {
     private final int mCode;
     private final String mtempPwd;
     private final String mChangePassword;
-
+    private final int mErrorCount;
 
 
 
@@ -47,6 +47,7 @@ public class Credentials implements Serializable {
         private int mCode = 0;
         private String mtempPwd ="";
         private String mChangePassword = "";
+        private int mErrorCount = 0;
 
 
         /**
@@ -71,6 +72,11 @@ public class Credentials implements Serializable {
          */
         public Builder addFirstName(final String val) {
             mFirstName = val;
+            return this;
+        }
+
+        public Builder addErrorCount(final int val) {
+            mErrorCount = val;
             return this;
         }
 
@@ -127,6 +133,7 @@ public class Credentials implements Serializable {
         mCode = builder.mCode;
         mtempPwd = builder.mtempPwd;
         mChangePassword = builder.mChangePassword;
+        mErrorCount = builder.mErrorCount;
 
     }
 
@@ -146,6 +153,9 @@ public class Credentials implements Serializable {
         return mPassword;
     }
 
+    public int getErrorCount() {
+        return mErrorCount;
+    }
     /**
      * Get the first name or the empty string if no first name was provided.
      * @return the first name or the empty string if no first name was provided.
@@ -198,6 +208,7 @@ public class Credentials implements Serializable {
             msg.put("code", getCode());
             msg.put("tempPwd", getTempPwd());
             msg.put("changepassword", getChangePassword());
+            msg.put("error", getErrorCount());
         } catch (JSONException e) {
             Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
         }

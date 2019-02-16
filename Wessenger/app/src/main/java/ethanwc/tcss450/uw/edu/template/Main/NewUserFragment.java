@@ -2,6 +2,7 @@ package ethanwc.tcss450.uw.edu.template.Main;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,12 +39,89 @@ public class NewUserFragment extends WaitFragment {
     private String mUsername;
     private String mFirstName;
     private String mLastName;
+    private int mAuthenticationCode;
 
     /**
      * Required empty public constructor.
      */
     public NewUserFragment() {
         // Required empty public constructor
+    }
+
+    /**
+     * Helper method used to save the user input for auto-re-direct to authentication fragment.
+     * @param credentials Bundle of user's information
+     */
+    private void saveCredentials(final Credentials credentials) {
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs_auth),
+                        Context.MODE_PRIVATE);
+        //Store the credentials in SharedPrefs
+        prefs.edit().putString(getString(R.string.keys_prefs_email_auth), credentials.getEmail()).apply();
+        prefs.edit().putString(getString(R.string.keys_prefs_password_auth), credentials.getPassword()).apply();
+        prefs.edit().putString(getString(R.string.keys_prefs_password2_auth), credentials.getPassword()).apply();
+        prefs.edit().putString(getString(R.string.keys_prefs_username_auth), credentials.getUsername()).apply();
+        prefs.edit().putString(getString(R.string.keys_prefs_first_auth), credentials.getFirstName()).apply();
+        prefs.edit().putString(getString(R.string.keys_prefs_last_auth), credentials.getLastName()).apply();
+        prefs.edit().putInt(getString(R.string.keys_prefs_code_auth), credentials.getCode()).apply();
+
+    }
+
+    /**
+     * OnStart used to handle auto-re-directing user to authentication.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs_auth),
+                        Context.MODE_PRIVATE);
+        //retrieve the stored credentials from SharedPrefs
+        if (prefs.contains(getString(R.string.keys_prefs_email_auth)) &&
+                prefs.contains(getString(R.string.keys_prefs_password_auth)) &&
+                prefs.contains(getString(R.string.keys_prefs_password2_auth)) &&
+                prefs.contains(getString(R.string.keys_prefs_username_auth)) &&
+                prefs.contains(getString(R.string.keys_prefs_first_auth)) &&
+                prefs.contains(getString(R.string.keys_prefs_last_auth))) {
+            final String email = prefs.getString(getString(R.string.keys_prefs_email_auth), "");
+            final String password = prefs.getString(getString(R.string.keys_prefs_password_auth), "");
+            final String password2 = prefs.getString(getString(R.string.keys_prefs_password2_auth), "");
+            final String username = prefs.getString(getString(R.string.keys_prefs_username_auth), "");
+            final String first = prefs.getString(getString(R.string.keys_prefs_first_auth), "");
+            final String last = prefs.getString(getString(R.string.keys_prefs_last_auth), "");
+            final int code = prefs.getInt(getString(R.string.keys_prefs_code_auth), Integer.MIN_VALUE);
+
+            //Load the edittext fields with user input.
+            EditText emailEdit = getActivity().findViewById(R.id.edittext_newuser_email);
+            emailEdit.setText(email);
+            EditText passwordEdit = getActivity().findViewById(R.id.edittext_newuser_password);
+            passwordEdit.setText(password);
+            EditText password2Edit = getActivity().findViewById(R.id.edittext_newuser_password2);
+            password2Edit.setText(password2);
+            EditText usernameEdit = getActivity().findViewById(R.id.edittext_newuser_nickname);
+            usernameEdit.setText(username);
+            EditText firstEdit = getActivity().findViewById(R.id.edittext_newuser_first);
+            firstEdit.setText(first);
+            EditText lastEdit = getActivity().findViewById(R.id.edittext_newuser_last);
+            lastEdit.setText(last);
+
+            mAuthenticationCode = code;
+            mCredentials = new Credentials.Builder(email, password)
+                    .addFirstName(first)
+                    .addLastName(last)
+                    .addUsername(username)
+                    .addCode(code)
+                    .build();
+            //Register was successful. Switch to the loadSuccessFragment.
+            mListener.registerSuccess(mCredentials);
+
+        }
+    }
+
+    public void doRegister() {
+
     }
 
     /**
@@ -277,7 +355,7 @@ public class NewUserFragment extends WaitFragment {
                             getString(R.string.keys_json_login_success));
             //Set up the authentication fragment.
             if (success) {
-                int mAuthenticationCode = resultsJSON.getInt(
+                mAuthenticationCode = resultsJSON.getInt(
                         getString(R.string.keys_json_authentication_code));
                 mCredentials = new Credentials.Builder(mEmail, mPass)
                         .addFirstName(mFirstName)
@@ -286,6 +364,7 @@ public class NewUserFragment extends WaitFragment {
                         .addCode(mAuthenticationCode)
                         .build();
                 //Register was successful. Switch to the loadSuccessFragment.
+                saveCredentials(mCredentials);
                 mListener.registerSuccess(mCredentials);
                 return;
             //Notify user that web service returned unsuccessful.
