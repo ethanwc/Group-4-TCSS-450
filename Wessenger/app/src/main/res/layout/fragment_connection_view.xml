@@ -1,10 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/fragment_messaging_message"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
+android:theme="@style/AppTheme"
 tools:context=".Messenger.ConnectionViewFragment">
 
 
+    <TextView
+        android:id="@+id/textview_connectionview_name_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="88dp"
+        android:text="@string/connectionview_name_prompt"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_connectionview_username" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/textview_connectionview_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Username"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textview_connectionview_email_prompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/connectionview_email_prompt"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_connectionview_name_prompt" />
+
+    <TextView
+        android:id="@+id/textview_connectionview_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="88dp"
+        android:text="First Last"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/textview_connectionview_name_prompt"
+        app:layout_constraintTop_toBottomOf="@+id/textview_connectionview_username" />
+
+    <TextView
+        android:id="@+id/textview_connectionview_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="20dp"
+        android:text="email@email.com"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/textview_connectionview_email_prompt"
+        app:layout_constraintTop_toBottomOf="@+id/textview_connectionview_name" />
+</android.support.constraint.ConstraintLayout>

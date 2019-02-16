@@ -1,27 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_messagelist_invitation"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_messaging_invitations"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:theme="@style/AppTheme"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:theme="@style/AppTheme">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardview_messagelist_view"
-        android:layout_width="match_parent"
+        android:id="@+id/cardview_mesasgelist_invitations_view"
+        android:layout_width="317dp"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
+        android:padding="10dp"
+        android:theme="@style/AppTheme"
         app:cardBackgroundColor="@color/backgroundDark"
-        app:cardCornerRadius="15dp">
+        app:cardCornerRadius="20dp"
+        app:cardPreventCornerOverlap="true">
 
-
-        <TextView
-            android:id="@+id/textview_invitations_prompt"
-            android:layout_width="match_parent"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="293dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Invitation" />
+            android:layout_margin="10dp"
+            tools:layout_editor_absoluteX="10dp"
+            tools:layout_editor_absoluteY="10dp">
+
+            <TextView
+                android:id="@+id/textview_invitations_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
+
+                android:layout_marginBottom="5dp"
+                android:text="Nickname"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textview_invitations_prompt"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.571" />
+
+            <TextView
+                android:id="@+id/textview_invitations_email"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="20dp"
+
+                android:layout_weight="1"
+                android:text="Email"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textview_invitations_username"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.523" />
+
+            <TextView
+                android:id="@+id/textview_invitations_prompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/invitationsview_prompt"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/button_invitations_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/ic_clear_orange" />
+
+            <ImageView
+                android:id="@+id/button_invitations_accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_invitations_cancel"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.666"
+                app:srcCompat="@drawable/ic_check_orange" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
     </android.support.v7.widget.CardView>
 
 </LinearLayout>

@@ -87,4 +87,8 @@
 
     <string name="keys_shared_prefs_error">edu.uw.tcss450.phishapp.PREFSCODE</string>
     <string name="keys_prefs_error">cant_eat_your_pudding</string>
+    <string name="connectionview_name_prompt">Name:</string>
+    <string name="connectionview_email_prompt">Email:</string>
+    <string name="requestview_prompt">Request:</string>
+    <string name="invitationsview_prompt">Invitations:</string>
 </resources>

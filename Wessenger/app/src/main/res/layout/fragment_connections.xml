@@ -1,28 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_messagelist_message"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_messagelist_connection"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:theme="@style/AppTheme"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:theme="@style/AppTheme">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardview_mesasgelist_view"
-        android:layout_width="match_parent"
+        android:id="@+id/cardview_mesasgelist_connections_view"
+        android:layout_width="317dp"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
+        android:padding="10dp"
         android:theme="@style/AppTheme"
         app:cardBackgroundColor="@color/backgroundDark"
-        app:cardCornerRadius="15dp">
+        app:cardCornerRadius="20dp"
+        app:cardPreventCornerOverlap="true">
 
-
-        <TextView
-            android:id="@+id/textview_messagelist_prompt"
-            android:layout_width="match_parent"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="293dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Connection" />
+            android:layout_margin="10dp"
+            tools:layout_editor_absoluteX="10dp"
+            tools:layout_editor_absoluteY="10dp">
+
+            <TextView
+                android:id="@+id/textview_conversations_usernames"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginStart="40dp"
+                android:text="Nickname"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.7" />
+
+            <TextView
+                android:id="@+id/textview_connections_email"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="40dp"
+                android:layout_weight="1"
+                android:text="Email"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textview_conversations_usernames"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
     </android.support.v7.widget.CardView>
 
 </LinearLayout>

@@ -1,26 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_messaging_requests"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:theme="@style/AppTheme"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:theme="@style/AppTheme">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardview_requests_view"
-        android:layout_width="match_parent"
+        android:id="@+id/cardview_mesasgelist_request_view"
+        android:layout_width="317dp"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
-        app:cardCornerRadius="15dp">
+        android:padding="10dp"
+        android:theme="@style/AppTheme"
+        app:cardBackgroundColor="@color/backgroundDark"
+        app:cardCornerRadius="20dp"
+        app:cardPreventCornerOverlap="true">
 
-
-        <TextView
-            android:id="@+id/textview_requests_prompt"
-            android:layout_width="match_parent"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="293dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Request" />
+            android:layout_margin="10dp"
+            tools:layout_editor_absoluteX="10dp"
+            tools:layout_editor_absoluteY="10dp">
+
+            <TextView
+                android:id="@+id/textview_requests_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="Nickname"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textview_requests_prompt"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textview_requests_email"
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:layout_marginStart="25dp"
+                android:layout_weight="1"
+                android:text="Email"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textview_requests_username"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textview_requests_prompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/requestview_prompt"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/button_requests_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.4"
+                app:srcCompat="@drawable/ic_clear_orange" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
     </android.support.v7.widget.CardView>
 
 </LinearLayout>

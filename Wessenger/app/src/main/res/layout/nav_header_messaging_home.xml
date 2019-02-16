@@ -29,11 +29,4 @@
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="@string/app_name" />
 
-    <Switch
-        android:id="@+id/switch_navDrawer_staylogin"
-        android:layout_width="123dp"
-        android:layout_height="wrap_content"
-        android:text="Stay Login"
-        android:layout_marginLeft="100dp"/>
-
 </LinearLayout>
