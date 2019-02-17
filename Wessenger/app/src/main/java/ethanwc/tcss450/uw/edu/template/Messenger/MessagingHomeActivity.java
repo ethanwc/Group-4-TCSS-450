@@ -389,7 +389,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-        
+
     }
 
 
