@@ -4,22 +4,20 @@
     tools:showIn="navigation_view">
 
     <item android:title="@string/Menu_Weather">
-    <menu
-        android:theme="@style/AppTheme">
-        <item
-            android:id="@+id/nav_weather_home"
-            android:icon="@drawable/ic_home"
-            android:title="@string/Menu_Home"
-            />
-        <item
-            android:id="@+id/nav_Change_Locations"
-            android:icon="@drawable/ic_change_location"
-            android:title="@string/Menu_Change_Location" />
-        <item
-            android:id="@+id/nav_View_Saved_Location"
-            android:icon="@drawable/ic_saved_location"
-            android:title="@string/Menu_View_Saved_Locations" />
-    </menu>
+        <menu android:theme="@style/WeatherTheme">
+            <item
+                android:id="@+id/nav_weather_home"
+                android:icon="@drawable/ic_home"
+                android:title="@string/Menu_Home" />
+            <item
+                android:id="@+id/nav_Change_Locations"
+                android:icon="@drawable/ic_change_location"
+                android:title="@string/Menu_Change_Location" />
+            <item
+                android:id="@+id/nav_View_Saved_Location"
+                android:icon="@drawable/ic_saved_location"
+                android:title="@string/Menu_View_Saved_Locations" />
+        </menu>
     </item>
 
     <item android:title="@string/menu_chat">

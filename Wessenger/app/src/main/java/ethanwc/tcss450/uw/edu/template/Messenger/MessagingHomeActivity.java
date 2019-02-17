@@ -59,7 +59,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
-
+        hideFabs();
         //TODO: Implement this correctly
 
 //        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
@@ -115,12 +115,23 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    public void hideFabs() {
+        FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
+        connectionsFab.setEnabled(false);
+        connectionsFab.hide();
+        FloatingActionButton conversationsFab = findViewById(R.id.fab_conversations_fab);
+        conversationsFab.setEnabled(false);
+        conversationsFab.hide();
+    }
     @Override
     public void onBackPressed() {
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+            hideFabs();
+
         } else {
+            hideFabs();
             super.onBackPressed();
         }
     }
@@ -141,13 +152,16 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_change_password) {
+            hideFabs();
             ChangePasswordFragment changePasswordFragment
                     = new ChangePasswordFragment();
             mArgs = getIntent().getExtras();
             changePasswordFragment.setArguments(mArgs);
             getSupportActionBar().setTitle("Change Password");
             loadFragment(changePasswordFragment);
+
         } else if (id == R.id.action_logout) {
+            hideFabs();
             logout();
             return true;
         }
@@ -161,7 +175,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_global_chat) {
-
+            hideFabs();
 
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
             String email = getIntent().getExtras().getString(("email"));
@@ -175,25 +189,32 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadFragment(chatFrag);
         }
         if (id == R.id.nav_weather_home) {
-
+            hideFabs();
             WeatherHome weatherHome = new WeatherHome();
             getSupportActionBar().setTitle("Weather Home");
             loadFragment(weatherHome);
         } else if (id == R.id.nav_Change_Locations) {
+            hideFabs();
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
             loadFragment(changeLocationsFragment);
 
         } else if (id == R.id.nav_View_Saved_Location) {
+            hideFabs();
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             loadFragment(locationFragment);
         } else if (id == R.id.nav_chat_home) {
+            hideFabs();
             ConversationFragment conversationFragment = new ConversationFragment();
             getSupportActionBar().setTitle("Messaging Home");
+
+            FloatingActionButton conversationsFab = findViewById(R.id.fab_conversations_fab);
+            conversationsFab.setEnabled(true);
+            conversationsFab.show();
             loadFragment(conversationFragment);
         } else if (id == R.id.nav_chat_view_connections) {
-
+            hideFabs();
 
             Uri uri = new Uri.Builder()
                     .scheme("https")
@@ -208,13 +229,11 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .onPostExecute(this::handleConnectionGetOnPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
-//            new GetAsyncTask.Builder(uri.toString())
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
-//
-//                    .onPostExecute(this::handleConnectionGetOnPostExecute)
-//                    .build().execute();
-
+            FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
+            connectionsFab.setEnabled(true);
+            connectionsFab.show();
         } else if (id == R.id.nav_Request_Invitations) {
+            hideFabs();
             InvitationsFragment invitationsFragment = new InvitationsFragment();
             getSupportActionBar().setTitle("Requests/Invitations");
             loadFragment(invitationsFragment);
@@ -224,6 +243,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     /**
      * Method to logout of the app, and delete saved password information
@@ -288,12 +308,6 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
 
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
     /**
      * Method which listens for a connection being selected in the recycler view.
      * @param theItem Connection which will represent a connection.
@@ -310,6 +324,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         args.putSerializable("first", theItem.getFirst());
         args.putSerializable("last", theItem.getLast());
         args.putSerializable("email", theItem.getEmail());
+
+        FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
+        connectionsFab.setEnabled(false);
+        connectionsFab.hide();
 
 
 
@@ -338,17 +356,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                 for(int i = 0; i < data.length(); i++) {
 
                     String email = data.getString(i);
-                    Log.e("SUPER!!!", email);
 
                     connections.add(new Connection.Builder(email).build());
-                    //JSONObject jsonConnection = data.getJSONObject(i);
-
-//                    connections.add(new Connection.Builder(
-//                            jsonConnection.getString(getString(R.string.keys_json_connections_first)),
-//                            jsonConnection.getString(getString(R.string.keys_json_connections_last)),
-//                            jsonConnection.getString(getString(R.string.keys_json_connections_username)),
-//                            jsonConnection.getString(getString(R.string.keys_json_connections_email))).build());
-
                 }
 
                 Connection[] connectionsAsArray = new Connection[connections.size()];
@@ -364,7 +373,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             //Not successful return from webservice
             } else {
-                Log.e("SUPER!!", "NOT SUCCESS");
 
                 onWaitFragmentInteractionHide();
             }
@@ -377,6 +385,11 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
         }
 
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        
     }
 
 
@@ -408,10 +421,10 @@ public class MessagingHomeActivity extends AppCompatActivity
             //close the app
             finishAndRemoveTask();
             //or close this activity and bring back the Login
-// Intent i = new Intent(this, MainActivity.class);
-// startActivity(i);
-// //Ends this Activity and removes it from the Activity back stack.
-// finish();
+            // Intent i = new Intent(this, MainActivity.class);
+            // startActivity(i);
+            // //Ends this Activity and removes it from the Activity back stack.
+            // finish();
         }
     }
 
