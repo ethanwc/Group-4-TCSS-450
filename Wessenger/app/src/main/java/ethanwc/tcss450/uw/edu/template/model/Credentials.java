@@ -38,7 +38,7 @@ public class Credentials implements Serializable {
      */
     public static class Builder {
 
-        private final String mPassword;
+        private String mPassword;
         private final String mEmail;
 
         private String mFirstName = "";
@@ -62,6 +62,20 @@ public class Credentials implements Serializable {
         public Builder(String email, String password) {
             mEmail = email;
             mPassword = password;
+        }
+
+        /**
+         * Constructs a new Builder.
+         *
+         * No validation is performed. Ensure that the argument is a
+         * valid email before adding here if you wish to perform validation.
+         *
+         * @param email the email
+
+         */
+        public Builder(String email) {
+            mEmail = email;
+
         }
 
 

@@ -14,4 +14,5 @@
     <string name="ep_messaging_base">messaging</string>
     <string name="ep_messaging_send">send</string>
     <string name="ep_change_password">changepassword</string>
+    <string name="ep_getContacts">getcontacts</string>
 </resources>

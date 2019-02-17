@@ -11,23 +11,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.Connection;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnConnectionListFragmentInteractionListener}
  * interface.
  */
 public class ConnectionsFragment extends Fragment {
+
+    public static final String ARG_CONNECTION_LIST = "connections list";
+    private List<Connection> mConnections;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnConnectionListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,7 +59,7 @@ public class ConnectionsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mConnections = new ArrayList<Connection> (Arrays.asList((Connection[]) getArguments().getSerializable(ARG_CONNECTION_LIST)));
         }
     }
 
@@ -77,7 +85,7 @@ public class ConnectionsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyConnectionsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyConnectionsRecyclerViewAdapter(mConnections, mListener));
         }
         return view;
     }
@@ -89,8 +97,8 @@ public class ConnectionsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnConnectionListFragmentInteractionListener) {
+            mListener = (OnConnectionListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -117,8 +125,8 @@ public class ConnectionsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     @SuppressWarnings("EmptyMethod")
-    public interface OnListFragmentInteractionListener {
+    public interface OnConnectionListFragmentInteractionListener {
         // TODO: Update what method does upon list interaction.
-        void onListFragmentInteraction(DummyItem item);
+        void onConnectionListFragmentInteraction(Connection item);
     }
 }

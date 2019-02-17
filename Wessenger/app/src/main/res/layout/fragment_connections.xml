@@ -28,26 +28,22 @@
             tools:layout_editor_absoluteY="10dp">
 
             <TextView
-                android:id="@+id/textview_conversations_usernames"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginStart="40dp"
-                android:text="Nickname"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.7" />
-
-            <TextView
                 android:id="@+id/textview_connections_email"
                 android:layout_width="wrap_content"
                 android:layout_height="15dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="24dp"
                 android:layout_weight="1"
-                android:text="Email"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textview_conversations_usernames"
+                app:layout_constraintStart_toEndOf="@+id/textview_connections_username"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textview_connections_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
 

@@ -7,23 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment.OnListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment.OnConnectionListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.Connection;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnConnectionListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyConnectionsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final List<Connection> mValues;
+    private final OnConnectionListFragmentInteractionListener mListener;
 
-    MyConnectionsRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    MyConnectionsRecyclerViewAdapter(List<Connection> items, OnConnectionListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -39,15 +38,15 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-//        holder.mContentView.setText(mValues.get(position).content);
-
+        holder.mUsernameView.setText(mValues.get(position).getUsername());
+        holder.mEmailView.setText(mValues.get(position).getEmail());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onConnectionListFragmentInteraction(holder.mItem);
                 }
             }
         });
@@ -60,19 +59,15 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        final TextView mContentView;
-        DummyItem mItem;
+        final TextView mUsernameView;
+        final TextView mEmailView;
+        Connection mItem;
 
         ViewHolder(View view) {
             super(view);
             mView = view;
-            mContentView = view.findViewById(R.id.content);
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            mUsernameView = (TextView) view.findViewById(R.id.textview_connections_email);
+            mEmailView = (TextView) view.findViewById(R.id.textview_connections_username);
         }
     }
 }

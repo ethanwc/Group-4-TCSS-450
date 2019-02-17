@@ -35,8 +35,8 @@ import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment.OnFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.connection.Connection;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
+import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
 import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment;
@@ -248,16 +248,6 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
 
-    public JSONObject asJSONObject(String theEmail) {
-        JSONObject msg = new JSONObject();
-        try {
-
-            msg.put("email", theEmail);
-        } catch (JSONException e) {
-            Log.wtf("EMAIL", "Error creating JSON: " + e.getMessage());
-        }
-        return msg;
-    }
     /**
      * Handle errors that may occur during the AsyncTask.
      * @param result the error message provide from the AsyncTask
@@ -347,6 +337,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 for(int i = 0; i < data.length(); i++) {
 
+                    String email = data.getString(i);
+                    Log.e("SUPER!!!", email);
+
+                    connections.add(new Connection.Builder(email).build());
                     //JSONObject jsonConnection = data.getJSONObject(i);
 
 //                    connections.add(new Connection.Builder(
