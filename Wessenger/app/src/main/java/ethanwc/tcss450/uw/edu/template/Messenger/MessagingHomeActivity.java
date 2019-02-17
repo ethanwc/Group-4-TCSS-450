@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,10 +22,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
+import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment.OnFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.connection.Connection;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
@@ -34,7 +45,7 @@ import me.pushy.sdk.Pushy;
 
 public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
-        ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnListFragmentInteractionListener,
+        ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
         SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener,
         ChangePasswordFragment.OnChangePasswordFragmentInteractionListener {
@@ -182,9 +193,26 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Messaging Home");
             loadFragment(conversationFragment);
         } else if (id == R.id.nav_chat_view_connections) {
-            ConnectionsFragment connectionsFragment = new ConnectionsFragment();
-            getSupportActionBar().setTitle("Connections");
-            loadFragment(connectionsFragment);
+
+
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getContacts))
+                  .build();
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleConnectionGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+//            new GetAsyncTask.Builder(uri.toString())
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
+//
+//                    .onPostExecute(this::handleConnectionGetOnPostExecute)
+//                    .build().execute();
 
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
@@ -213,10 +241,29 @@ public class MessagingHomeActivity extends AppCompatActivity
         //close the app
         //finishAndRemoveTask();
         //or close this activity and bring back the Login
- Intent i = new Intent(this, MainActivity.class);
- startActivity(i);
- //Ends this Activity and removes it from the Activity back stack.
- finish();
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        //Ends this Activity and removes it from the Activity back stack.
+        finish();
+    }
+
+
+    public JSONObject asJSONObject(String theEmail) {
+        JSONObject msg = new JSONObject();
+        try {
+
+            msg.put("email", theEmail);
+        } catch (JSONException e) {
+            Log.wtf("EMAIL", "Error creating JSON: " + e.getMessage());
+        }
+        return msg;
+    }
+    /**
+     * Handle errors that may occur during the AsyncTask.
+     * @param result the error message provide from the AsyncTask
+     */
+    private void handleErrorsInTask(String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
     }
 
     public void onWaitFragmentInteractionShow() {
@@ -237,8 +284,6 @@ public class MessagingHomeActivity extends AppCompatActivity
     //
     @Override
     public void onSendFragmentInteraction() {
-        MessageViewFragment messageView = new MessageViewFragment();
-        loadFragment(messageView);
     }
 
     /**
@@ -252,15 +297,95 @@ public class MessagingHomeActivity extends AppCompatActivity
         transaction.commit();
     }
 
-    @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
-    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    /**
+     * Method which listens for a connection being selected in the recycler view.
+     * @param theItem Connection which will represent a connection.
+     */
+    @Override
+    public void onConnectionListFragmentInteraction(Connection theItem) {
+
+        ConnectionViewFragment connectionViewFrag;
+        connectionViewFrag = new ConnectionViewFragment();
+
+        Bundle args = new Bundle();
+
+        args.putSerializable("username", theItem.getUsername());
+        args.putSerializable("first", theItem.getFirst());
+        args.putSerializable("last", theItem.getLast());
+        args.putSerializable("email", theItem.getEmail());
+
+
+
+        connectionViewFrag.setArguments(args);
+        loadFragment(connectionViewFrag);
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
+    private void handleConnectionGetOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+
+                List<Connection> connections = new ArrayList<>();
+
+
+                for(int i = 0; i < data.length(); i++) {
+
+                    //JSONObject jsonConnection = data.getJSONObject(i);
+
+//                    connections.add(new Connection.Builder(
+//                            jsonConnection.getString(getString(R.string.keys_json_connections_first)),
+//                            jsonConnection.getString(getString(R.string.keys_json_connections_last)),
+//                            jsonConnection.getString(getString(R.string.keys_json_connections_username)),
+//                            jsonConnection.getString(getString(R.string.keys_json_connections_email))).build());
+
+                }
+
+                Connection[] connectionsAsArray = new Connection[connections.size()];
+                connectionsAsArray = connections.toArray(connectionsAsArray);
+
+                Bundle args = new Bundle();
+                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                Fragment frag = new ConnectionsFragment();
+                frag.setArguments(args);
+
+                onWaitFragmentInteractionHide();
+                loadFragment(frag);
+
+            //Not successful return from webservice
+            } else {
+                Log.e("SUPER!!", "NOT SUCCESS");
+
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+
     // Deleting the Pushy device token must be done asynchronously. Good thing
     // we have something that allows us to do that.
     class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
