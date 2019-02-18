@@ -91,4 +91,8 @@
     <string name="connectionview_email_prompt">Email:</string>
     <string name="requestview_prompt">Request:</string>
     <string name="invitationsview_prompt">Invitations:</string>
+    <string name="connectionview_details_deletebutton">Delete</string>
+    <string name="connectionview_details_detailsbutton">Details</string>
+    <string name="connectionview_details_messagebutton">Send Message</string>
+
 </resources>

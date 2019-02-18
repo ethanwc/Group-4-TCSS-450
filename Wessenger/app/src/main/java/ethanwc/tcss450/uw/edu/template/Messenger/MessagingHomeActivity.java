@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -52,16 +53,19 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
     private Bundle mArgs;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
-        hideFabs();
         //TODO: Implement this correctly
-
+        mFab = findViewById(R.id.fab_messaging_fab);
+        mFab.setEnabled(false);
+        mFab.hide();
 //        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -115,23 +119,23 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-    public void hideFabs() {
-        FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
-        connectionsFab.setEnabled(false);
-        connectionsFab.hide();
-        FloatingActionButton conversationsFab = findViewById(R.id.fab_conversations_fab);
-        conversationsFab.setEnabled(false);
-        conversationsFab.hide();
-    }
+
     @Override
     public void onBackPressed() {
+        View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-            hideFabs();
 
+
+        } else if(connectionViewFrag != null) {
+
+            mFab.show();
+            mFab.setEnabled(true);
+            super.onBackPressed();
         } else {
-            hideFabs();
+            mFab.hide();
+            mFab.setEnabled(false);
             super.onBackPressed();
         }
     }
@@ -152,7 +156,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_change_password) {
-            hideFabs();
+
             ChangePasswordFragment changePasswordFragment
                     = new ChangePasswordFragment();
             mArgs = getIntent().getExtras();
@@ -161,7 +165,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadFragment(changePasswordFragment);
 
         } else if (id == R.id.action_logout) {
-            hideFabs();
+
             logout();
             return true;
         }
@@ -175,7 +179,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_global_chat) {
-            hideFabs();
+
 
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
             String email = getIntent().getExtras().getString(("email"));
@@ -189,33 +193,26 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadFragment(chatFrag);
         }
         if (id == R.id.nav_weather_home) {
-            hideFabs();
+
             WeatherHome weatherHome = new WeatherHome();
             getSupportActionBar().setTitle("Weather Home");
             loadFragment(weatherHome);
         } else if (id == R.id.nav_Change_Locations) {
-            hideFabs();
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
             loadFragment(changeLocationsFragment);
 
         } else if (id == R.id.nav_View_Saved_Location) {
-            hideFabs();
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             loadFragment(locationFragment);
         } else if (id == R.id.nav_chat_home) {
-            hideFabs();
             ConversationFragment conversationFragment = new ConversationFragment();
             getSupportActionBar().setTitle("Messaging Home");
 
-            FloatingActionButton conversationsFab = findViewById(R.id.fab_conversations_fab);
-            conversationsFab.setEnabled(true);
-            conversationsFab.show();
+
             loadFragment(conversationFragment);
         } else if (id == R.id.nav_chat_view_connections) {
-            hideFabs();
-
             Uri uri = new Uri.Builder()
                     .scheme("https")
                     .appendPath(getString(R.string.ep_base_url))
@@ -229,11 +226,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .onPostExecute(this::handleConnectionGetOnPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
-            FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
-            connectionsFab.setEnabled(true);
-            connectionsFab.show();
+            mFab.setEnabled(true);
+            mFab.show();
+
         } else if (id == R.id.nav_Request_Invitations) {
-            hideFabs();
             InvitationsFragment invitationsFragment = new InvitationsFragment();
             getSupportActionBar().setTitle("Requests/Invitations");
             loadFragment(invitationsFragment);
@@ -319,15 +315,13 @@ public class MessagingHomeActivity extends AppCompatActivity
         connectionViewFrag = new ConnectionViewFragment();
 
         Bundle args = new Bundle();
-
+        mFab.setEnabled(false);
+        mFab.hide();
         args.putSerializable("username", theItem.getUsername());
         args.putSerializable("first", theItem.getFirst());
         args.putSerializable("last", theItem.getLast());
         args.putSerializable("email", theItem.getEmail());
 
-        FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
-        connectionsFab.setEnabled(false);
-        connectionsFab.hide();
 
 
 
