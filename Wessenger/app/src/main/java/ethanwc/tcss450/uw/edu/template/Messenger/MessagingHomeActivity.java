@@ -201,7 +201,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         args.putSerializable("email", queryString);
 
-        FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
+        FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
         connectionsFab.setEnabled(false);
         connectionsFab.hide();
 
