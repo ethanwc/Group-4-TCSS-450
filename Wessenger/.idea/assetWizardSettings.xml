@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/content/ic_add_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/Applications/Android%20Studio%202.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_search_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,10 +28,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ed7b22" />
-                            <entry key="outputName" value="ic_add_orange" />
-                            <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\user" />
+                            <entry key="outputName" value="ic_search_email" />
+                            <entry key="sourceFile" value="$USER_HOME$" />
                           </map>
                         </option>
                       </PersistentState>
