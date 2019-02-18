@@ -7,6 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
@@ -106,7 +113,13 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
      * @param jwt Token used for auto login verification.
      */
     @Override
-    public void onLoginSuccess(Credentials credentials, String jwt) {
+    public void onLoginSuccess(Credentials credentials, String jwt, String[] arrayEmail) {
+        ArrayList<String> emailList = new ArrayList<String>();
+        for(int i=0; i<arrayEmail.length; i++){
+            emailList.add(arrayEmail[i]);
+//            System.out.println("-----"+arrayEmail[i]);
+        }
+
 
         //Bundle user information from input into intent and send to messaging home activity.
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
@@ -114,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
         intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
+        intent.putStringArrayListExtra("a", emailList);
         Log.e("mainactivity: ", " " + credentials.getEmail());
         startActivity(intent);
         finish();

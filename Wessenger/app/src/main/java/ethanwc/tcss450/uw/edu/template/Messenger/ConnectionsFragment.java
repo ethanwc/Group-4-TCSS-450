@@ -1,5 +1,6 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,13 +8,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
@@ -44,6 +50,8 @@ public class ConnectionsFragment extends Fragment {
     public ConnectionsFragment() {
     }
 
+
+
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static ConnectionsFragment newInstance(int columnCount) {
@@ -61,6 +69,8 @@ public class ConnectionsFragment extends Fragment {
         if (getArguments() != null) {
             mConnections = new ArrayList<Connection> (Arrays.asList((Connection[]) getArguments().getSerializable(ARG_CONNECTION_LIST)));
         }
+
+
     }
 
     /**
@@ -87,6 +97,8 @@ public class ConnectionsFragment extends Fragment {
             }
             recyclerView.setAdapter(new MyConnectionsRecyclerViewAdapter(mConnections, mListener));
         }
+//        getActivity().getActionBar().hide();
+
         return view;
     }
 
@@ -104,7 +116,7 @@ public class ConnectionsFragment extends Fragment {
                     + " must implement OnListFragmentInteractionListener");
         }
     }
-
+//public boolean onCreateOptions
     /**
      * OnDetach used to remove the listener.
      */

@@ -1,8 +1,11 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
+import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,7 +15,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Layout;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,6 +28,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,10 +63,12 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private Bundle mArgs;
     private FloatingActionButton mFab;
+    private ArrayList<String> mEmailList;
+    private static final String[] COUNTRIES = new String[] { "Belgium",
+            "France", "France_", "Italy", "Germany", "Spain" };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
@@ -66,6 +77,14 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab = findViewById(R.id.fab_messaging_fab);
         mFab.setEnabled(false);
         mFab.hide();
+        if(getIntent().getExtras() != null){
+            Bundle extras = getIntent().getExtras();
+
+            mEmailList = new ArrayList<String>();
+                    mEmailList = getIntent().getStringArrayListExtra("a");
+            System.out.println("there is a value in intent---------"+mEmailList.size());
+        }
+
 //        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -142,9 +161,76 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.messaging_home, menu);
-        return true;
+
+        // Inflate the search menu action bar.
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.messaging_home, menu);
+
+        // Get the search menu.
+        MenuItem searchMenu = menu.findItem(R.id.app_bar_menu_search);
+
+        // Get SearchView object.
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
+
+        // Get SearchView autocomplete object.
+        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchAutoComplete.setBackgroundColor(Color.BLUE);
+        searchAutoComplete.setTextColor(Color.GREEN);
+        searchAutoComplete.setDropDownBackgroundResource(android.R.color.holo_blue_light);
+        String dataArr[]= new String[mEmailList.size()];
+        for(int i=0; i<mEmailList.size(); i++){
+            dataArr[i]= mEmailList.get(i);
+    System.out.println("=====$$"+dataArr[i]);
+}
+        // Create a new ArrayAdapter and add data to search auto complete object.
+//        String dataArr[] = {"Apple" , "Amazon" , "Amd", "Microsoft", "Microwave", "MicroNews", "Intel", "Intelligence"};
+        ArrayAdapter<String> newsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dataArr);
+        searchAutoComplete.setAdapter(newsAdapter);
+
+        // Listen to search view item on click event.
+        searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
+                String queryString=(String)adapterView.getItemAtPosition(itemIndex);
+                searchAutoComplete.setText("" + queryString);
+                ConnectionViewFragment connectionViewFrag;
+        connectionViewFrag = new ConnectionViewFragment();
+
+        Bundle args = new Bundle();
+
+
+        args.putSerializable("email", queryString);
+
+        FloatingActionButton connectionsFab = findViewById(R.id.fab_connections_fab);
+        connectionsFab.setEnabled(false);
+        connectionsFab.hide();
+
+
+
+        connectionViewFrag.setArguments(args);
+        loadFragment(connectionViewFrag);
+            }
+        });
+
+        // Below event is triggered when submit search query.
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+////            public boolean onQueryTextSubmit(String query) {
+////                AlertDialog alertDialog = new AlertDialog.Builder(ActionBarSearchActivity.this).create();
+////                alertDialog.setMessage("Search keyword is " + query);
+////                alertDialog.show();
+////                return false;
+////            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+
+
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -169,6 +255,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             logout();
             return true;
         }
+//        else if(id == R.id.action_search){
+//            System.out.println("---------search---------");
+//        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -220,7 +309,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                   .build();
             String msg = getIntent().getExtras().getString("email");
             Credentials creds = new Credentials.Builder(msg).build();
-
+            getSupportActionBar().setTitle("Connections");
             new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleConnectionGetOnPostExecute)

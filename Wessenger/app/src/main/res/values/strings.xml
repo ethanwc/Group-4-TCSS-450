@@ -2,6 +2,7 @@
     <string name="app_name">Wessenger</string>
 
     <string name="email_registerToLogin">email</string>
+    <string name="email_list">emailArray</string>
     <string name="password_registerToLogin">password</string>
 
     <string name="login_emailHint">E-mail Address</string>
@@ -95,4 +96,5 @@
     <string name="connectionview_details_detailsbutton">Details</string>
     <string name="connectionview_details_messagebutton">Send Message</string>
 
+    <string name="search_hint">Search...:</string>
 </resources>

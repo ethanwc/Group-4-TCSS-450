@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,6 +38,7 @@ public class LoginFragment extends WaitFragment {
     private EditText mEditEmail, mEditPass;
     private String mJwt;
     private OnLoginFragmentInteractionListener mListener;
+    private String mArrayEmail[];
 
     /**
      * Required empty public constructor.
@@ -213,6 +215,13 @@ public class LoginFragment extends WaitFragment {
 
                 mJwt = resultsJSON.getString(
                         getString(R.string.keys_json_login_jwt));
+                JSONArray emailArray = resultsJSON.getJSONArray("emailArray");
+                String emailList[] = new String[emailArray.length()];
+                for(int i=0; i<emailArray.length();i++){
+                    emailList[i]=emailArray.get(i).toString();
+                }
+                mArrayEmail = emailList;
+//                System.out.println("---email length----"+ar.length());
 
                 new RegisterForPushNotificationsAsync().execute();
 
@@ -303,7 +312,7 @@ public class LoginFragment extends WaitFragment {
             boolean success = resultsJSON.getBoolean("success");
             if (success) {
                 saveCredentials(mCredentials);
-                mListener.onLoginSuccess(mCredentials, mJwt);
+                mListener.onLoginSuccess(mCredentials, mJwt, mArrayEmail);
                 return;
             } else {
                 //Saving the token wrong. Don’t switch fragments and inform the user
@@ -326,7 +335,7 @@ public class LoginFragment extends WaitFragment {
 
     public interface OnLoginFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener {
 
-        void onLoginSuccess(Credentials credentials, String jwt);
+        void onLoginSuccess(Credentials credentials, String jwt, String[] mArrayEmail);
         void onRegisterClicked();
         void onForgotPasswordClicked();
 
