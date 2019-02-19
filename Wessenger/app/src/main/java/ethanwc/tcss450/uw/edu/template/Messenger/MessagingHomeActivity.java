@@ -1,7 +1,5 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
-import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,28 +9,25 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.text.Layout;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
-import android.view.MenuInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,11 +36,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
-import ethanwc.tcss450.uw.edu.template.Main.WaitFragment.OnFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContactFragmentButtonAction;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
@@ -56,6 +49,9 @@ import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.weather.WeatherHome;
 import me.pushy.sdk.Pushy;
 
+/**
+ * Acivity class which manages functionality beyond login/registration.
+ */
 public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
@@ -70,24 +66,31 @@ public class MessagingHomeActivity extends AppCompatActivity
     private static final String[] COUNTRIES = new String[] { "Belgium",
             "France", "France_", "Italy", "Germany", "Spain" };
 
+    /**
+     * OnCreate used to instantiate the starting state of the application.
+     * @param savedInstanceState Bundle of instance state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
-        //TODO: Implement this correctly
+
+        //Hide the FAB upon main activity loading.
         mFab = findViewById(R.id.fab_messaging_fab);
         mFab.setEnabled(false);
         mFab.hide();
+
         if(getIntent().getExtras() != null){
             Bundle extras = getIntent().getExtras();
 
             mEmailList = new ArrayList<String>();
                     mEmailList = getIntent().getStringArrayListExtra("a");
-            System.out.println("there is a value in intent---------"+mEmailList.size());
+
         }
 
+        //Set on click listener for FAB
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,7 +99,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 mFab.setEnabled(false);
             }
             /**
-             * Load the desire fragment
+             * Load the desired fragment.
              * @param frag
              */
             private void loadFragment(Fragment frag){
@@ -107,7 +110,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             }
         });
 
-
+        //Setup the navigation
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -124,15 +127,15 @@ public class MessagingHomeActivity extends AppCompatActivity
             fragment = new ConversationFragment();
         }
 
-
-
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_messaging_container, fragment)
                 .commit();
 
     }
 
-
+    /**
+     * OnBackPressed used to handle minimizing of the navigation drawer and closing the FAB on inappropriate windows.
+     */
     @Override
     public void onBackPressed() {
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
@@ -143,17 +146,23 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         } else if(connectionViewFrag != null || addcontactViewFrag != null) {
-
+            //Show the FAB on correct windows when back is pressed.
             mFab.show();
             mFab.setEnabled(true);
             super.onBackPressed();
         } else {
+            //Hide the FAB on correct windows when back is pressed
             mFab.hide();
             mFab.setEnabled(false);
             super.onBackPressed();
         }
     }
 
+    /**
+     * OnCreateOptionsMenu used to help create the options menu.
+     * @param menu Encompassing menu.
+     * @return Boolean used to represent if the menu has been created.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -175,10 +184,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         String dataArr[]= new String[mEmailList.size()];
         for(int i=0; i<mEmailList.size(); i++){
             dataArr[i]= mEmailList.get(i);
-    System.out.println("=====$$"+dataArr[i]);
-}
-        // Create a new ArrayAdapter and add data to search auto complete object.
-//        String dataArr[] = {"Apple" , "Amazon" , "Amd", "Microsoft", "Microwave", "MicroNews", "Intel", "Intelligence"};
+        }
+
         ArrayAdapter<String> newsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, dataArr);
         searchAutoComplete.setAdapter(newsAdapter);
 
@@ -193,41 +200,24 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         Bundle args = new Bundle();
 
-
         args.putSerializable("email", queryString);
 
         FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
         connectionsFab.setEnabled(false);
         connectionsFab.hide();
 
-
-
         connectionViewFrag.setArguments(args);
         loadFragment(connectionViewFrag);
             }
         });
-
-        // Below event is triggered when submit search query.
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-////            public boolean onQueryTextSubmit(String query) {
-////                AlertDialog alertDialog = new AlertDialog.Builder(ActionBarSearchActivity.this).create();
-////                alertDialog.setMessage("Search keyword is " + query);
-////                alertDialog.show();
-////                return false;
-////            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-
-
-
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Method used handle when menu items are selected.
+     * @param item MenuItem used to represent the item that has been selected.
+     * @return Boolean used to represent whether the item has been selected.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -250,18 +240,20 @@ public class MessagingHomeActivity extends AppCompatActivity
             logout();
             return true;
         }
-//        else if(id == R.id.action_search){
-//            System.out.println("---------search---------");
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method used to handle when menu items are selected.
+     * @param item MenuItem used to represent the item that has been selected.
+     * @return Boolean used to represent whether the item has been selected.
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        //Chat has been chosen
         if (id == R.id.nav_global_chat) {
 
 
@@ -276,27 +268,33 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             loadFragment(chatFrag);
         }
+        //Weather home has been chosen
         if (id == R.id.nav_weather_home) {
 
             WeatherHome weatherHome = new WeatherHome();
             getSupportActionBar().setTitle("Weather Home");
             loadFragment(weatherHome);
+        //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
             loadFragment(changeLocationsFragment);
-
+        //Saved locations has been chosen
         } else if (id == R.id.nav_View_Saved_Location) {
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             loadFragment(locationFragment);
+        //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
             ConversationFragment conversationFragment = new ConversationFragment();
             getSupportActionBar().setTitle("Messaging Home");
 
 
             loadFragment(conversationFragment);
+        //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
+
+            //Build ASNC task to grab connections from web service.
             Uri uri = new Uri.Builder()
                     .scheme("https")
                     .appendPath(getString(R.string.ep_base_url))
@@ -310,9 +308,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .onPostExecute(this::handleConnectionGetOnPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
+            //Show FAB
             mFab.setEnabled(true);
             mFab.show();
-
+        //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
             getSupportActionBar().setTitle("Requests/Invitations");
@@ -364,6 +363,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .commit();
     }
 
+    /**
+     * Helper method used to hide the wait fragment.
+     */
     public void onWaitFragmentInteractionHide() {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -371,7 +373,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .commit();
     }
 
-    //
+    /**
+     * Listener method.
+     */
     @Override
     public void onSendFragmentInteraction() {
     }
@@ -405,17 +409,19 @@ public class MessagingHomeActivity extends AppCompatActivity
         args.putSerializable("first", theItem.getFirst());
         args.putSerializable("last", theItem.getLast());
         args.putSerializable("email", theItem.getEmail());
-
-
-
-
         connectionViewFrag.setArguments(args);
         loadFragment(connectionViewFrag);
 
     }
 
+    /**
+     * Method which listens for a delete button click on the connections page
+     * @param item Connection which is to be deleted.
+     */
     @Override
     public void onConnectionListDeleteFragmentInteraction(Connection item) {
+
+        //Build ASNYC  task for deleteing the contact
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -441,6 +447,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
+        //Build ASYNC task to get the new contacts list.
         uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -454,23 +461,24 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleConnectionGetOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-
-
         mFab.setEnabled(true);
         mFab.show();
 
-
-
-
     }
 
-
-
+    /**
+     *
+     * @param item
+     */
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
     }
 
+    /**
+     * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
+     * @param result String which represents the JSON result.
+     */
     private void handleConnectionGetOnPostExecute(final String result) {
         //parse JSON
         try {
@@ -480,19 +488,17 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             if (success) {
 
+                //Create list of connections
                 List<Connection> connections = new ArrayList<>();
-
-
                 for(int i = 0; i < data.length(); i++) {
 
                     String email = data.getString(i);
-
-                    connections.add(new Connection.Builder(email).build());
+                     connections.add(new Connection.Builder(email).build());
                 }
 
                 Connection[] connectionsAsArray = new Connection[connections.size()];
                 connectionsAsArray = connections.toArray(connectionsAsArray);
-
+                //Bundle connections and send as arguments
                 Bundle args = new Bundle();
                 args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
                 Fragment frag = new ConnectionsFragment();
@@ -501,14 +507,12 @@ public class MessagingHomeActivity extends AppCompatActivity
                 onWaitFragmentInteractionHide();
                 loadFragment(frag);
 
-                //Not successful return from webservice
-            } else {
 
+            } else {
+                //Not successful return from webservice
                 onWaitFragmentInteractionHide();
             }
-
-
-        } catch (JSONException e) {
+       } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
@@ -517,6 +521,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Method used to handle the tasks after the ASYNC task returns for deleting a contact.
+     * @param result String which represents the JSON result.
+     */
     private void handleConnectionDeleteOnPostExecute(final String result) {
         //parse JSON
         try {
@@ -524,25 +532,27 @@ public class MessagingHomeActivity extends AppCompatActivity
             boolean success = resultJSON.getBoolean("success");
 
             if (success) {
-
+                //Hide wait fragment to go on to next ASYNC call
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
             } else {
+                //Delete unesuccessful
                 TextView delete = findViewById(R.id.textview_connections_details_deletebutton);
                 delete.setText("Unexpected error.");
                 onWaitFragmentInteractionHide();
             }
-
-
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
             onWaitFragmentInteractionHide();
         }
-
     }
 
+    /**
+     * Method used to handle the tasks after the ASYNC task returns for adding a contact.
+     * @param result String which represents the JSON result.
+     */
     private void handleConnectionAddOnPostExecute(final String result) {
         //parse JSON
         try {
@@ -550,17 +560,16 @@ public class MessagingHomeActivity extends AppCompatActivity
             boolean success = resultJSON.getBoolean("success");
 
             if (success) {
-
+                //Hide wait fragment for next ASYNC task
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
             } else {
+                //Add was unsuccessful, let user know the email is unavailable for adding.
                 EditText email = findViewById(R.id.edittext_newcontact_email);
                 email.setText("The email entered is not in our system. Try another email.");
                 onWaitFragmentInteractionHide();
             }
-
-
-        } catch (JSONException e) {
+         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
@@ -574,9 +583,14 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Method which listens for adding a contact button.
+     * @param credentials Credentials used to represent the user information going to be added as a contact.
+     */
     @Override
     public void addContactButton(Credentials credentials) {
 
+        //Build ASYNC task for adding contact
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -602,7 +616,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-
+        //Build ASYNC task for getting new contact list
         uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -622,8 +636,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab.show();
 
     }
-
-
 
     // Deleting the Pushy device token must be done asynchronously. Good thing
     // we have something that allows us to do that.

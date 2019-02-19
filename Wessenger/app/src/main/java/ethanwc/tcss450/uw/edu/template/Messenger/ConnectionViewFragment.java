@@ -11,9 +11,8 @@ import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
 
-
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment used to represent the view of an individual contact's details.
  */
 public class ConnectionViewFragment extends Fragment {
 
