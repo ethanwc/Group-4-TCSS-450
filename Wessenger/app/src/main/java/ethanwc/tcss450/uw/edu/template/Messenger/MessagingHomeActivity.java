@@ -30,6 +30,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -413,16 +415,55 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConnectionAddFragmentInteraction() {
-        AddContactFragment addContactFrag;
-        addContactFrag = new AddContactFragment();
+    public void onConnectionListDeleteFragmentInteraction(Connection item) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_deleteContact))
+                .build();
+        String msg = getIntent().getExtras().getString("email");
+        String msg2 = item.getEmail();
 
-        mFab.setEnabled(false);
-        mFab.hide();
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("email", msg);
+            json.put("email2", msg2);
 
 
-        loadFragment(addContactFrag);
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+
+        new SendPostAsyncTask.Builder(uri.toString(),json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConnectionDeleteOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+        uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getContacts))
+                .build();
+        msg = getIntent().getExtras().getString("email");
+        Credentials creds = new Credentials.Builder(msg).build();
+        getSupportActionBar().setTitle("Connections");
+        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConnectionGetOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+
+        mFab.setEnabled(true);
+        mFab.show();
+
+
+
+
     }
+
 
 
     @Override
@@ -476,6 +517,31 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    private void handleConnectionDeleteOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            if (success) {
+
+                onWaitFragmentInteractionHide();
+                //Not successful return from webservice
+            } else {
+                TextView delete = findViewById(R.id.textview_connections_details_deletebutton);
+                delete.setText("Unexpected error.");
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
 
     private void handleConnectionAddOnPostExecute(final String result) {
         //parse JSON
@@ -488,7 +554,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
             } else {
-
+                EditText email = findViewById(R.id.edittext_newcontact_email);
+                email.setText("The email entered is not in our system. Try another email.");
                 onWaitFragmentInteractionHide();
             }
 

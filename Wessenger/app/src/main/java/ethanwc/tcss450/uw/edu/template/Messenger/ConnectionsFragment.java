@@ -140,6 +140,6 @@ public class ConnectionsFragment extends Fragment {
     public interface OnConnectionListFragmentInteractionListener {
         // TODO: Update what method does upon list interaction.
         void onConnectionListFragmentInteraction(Connection item);
-        void onConnectionAddFragmentInteraction();
+        void onConnectionListDeleteFragmentInteraction(Connection item);
     }
 }

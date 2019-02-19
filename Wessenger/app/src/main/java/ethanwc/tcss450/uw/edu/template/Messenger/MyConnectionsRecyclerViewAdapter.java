@@ -81,7 +81,9 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
         holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (null != mListener) {
+                    mListener.onConnectionListDeleteFragmentInteraction(holder.mItem);
+                }
             }
         });
 
