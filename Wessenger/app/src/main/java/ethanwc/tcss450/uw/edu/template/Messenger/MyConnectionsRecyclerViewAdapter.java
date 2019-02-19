@@ -29,7 +29,7 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
 
     MyConnectionsRecyclerViewAdapter(List<Connection> items, OnConnectionListFragmentInteractionListener listener) {
         mValues = items;
-        Collections.sort(mValues);
+
         mListener = listener;
     }
 
@@ -47,7 +47,7 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
-
+        Collections.sort(mValues);
         final boolean isExpanded = position==mExpandedPosition;
         holder.mItem = mValues.get(position);
 
@@ -123,8 +123,8 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
             details = view.findViewById(R.id.layout_connections_details);
             mDetailsButton = view.findViewById(R.id.textview_connections_details_detailsbutton);
             mDeleteButton = view.findViewById(R.id.textview_connections_details_deletebutton);
-            mUsernameView = (TextView) view.findViewById(R.id.textview_connections_email);
-            mEmailView = (TextView) view.findViewById(R.id.textview_connections_username);
+            mUsernameView = (TextView) view.findViewById(R.id.textview_connections_username);
+            mEmailView = (TextView) view.findViewById(R.id.textview_connections_email);
             mSendButton = view.findViewById(R.id.textview_connections_details_messagebutton);
 
 

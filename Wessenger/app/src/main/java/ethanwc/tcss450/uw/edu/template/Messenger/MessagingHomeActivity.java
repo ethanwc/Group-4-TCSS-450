@@ -63,6 +63,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     private Bundle mArgs;
     private FloatingActionButton mFab;
     private ArrayList<String> mEmailList;
+    private ArrayList<String> mEmails;
+    private ArrayList<String> mFirsts;
+    private ArrayList<String> mLasts;
+    private ArrayList<String> mUNames;
+    private ArrayList<Connection> mConnections;
+    private int mCounter = 0;
+
     private static final String[] COUNTRIES = new String[] { "Belgium",
             "France", "France_", "Italy", "Germany", "Spain" };
 
@@ -294,6 +301,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
 
+            mEmails = new ArrayList<>();
+            mFirsts = new ArrayList<>();
+            mLasts = new ArrayList<>();
+            mUNames = new ArrayList<>();
+            mConnections = new ArrayList<>();
             //Build ASNC task to grab connections from web service.
             Uri uri = new Uri.Builder()
                     .scheme("https")
@@ -309,6 +321,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
             //Show FAB
+
             mFab.setEnabled(true);
             mFab.show();
         //Requests/Invitations has been chosen
@@ -320,6 +333,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         drawer.closeDrawer(GravityCompat.START);
+
+
         return true;
     }
 
@@ -476,33 +491,110 @@ public class MessagingHomeActivity extends AppCompatActivity
             if (success) {
 
                 //Create list of connections
-                List<Connection> connections = new ArrayList<>();
                 for(int i = 0; i < data.length(); i++) {
 
                     String email = data.getString(i);
-                     connections.add(new Connection.Builder(email).build());
+                    //Create list of connections later, make list of emails for now
+                    mEmails.add(email);
+                    //Build ASNC task to grab connections from web service.
+
+//                     connections.add(new Connection.Builder(email).build());
+                }
+                Log.e("GOD!!!!", mEmails.toString());
+                for (int i = 0; i < mEmails.size(); i++) {
+                    Uri uri = new Uri.Builder()
+                            .scheme("https")
+                            .appendPath(getString(R.string.ep_base_url))
+                            .appendPath(getString(R.string.ep_memberinfo))
+                            .build();
+
+                    Credentials creds = new Credentials.Builder(mEmails.get(i)).build();
+                    new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                            .onPostExecute(this::handleConnectionGetInfoOnPostExecute)
+                            .onCancelled(this::handleErrorsInTask)
+                            .build().execute();
                 }
 
-                Connection[] connectionsAsArray = new Connection[connections.size()];
-                connectionsAsArray = connections.toArray(connectionsAsArray);
-                //Bundle connections and send as arguments
-                Bundle args = new Bundle();
-                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
-                Fragment frag = new ConnectionsFragment();
-                frag.setArguments(args);
+                //EACH CONNECTION IS ADDED ABOVE ^^^^^^^^^^^^ CONNECTIONS = MEMAILS
+                //
+                //
+//                List<Connection> connections = new ArrayList<>();
+//
+//                Connection[] connectionsAsArray = new Connection[connections.size()];
+//                connectionsAsArray = connections.toArray(connectionsAsArray);
+//                //Bundle connections and send as arguments
+//                Bundle args = new Bundle();
+//                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+//                Fragment frag = new ConnectionsFragment();
+//                frag.setArguments(args);
+//
+//                onWaitFragmentInteractionHide();
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragment_messaging_container, frag )
+//                        .addToBackStack(null);
+//                transaction.commit();
 
                 onWaitFragmentInteractionHide();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_messaging_container, frag )
-                        .addToBackStack(null);
-                transaction.commit();
-
-
             } else {
                 //Not successful return from webservice
                 onWaitFragmentInteractionHide();
             }
        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+
+    private void handleConnectionGetInfoOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+
+                mFirsts.add(data.getString(0));
+                mLasts.add(data.getString(1));
+                mUNames.add(data.getString(2));
+                mCounter++;
+
+
+
+                if (mCounter == mEmails.size()) {
+                    for (int i = 0; i < mEmails.size(); i++) {
+                        Connection conn = new Connection.Builder(mEmails.get(i))
+                                .addFirst(mFirsts.get(i)).addLast(mLasts.get(i))
+                                .addUsername(mUNames.get(i)).build();
+                        mConnections.add(conn);
+                    }
+                    onWaitFragmentInteractionHide();
+                    Connection[] connectionsAsArray = new Connection[mConnections.size()];
+                    connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                    //Bundle connections and send as arguments
+                    Bundle args = new Bundle();
+                    args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                    Fragment frag = new ConnectionsFragment();
+                    frag.setArguments(args);
+
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_messaging_container, frag )
+                            .addToBackStack(null);
+                    transaction.commit();
+
+                }
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
