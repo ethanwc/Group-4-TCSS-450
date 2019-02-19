@@ -5,11 +5,17 @@ import java.io.Serializable;
 /**
  * Clas to encapsulate a connection.
  */
-public class Connection implements Serializable {
+public class Connection implements Serializable, Comparable {
     private final String mFirst;
     private final String mLast;
     private final String mUsername;
     private final String mEmail;
+
+    @Override
+    public int compareTo(Object o) {
+        Connection conn = (Connection)o;
+        return mEmail.compareTo(conn.mEmail);
+    }
 
     /**
      * Helper class for building connection.

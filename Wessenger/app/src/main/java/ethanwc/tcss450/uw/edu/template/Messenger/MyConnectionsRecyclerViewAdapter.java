@@ -14,6 +14,7 @@ import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment.OnConnectio
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,12 +23,13 @@ import java.util.List;
  */
 public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyConnectionsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Connection> mValues;
+    private List<Connection> mValues;
     private final OnConnectionListFragmentInteractionListener mListener;
     private int mExpandedPosition = -1;
 
     MyConnectionsRecyclerViewAdapter(List<Connection> items, OnConnectionListFragmentInteractionListener listener) {
         mValues = items;
+        Collections.sort(mValues);
         mListener = listener;
     }
 
