@@ -514,26 +514,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
                 }
-
-                //EACH CONNECTION IS ADDED ABOVE ^^^^^^^^^^^^ CONNECTIONS = MEMAILS
-                //
-                //
-//                List<Connection> connections = new ArrayList<>();
-//
-//                Connection[] connectionsAsArray = new Connection[connections.size()];
-//                connectionsAsArray = connections.toArray(connectionsAsArray);
-//                //Bundle connections and send as arguments
-//                Bundle args = new Bundle();
-//                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
-//                Fragment frag = new ConnectionsFragment();
-//                frag.setArguments(args);
-//
-//                onWaitFragmentInteractionHide();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_messaging_container, frag )
-//                        .addToBackStack(null);
-//                transaction.commit();
-
                 onWaitFragmentInteractionHide();
             } else {
                 //Not successful return from webservice
@@ -548,7 +528,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-
+    /**
+     * Method listening for contact details button to be pressed.
+     * @param result String representing the JSON result.
+     */
     private void handleConnectionGetInfoOnPostExecute(final String result) {
         //parse JSON
         try {
@@ -557,14 +540,12 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONArray data = resultJSON.getJSONArray("message");
 
             if (success) {
-
+                //Grab contact info from JSON result
                 mFirsts.add(data.getString(0));
                 mLasts.add(data.getString(1));
                 mUNames.add(data.getString(2));
                 mCounter++;
-
-
-
+                //When done parsing begin creating list of connections
                 if (mCounter == mEmails.size()) {
                     for (int i = 0; i < mEmails.size(); i++) {
                         Connection conn = new Connection.Builder(mEmails.get(i))
@@ -572,7 +553,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                                 .addUsername(mUNames.get(i)).build();
                         mConnections.add(conn);
                     }
+
                     onWaitFragmentInteractionHide();
+                    //Bundle list of connections as arguments and load connection fragment
                     Connection[] connectionsAsArray = new Connection[mConnections.size()];
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
                     //Bundle connections and send as arguments
@@ -580,8 +563,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
                     Fragment frag = new ConnectionsFragment();
                     frag.setArguments(args);
-
-
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_messaging_container, frag )
                             .addToBackStack(null);
@@ -779,6 +760,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Method listening for change password button to be clicked.
+     */
     @Override
     public void onChangePasswordClicked() {
         getSupportActionBar().setTitle("Messaging");
