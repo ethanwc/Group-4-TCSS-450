@@ -44,6 +44,7 @@ import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment.OnFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContactFragmentButtonAction;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
@@ -58,7 +59,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
         SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener,
-        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener {
+        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener, OnNewContactFragmentButtonAction {
 
 
     private Bundle mArgs;
@@ -85,34 +86,25 @@ public class MessagingHomeActivity extends AppCompatActivity
             System.out.println("there is a value in intent---------"+mEmailList.size());
         }
 
-//        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                loadFragment(new NewMessageFragment());
-//            }
-//            private void loadFragment(Fragment frag){
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.activity_messaging_container, frag )
-//                        .addToBackStack(null);
-//                transaction.commit();
-//            }
-//        });
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new AddContactFragment());
+                mFab.hide();
+                mFab.setEnabled(false);
+            }
+            /**
+             * Load the desire fragment
+             * @param frag
+             */
+            private void loadFragment(Fragment frag){
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_messaging_container, frag )
+                        .addToBackStack(null);
+                transaction.commit();
+            }
+        });
 
-//        FloatingActionButton fab = findViewById(R.id.fab_messenging_fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                loadFragment(new NewMessageFragment());
-//            }
-//            private void loadFragment(Fragment frag){
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_messaging_container, frag )
-//                        .addToBackStack(null);
-//                getSupportActionBar().setTitle("New Message");
-//                transaction.commit();
-//            }
-//        });
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -142,12 +134,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
+        View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
 
-        } else if(connectionViewFrag != null) {
+        } else if(connectionViewFrag != null || addcontactViewFrag != null) {
 
             mFab.show();
             mFab.setEnabled(true);
@@ -420,6 +413,19 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     @Override
+    public void onConnectionAddFragmentInteraction() {
+        AddContactFragment addContactFrag;
+        addContactFrag = new AddContactFragment();
+
+        mFab.setEnabled(false);
+        mFab.hide();
+
+
+        loadFragment(addContactFrag);
+    }
+
+
+    @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
     }
@@ -454,7 +460,33 @@ public class MessagingHomeActivity extends AppCompatActivity
                 onWaitFragmentInteractionHide();
                 loadFragment(frag);
 
-            //Not successful return from webservice
+                //Not successful return from webservice
+            } else {
+
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+
+    private void handleConnectionAddOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            if (success) {
+
+                onWaitFragmentInteractionHide();
+                //Not successful return from webservice
             } else {
 
                 onWaitFragmentInteractionHide();
@@ -474,6 +506,56 @@ public class MessagingHomeActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    @Override
+    public void addContactButton(Credentials credentials) {
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_addContact))
+                .build();
+        String msg = getIntent().getExtras().getString("email");
+
+        String msg2 = credentials.getEmail2();
+        int verify = credentials.getVerify();
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("email", msg);
+            json.put("email2", msg2);
+            json.put("verify", verify);
+
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+        new SendPostAsyncTask.Builder(uri.toString(),json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConnectionAddOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+
+        uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getContacts))
+                .build();
+        msg = getIntent().getExtras().getString("email");
+
+        Credentials creds = new Credentials.Builder(msg).build();
+
+        getSupportActionBar().setTitle("Connections");
+        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConnectionGetOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+        mFab.setEnabled(true);
+        mFab.show();
+
+    }
+
 
 
     // Deleting the Pushy device token must be done asynchronously. Good thing

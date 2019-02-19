@@ -85,6 +85,15 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
 
 
 
+        holder.mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+
     }
 
     @Override
@@ -99,6 +108,7 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
         final LinearLayout details;
         final TextView mDetailsButton;
         final TextView mDeleteButton;
+        final TextView mSendButton;
         Connection mItem;
 
 
@@ -111,6 +121,8 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
             mDeleteButton = view.findViewById(R.id.textview_connections_details_deletebutton);
             mUsernameView = (TextView) view.findViewById(R.id.textview_connections_email);
             mEmailView = (TextView) view.findViewById(R.id.textview_connections_username);
+            mSendButton = view.findViewById(R.id.textview_connections_details_messagebutton);
+
 
 
         }

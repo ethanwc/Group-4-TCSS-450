@@ -28,6 +28,8 @@ public class Credentials implements Serializable {
     private final String mtempPwd;
     private final String mChangePassword;
     private final int mErrorCount;
+    private final int mVerify;
+    private final String mEmail2;
 
 
 
@@ -48,6 +50,8 @@ public class Credentials implements Serializable {
         private String mtempPwd ="";
         private String mChangePassword = "";
         private int mErrorCount = 0;
+        private int mVerify = 0;
+        private String mEmail2 = "";
 
 
         /**
@@ -123,6 +127,16 @@ public class Credentials implements Serializable {
             return this;
         }
 
+        public Builder addEmail2(final String val) {
+            mEmail2 = val;
+            return this;
+        }
+
+        public Builder addVerify(final int val) {
+            mVerify = val;
+            return this;
+        }
+
         public Builder addChangePassword(final String val) {
             mChangePassword = val;
             return this;
@@ -148,6 +162,8 @@ public class Credentials implements Serializable {
         mtempPwd = builder.mtempPwd;
         mChangePassword = builder.mChangePassword;
         mErrorCount = builder.mErrorCount;
+        mEmail2 = builder.mEmail2;
+        mVerify = builder.mVerify;
 
     }
 
@@ -186,6 +202,9 @@ public class Credentials implements Serializable {
         return mLastName;
     }
 
+    public String getEmail2() {return mEmail2;}
+
+    public int getVerify() { return mVerify;}
     /**
      * Get the email or the empty string if no first name was provided.
      * @return the email or the empty string if no first name was provided.
@@ -223,6 +242,9 @@ public class Credentials implements Serializable {
             msg.put("tempPwd", getTempPwd());
             msg.put("changepassword", getChangePassword());
             msg.put("error", getErrorCount());
+            msg.put("email2", getEmail2());
+            msg.put("verify", getVerify());
+
         } catch (JSONException e) {
             Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
         }

@@ -16,6 +16,9 @@
     <string name="new_user_nickname">NickName</string>
     <string name="new_user_register">Register</string>
     <string name="new_user_Log_In">Log In</string>
+    <string name="new_contact_connections">Connections</string>
+    <string name="new_contact_add">Add</string>
+    <string name="addcontact_prompt">Enter Connection\'s Email</string>
     <string name="title_activity_messaging_home">Messaging</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -97,4 +100,7 @@
     <string name="connectionview_details_messagebutton">Send Message</string>
 
     <string name="search_hint">Search...:</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
