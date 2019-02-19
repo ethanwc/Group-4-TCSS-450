@@ -447,20 +447,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-        //Build ASYNC task to get the new contacts list.
-        uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_getContacts))
-                .build();
-        msg = getIntent().getExtras().getString("email");
-        Credentials creds = new Credentials.Builder(msg).build();
-        getSupportActionBar().setTitle("Connections");
-        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleConnectionGetOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
+
         mFab.setEnabled(true);
         mFab.show();
 
@@ -505,7 +492,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 frag.setArguments(args);
 
                 onWaitFragmentInteractionHide();
-                loadFragment(frag);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_messaging_container, frag )
+                        .addToBackStack(null);
+                transaction.commit();
 
 
             } else {
@@ -532,19 +522,37 @@ public class MessagingHomeActivity extends AppCompatActivity
             boolean success = resultJSON.getBoolean("success");
 
             if (success) {
+                //Build ASYNC task to get the new contacts list.
+                Uri uri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_getContacts))
+                        .build();
+                String msg = getIntent().getExtras().getString("email");
+                Credentials creds = new Credentials.Builder(msg).build();
+                getSupportActionBar().setTitle("Connections");
+                new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                        .onPreExecute(this::onWaitFragmentInteractionShow)
+                        .onPostExecute(this::handleConnectionGetOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
                 //Hide wait fragment to go on to next ASYNC call
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
             } else {
                 //Delete unesuccessful
                 TextView delete = findViewById(R.id.textview_connections_details_deletebutton);
-                delete.setText("Unexpected error.");
+                delete.setError("Unexpected error.");
+                mFab.hide();
+                mFab.setEnabled(false);
                 onWaitFragmentInteractionHide();
             }
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
+            mFab.hide();
+            mFab.setEnabled(false);
             onWaitFragmentInteractionHide();
         }
     }
@@ -561,18 +569,40 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             if (success) {
                 //Hide wait fragment for next ASYNC task
+                //Build ASYNC task for getting new contact list
+                Uri uri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_getContacts))
+                        .build();
+                String msg = getIntent().getExtras().getString("email");
+
+                Credentials creds = new Credentials.Builder(msg).build();
+
+                getSupportActionBar().setTitle("Connections");
+                new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                        .onPreExecute(this::onWaitFragmentInteractionShow)
+                        .onPostExecute(this::handleConnectionGetOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
+
+
             } else {
                 //Add was unsuccessful, let user know the email is unavailable for adding.
                 EditText email = findViewById(R.id.edittext_newcontact_email);
-                email.setText("The email entered is not in our system. Try another email.");
+                email.setError(resultJSON.getString("message"));
+                mFab.hide();
+                mFab.setEnabled(false);
                 onWaitFragmentInteractionHide();
             }
          } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
+            mFab.hide();
+            mFab.setEnabled(false);
             onWaitFragmentInteractionHide();
         }
 
@@ -616,22 +646,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-        //Build ASYNC task for getting new contact list
-        uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_getContacts))
-                .build();
-        msg = getIntent().getExtras().getString("email");
 
-        Credentials creds = new Credentials.Builder(msg).build();
-
-        getSupportActionBar().setTitle("Connections");
-        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleConnectionGetOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
         mFab.setEnabled(true);
         mFab.show();
 
