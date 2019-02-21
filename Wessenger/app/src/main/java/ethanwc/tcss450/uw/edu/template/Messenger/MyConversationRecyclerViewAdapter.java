@@ -7,27 +7,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment.OnListFragmentInteractionListener;
-import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
-
+import java.util.ArrayList;
 import java.util.List;
 
+import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.model.Message;
+
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ * Class which handles creating and populating hte list for hte recyclerview.
  */
 public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyConversationRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private List<Message> mValues;
+    private final ConversationFragment.OnMessageListFragmentInteractionListener mListener;
 
-    public MyConversationRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyConversationRecyclerViewAdapter(List<Message> items, ConversationFragment.OnMessageListFragmentInteractionListener listener) {
         mValues = items;
+        if (null == mValues) {
+            mValues = new ArrayList<>();
+            mValues.add(new Message.Builder("").build());
+        }
         mListener = listener;
     }
 
+    /**
+     * OnCreatViewHolder which is used to instantiate the vies of each menu item.
+     * @param parent ViewGroup.
+     * @param viewType int.
+     * @return ViewHolder used to hold all the views to be used.
+     */
     @Override
     @NonNull
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,24 +44,34 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
         return new ViewHolder(view);
     }
 
+    /**
+     * OnBindViewHolder used to instantiate textfields and create button listener.
+     * @param holder ViewHolder holding the views.
+     * @param position Int position in the viewholder.
+     */
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        //holder.mIdView.setText(mValues.get(position).id);
-        //holder.mContentView.setText(mValues.get(position).content);
+        holder.mUsers.setText(mValues.get(position).getUsers());
+        holder.mMessage.setText(mValues.get(position).getMessage());
 
+        //Create listener for click on message.
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onMessageListFragmentInteraction(holder.mItem);
                 }
             }
         });
     }
 
+    /**
+     * Helper method used to get the size of the list.
+     * @return int used to represent the list size.
+     */
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -61,21 +79,16 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        //public final TextView mIdView;
-        final TextView mContentView;
-        DummyItem mItem;
+        final TextView mUsers;
+        Message mItem;
+        final TextView mMessage;
 
         ViewHolder(View view) {
             super(view);
             mView = view;
             //mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = view.findViewById(R.id.content);
-        }
-
-        @Override
-        @NonNull
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            mUsers = view.findViewById(R.id.textview_conversation_users);
+            mMessage = view.findViewById(R.id.textview_conversation_message);
         }
     }
 }

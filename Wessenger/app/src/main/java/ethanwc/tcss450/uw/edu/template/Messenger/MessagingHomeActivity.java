@@ -44,6 +44,7 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.model.Message;
 import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
 import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.weather.WeatherHome;
@@ -54,7 +55,7 @@ import me.pushy.sdk.Pushy;
  */
 public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
-        ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
+        ConversationFragment.OnMessageListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
         SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener,
         ChangePasswordFragment.OnChangePasswordFragmentInteractionListener, OnNewContactFragmentButtonAction {
@@ -280,24 +281,42 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             WeatherHome weatherHome = new WeatherHome();
             getSupportActionBar().setTitle("Weather Home");
+            mFab.hide();
+            mFab.setEnabled(false);
             loadFragment(weatherHome);
         //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
+            mFab.hide();
+            mFab.setEnabled(false);
             loadFragment(changeLocationsFragment);
         //Saved locations has been chosen
         } else if (id == R.id.nav_View_Saved_Location) {
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
+            mFab.hide();
+            mFab.setEnabled(false);
             loadFragment(locationFragment);
         //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
-            ConversationFragment conversationFragment = new ConversationFragment();
-            getSupportActionBar().setTitle("Messaging Home");
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getconversations))
+                    .build();
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+            getSupportActionBar().setTitle("Conversations");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleConversationGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+            //Show FAB
 
-
-            loadFragment(conversationFragment);
+            mFab.setEnabled(true);
+            mFab.show();
         //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
 
@@ -468,13 +487,80 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
     /**
-     *
-     * @param item
+     * Method which listens for adding a contact button.
+     * @param credentials Credentials used to represent the user information going to be added as a contact.
      */
+    @Override
+    public void addContactButton(Credentials credentials) {
+
+        //Build ASYNC task for adding contact
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_addContact))
+                .build();
+        String msg = getIntent().getExtras().getString("email");
+
+        String msg2 = credentials.getEmail2();
+        int verify = credentials.getVerify();
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("email", msg);
+            json.put("email2", msg2);
+            json.put("verify", verify);
+
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+        new SendPostAsyncTask.Builder(uri.toString(),json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConnectionAddOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+
+        mFab.setEnabled(true);
+        mFab.show();
+
+    }
+
+    @Override
+    public void onMessageListFragmentInteraction(Message item) {
+
+        ChatFragment chatFrag;
+        chatFrag = new ChatFragment();
+
+        Bundle args = new Bundle();
+        mFab.setEnabled(false);
+        mFab.hide();
+
+        chatFrag.setArguments(args);
+
+        //LOAD CHAT FRAGMENT CORRECTLY
+
+        //loadFragment(chatFrag);
+    }
+
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
+    }
+
+    /**
+     * Method listening for change password button to be clicked.
+     */
+    @Override
+    public void onChangePasswordClicked() {
+        getSupportActionBar().setTitle("Messaging");
+        loadFragment(new ConversationFragment());
     }
 
     /**
@@ -498,9 +584,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     mEmails.add(email);
                     //Build ASNC task to grab connections from web service.
 
-//                     connections.add(new Connection.Builder(email).build());
                 }
-                Log.e("GOD!!!!", mEmails.toString());
                 for (int i = 0; i < mEmails.size(); i++) {
                     Uri uri = new Uri.Builder()
                             .scheme("https")
@@ -519,7 +603,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 //Not successful return from webservice
                 onWaitFragmentInteractionHide();
             }
-       } catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
@@ -527,6 +611,60 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
     }
+
+    /**
+     * Helper method used to handle the tasks after the async task has been completed for receiving message list.
+     * @param result String which represents the JSON result.
+     */
+    private void handleConversationGetOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            //GET CORRECT JSON RESULT KEY
+
+//            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+
+                //HANDLE LIST LOGISTICS (MAYBE ALREADY HANDLED?)
+
+//                //Create list of conversations
+//                for(int i = 0; i < data.length(); i++) {
+//
+//                    String message = data.getString(i);
+//                    JSONArray users = data.getJSONArray(i);
+//
+//                    //Build ASNC task to grab connections from web service.
+//
+//                }
+                onWaitFragmentInteractionHide();
+//
+//                Connection[] conversationsAsArray = new Connection[data.size()];
+//                conversationsAsArray = data.toArray(conversationsAsArray);
+//                //Bundle connections and send as arguments
+//                Bundle args = new Bundle();
+//                args.putSerializable(ConversationFragment.ARG_MESSAGE_LIST, conversationsAsArray);
+//                Fragment frag = new ConversationFragment();
+//                frag.setArguments(args);
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragment_messaging_container, frag )
+//                        .addToBackStack(null);
+//                transaction.commit();
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
 
     /**
      * Method listening for contact details button to be pressed.
@@ -681,50 +819,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    /**
-     * Method which listens for adding a contact button.
-     * @param credentials Credentials used to represent the user information going to be added as a contact.
-     */
-    @Override
-    public void addContactButton(Credentials credentials) {
-
-        //Build ASYNC task for adding contact
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_addContact))
-                .build();
-        String msg = getIntent().getExtras().getString("email");
-
-        String msg2 = credentials.getEmail2();
-        int verify = credentials.getVerify();
-        JSONObject json = new JSONObject();
-        try {
-
-            json.put("email", msg);
-            json.put("email2", msg2);
-            json.put("verify", verify);
-
-        } catch (JSONException e) {
-            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
-        }
-        new SendPostAsyncTask.Builder(uri.toString(),json)
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleConnectionAddOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-
-
-        mFab.setEnabled(true);
-        mFab.show();
-
-    }
-
     // Deleting the Pushy device token must be done asynchronously. Good thing
     // we have something that allows us to do that.
     class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
@@ -760,12 +854,4 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * Method listening for change password button to be clicked.
-     */
-    @Override
-    public void onChangePasswordClicked() {
-        getSupportActionBar().setTitle("Messaging");
-        loadFragment(new ConversationFragment());
-    }
 }
