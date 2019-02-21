@@ -346,8 +346,15 @@ public class MessagingHomeActivity extends AppCompatActivity
         //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
+            RequestsFragment requestsFragment = new RequestsFragment();
+            InvReqFragment invReqFragment = new InvReqFragment();
             getSupportActionBar().setTitle("Requests/Invitations");
-            loadFragment(invitationsFragment);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_messaging_container, invReqFragment)
+                    .replace(R.id.fragment_messaging_inv_container, invitationsFragment )
+                    .replace(R.id.fragment_messaging_req_container, requestsFragment )
+                    .addToBackStack(null);
+            transaction.commit();
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
