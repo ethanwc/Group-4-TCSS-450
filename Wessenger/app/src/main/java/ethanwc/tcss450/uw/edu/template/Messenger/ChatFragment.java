@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -91,6 +92,28 @@ public class ChatFragment extends Fragment {
         mMessageOutputTextView = rootLayout.findViewById(R.id.text_chat_message_display);
         mMessageInputEditText = rootLayout.findViewById(R.id.edit_chat_message_input);
         rootLayout.findViewById(R.id.button_send_message).setOnClickListener(this::handleSendClick);
+
+        String getAll = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_messaging_base))
+                .appendPath(getString(R.string.ep_messaging_getAll))
+                .build()
+                .toString();
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("chatId", CHAT_ID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new SendPostAsyncTask.Builder(getAll, messageJson)
+                .onPostExecute(this::getAllHistory)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken)
+                .build().execute();
+
         return rootLayout;
     }
 
@@ -157,6 +180,27 @@ public class ChatFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
+    //output the chat history result
+    private void getAllHistory(final String result) {
+        try {
+            //This is the result from the web service
+            JSONObject res = new JSONObject(result);
+            if(res.has("messages")) {
+
+                JSONArray chatHistoryArray = res.getJSONArray("messages");
+                String chatHistoryText = "";
+                //Log.e("history: ", "  " + res.get("messages"));
+                for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
+                    chatHistoryText += chatHistoryArray.getString(i) + "\n";
+                }
+                mMessageOutputTextView.setText(chatHistoryText);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
