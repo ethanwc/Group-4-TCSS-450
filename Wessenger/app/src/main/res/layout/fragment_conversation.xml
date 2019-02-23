@@ -1,59 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_messagelist_conversation"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:orientation="vertical"
-android:padding="5dp"
-android:theme="@style/AppTheme">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/fragment_messagelist_conversation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:theme="@style/AppTheme">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardview_mesasgelist_conversation_view"
-        android:layout_width="317dp"
-        android:layout_height="match_parent"
-        android:layout_margin="5dp"
-        android:padding="10dp"
-        android:theme="@style/AppTheme"
-        app:cardBackgroundColor="@color/backgroundDark"
-        app:cardCornerRadius="20dp"
-        app:cardPreventCornerOverlap="true">
-
-        <LinearLayout
-            android:layout_width="293dp"
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardview_mesasgelist_connections_view"
+            android:layout_width="317dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="10dp"
-            tools:layout_editor_absoluteY="10dp">
+            android:padding="10dp"
+            android:theme="@style/AppTheme"
+            app:cardBackgroundColor="@color/backgroundDark"
+            app:cardCornerRadius="20dp"
+            app:cardPreventCornerOverlap="true">
 
-            <TextView
-                android:id="@+id/textview_conversations_usernames"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="293dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="Recipient1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.7" />
+                android:layout_margin="10dp"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteX="10dp"
+                tools:layout_editor_absoluteY="10dp">
 
-            <TextView
-                android:id="@+id/textview_conversations_messagepreview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="This is a preview of a message that would be gotten from the full message."
-                android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/textview_conversation_users"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/weatherText"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/textview_connections_username"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/textview_conversation_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
 
-        </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+            </LinearLayout>
 
-</LinearLayout>
 
+        </android.support.v7.widget.CardView>
+
+
+    </LinearLayout>

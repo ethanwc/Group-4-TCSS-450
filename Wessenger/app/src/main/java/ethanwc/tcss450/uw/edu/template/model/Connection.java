@@ -14,7 +14,7 @@ public class Connection implements Serializable, Comparable {
     @Override
     public int compareTo(Object o) {
         Connection conn = (Connection)o;
-        return mEmail.compareTo(conn.mEmail);
+        return mUsername.compareTo(conn.mUsername);
     }
 
     /**

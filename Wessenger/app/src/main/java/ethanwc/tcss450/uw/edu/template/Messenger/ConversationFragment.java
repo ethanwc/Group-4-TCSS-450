@@ -11,23 +11,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.Message;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnMessageListFragmentInteractionListener}
  * interface.
  */
 public class ConversationFragment extends Fragment {
+
+    public static final String ARG_MESSAGE_LIST = "messages list";
+    private List<Message> mMessages;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnMessageListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,7 +59,7 @@ public class ConversationFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mMessages = new ArrayList<Message> (Arrays.asList((Message[]) getArguments().getSerializable(ARG_MESSAGE_LIST)));
         }
     }
 
@@ -77,7 +85,8 @@ public class ConversationFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyConversationRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            recyclerView.setAdapter(new MyConversationRecyclerViewAdapter(mMessages, mListener));
         }
         return view;
     }
@@ -89,11 +98,11 @@ public class ConversationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnMessageListFragmentInteractionListener) {
+            mListener = (OnMessageListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnMessageListFragmentInteractionListener");
         }
     }
 
@@ -116,8 +125,7 @@ public class ConversationFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update what method does upon list interaction.
-        void onListFragmentInteraction(DummyItem item);
+    public interface OnMessageListFragmentInteractionListener {
+        void onMessageListFragmentInteraction(Message item);
     }
 }

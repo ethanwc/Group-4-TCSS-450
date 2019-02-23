@@ -44,6 +44,7 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.model.Message;
 import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
 import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.weather.WeatherHome;
@@ -54,7 +55,7 @@ import me.pushy.sdk.Pushy;
  */
 public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
-        ConversationFragment.OnListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
+        ConversationFragment.OnMessageListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnListFragmentInteractionListener, RequestsFragment.OnListFragmentInteractionListener,
         SavedLocationFragment.OnListFragmentInteractionListener, WeatherHome.OnFragmentInteractionListener,
         ChangePasswordFragment.OnChangePasswordFragmentInteractionListener, OnNewContactFragmentButtonAction {
@@ -63,6 +64,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     private Bundle mArgs;
     private FloatingActionButton mFab;
     private ArrayList<String> mEmailList;
+    private ArrayList<String> mEmails;
+    private ArrayList<String> mFirsts;
+    private ArrayList<String> mLasts;
+    private ArrayList<String> mUNames;
+    private ArrayList<Connection> mConnections;
+    private int mCounter = 0;
+
     private static final String[] COUNTRIES = new String[] { "Belgium",
             "France", "France_", "Italy", "Germany", "Spain" };
 
@@ -273,27 +281,50 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             WeatherHome weatherHome = new WeatherHome();
             getSupportActionBar().setTitle("Weather Home");
+            mFab.hide();
+            mFab.setEnabled(false);
             loadFragment(weatherHome);
         //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
+            mFab.hide();
+            mFab.setEnabled(false);
             loadFragment(changeLocationsFragment);
         //Saved locations has been chosen
         } else if (id == R.id.nav_View_Saved_Location) {
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
+            mFab.hide();
+            mFab.setEnabled(false);
             loadFragment(locationFragment);
         //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
-            ConversationFragment conversationFragment = new ConversationFragment();
-            getSupportActionBar().setTitle("Messaging Home");
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getconversations))
+                    .build();
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+            getSupportActionBar().setTitle("Conversations");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleConversationGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+            //Show FAB
 
-
-            loadFragment(conversationFragment);
+            mFab.setEnabled(true);
+            mFab.show();
         //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
 
+            mEmails = new ArrayList<>();
+            mFirsts = new ArrayList<>();
+            mLasts = new ArrayList<>();
+            mUNames = new ArrayList<>();
+            mConnections = new ArrayList<>();
             //Build ASNC task to grab connections from web service.
             Uri uri = new Uri.Builder()
                     .scheme("https")
@@ -309,17 +340,27 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
             //Show FAB
+
             mFab.setEnabled(true);
             mFab.show();
         //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
+            RequestsFragment requestsFragment = new RequestsFragment();
+            InvReqFragment invReqFragment = new InvReqFragment();
             getSupportActionBar().setTitle("Requests/Invitations");
-            loadFragment(invitationsFragment);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_messaging_container, invReqFragment)
+                    .replace(R.id.fragment_messaging_inv_container, invitationsFragment )
+                    .replace(R.id.fragment_messaging_req_container, requestsFragment )
+                    .addToBackStack(null);
+            transaction.commit();
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         drawer.closeDrawer(GravityCompat.START);
+
+
         return true;
     }
 
@@ -447,136 +488,12 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-        //Build ASYNC task to get the new contacts list.
-        uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_getContacts))
-                .build();
-        msg = getIntent().getExtras().getString("email");
-        Credentials creds = new Credentials.Builder(msg).build();
-        getSupportActionBar().setTitle("Connections");
-        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleConnectionGetOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
+
         mFab.setEnabled(true);
         mFab.show();
 
     }
 
-    /**
-     *
-     * @param item
-     */
-    @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-
-    }
-
-    /**
-     * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
-     * @param result String which represents the JSON result.
-     */
-    private void handleConnectionGetOnPostExecute(final String result) {
-        //parse JSON
-        try {
-            JSONObject resultJSON = new JSONObject(result);
-            boolean success = resultJSON.getBoolean("success");
-            JSONArray data = resultJSON.getJSONArray("message");
-
-            if (success) {
-
-                //Create list of connections
-                List<Connection> connections = new ArrayList<>();
-                for(int i = 0; i < data.length(); i++) {
-
-                    String email = data.getString(i);
-                     connections.add(new Connection.Builder(email).build());
-                }
-
-                Connection[] connectionsAsArray = new Connection[connections.size()];
-                connectionsAsArray = connections.toArray(connectionsAsArray);
-                //Bundle connections and send as arguments
-                Bundle args = new Bundle();
-                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
-                Fragment frag = new ConnectionsFragment();
-                frag.setArguments(args);
-
-                onWaitFragmentInteractionHide();
-                loadFragment(frag);
-
-
-            } else {
-                //Not successful return from webservice
-                onWaitFragmentInteractionHide();
-            }
-       } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("SUPER!!", e.getMessage());
-            //notify user
-            onWaitFragmentInteractionHide();
-        }
-
-    }
-
-    /**
-     * Method used to handle the tasks after the ASYNC task returns for deleting a contact.
-     * @param result String which represents the JSON result.
-     */
-    private void handleConnectionDeleteOnPostExecute(final String result) {
-        //parse JSON
-        try {
-            JSONObject resultJSON = new JSONObject(result);
-            boolean success = resultJSON.getBoolean("success");
-
-            if (success) {
-                //Hide wait fragment to go on to next ASYNC call
-                onWaitFragmentInteractionHide();
-                //Not successful return from webservice
-            } else {
-                //Delete unesuccessful
-                TextView delete = findViewById(R.id.textview_connections_details_deletebutton);
-                delete.setText("Unexpected error.");
-                onWaitFragmentInteractionHide();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("SUPER!!", e.getMessage());
-            //notify user
-            onWaitFragmentInteractionHide();
-        }
-    }
-
-    /**
-     * Method used to handle the tasks after the ASYNC task returns for adding a contact.
-     * @param result String which represents the JSON result.
-     */
-    private void handleConnectionAddOnPostExecute(final String result) {
-        //parse JSON
-        try {
-            JSONObject resultJSON = new JSONObject(result);
-            boolean success = resultJSON.getBoolean("success");
-
-            if (success) {
-                //Hide wait fragment for next ASYNC task
-                onWaitFragmentInteractionHide();
-                //Not successful return from webservice
-            } else {
-                //Add was unsuccessful, let user know the email is unavailable for adding.
-                EditText email = findViewById(R.id.edittext_newcontact_email);
-                email.setText("The email entered is not in our system. Try another email.");
-                onWaitFragmentInteractionHide();
-            }
-         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("SUPER!!", e.getMessage());
-            //notify user
-            onWaitFragmentInteractionHide();
-        }
-
-    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -616,24 +533,296 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-        //Build ASYNC task for getting new contact list
-        uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_getContacts))
-                .build();
-        msg = getIntent().getExtras().getString("email");
 
-        Credentials creds = new Credentials.Builder(msg).build();
-
-        getSupportActionBar().setTitle("Connections");
-        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleConnectionGetOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
         mFab.setEnabled(true);
         mFab.show();
+
+    }
+
+    @Override
+    public void onMessageListFragmentInteraction(Message item) {
+
+        ChatFragment chatFrag;
+        chatFrag = new ChatFragment();
+
+        Bundle args = new Bundle();
+        mFab.setEnabled(false);
+        mFab.hide();
+
+        chatFrag.setArguments(args);
+
+        //LOAD CHAT FRAGMENT CORRECTLY
+
+        //loadFragment(chatFrag);
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
+    /**
+     * Method listening for change password button to be clicked.
+     */
+    @Override
+    public void onChangePasswordClicked() {
+        getSupportActionBar().setTitle("Messaging");
+        loadFragment(new ConversationFragment());
+    }
+
+    /**
+     * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
+     * @param result String which represents the JSON result.
+     */
+    private void handleConnectionGetOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+
+                //Create list of connections
+                for(int i = 0; i < data.length(); i++) {
+
+                    String email = data.getString(i);
+                    //Create list of connections later, make list of emails for now
+                    mEmails.add(email);
+                    //Build ASNC task to grab connections from web service.
+
+                }
+                for (int i = 0; i < mEmails.size(); i++) {
+                    Uri uri = new Uri.Builder()
+                            .scheme("https")
+                            .appendPath(getString(R.string.ep_base_url))
+                            .appendPath(getString(R.string.ep_memberinfo))
+                            .build();
+
+                    Credentials creds = new Credentials.Builder(mEmails.get(i)).build();
+                    new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                            .onPostExecute(this::handleConnectionGetInfoOnPostExecute)
+                            .onCancelled(this::handleErrorsInTask)
+                            .build().execute();
+                }
+                onWaitFragmentInteractionHide();
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+    /**
+     * Helper method used to handle the tasks after the async task has been completed for receiving message list.
+     * @param result String which represents the JSON result.
+     */
+    private void handleConversationGetOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            //GET CORRECT JSON RESULT KEY
+
+//            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+
+                //HANDLE LIST LOGISTICS (MAYBE ALREADY HANDLED?)
+
+//                //Create list of conversations
+//                for(int i = 0; i < data.length(); i++) {
+//
+//                    String message = data.getString(i);
+//                    JSONArray users = data.getJSONArray(i);
+//
+//                    //Build ASNC task to grab connections from web service.
+//
+//                }
+                onWaitFragmentInteractionHide();
+//
+//                Connection[] conversationsAsArray = new Connection[data.size()];
+//                conversationsAsArray = data.toArray(conversationsAsArray);
+//                //Bundle connections and send as arguments
+//                Bundle args = new Bundle();
+//                args.putSerializable(ConversationFragment.ARG_MESSAGE_LIST, conversationsAsArray);
+//                Fragment frag = new ConversationFragment();
+//                frag.setArguments(args);
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragment_messaging_container, frag )
+//                        .addToBackStack(null);
+//                transaction.commit();
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+
+    /**
+     * Method listening for contact details button to be pressed.
+     * @param result String representing the JSON result.
+     */
+    private void handleConnectionGetInfoOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+                //Grab contact info from JSON result
+                mFirsts.add(data.getString(0));
+                mLasts.add(data.getString(1));
+                mUNames.add(data.getString(2));
+                mCounter++;
+                //When done parsing begin creating list of connections
+                if (mCounter == mEmails.size()) {
+                    for (int i = 0; i < mEmails.size(); i++) {
+                        Connection conn = new Connection.Builder(mEmails.get(i))
+                                .addFirst(mFirsts.get(i)).addLast(mLasts.get(i))
+                                .addUsername(mUNames.get(i)).build();
+                        mConnections.add(conn);
+                    }
+
+                    onWaitFragmentInteractionHide();
+                    //Bundle list of connections as arguments and load connection fragment
+                    Connection[] connectionsAsArray = new Connection[mConnections.size()];
+                    connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                    //Bundle connections and send as arguments
+                    Bundle args = new Bundle();
+                    args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                    Fragment frag = new ConnectionsFragment();
+                    frag.setArguments(args);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_messaging_container, frag )
+                            .addToBackStack(null);
+                    transaction.commit();
+
+                }
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+    /**
+     * Method used to handle the tasks after the ASYNC task returns for deleting a contact.
+     * @param result String which represents the JSON result.
+     */
+    private void handleConnectionDeleteOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            if (success) {
+                //Build ASYNC task to get the new contacts list.
+                Uri uri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_getContacts))
+                        .build();
+                String msg = getIntent().getExtras().getString("email");
+                Credentials creds = new Credentials.Builder(msg).build();
+                getSupportActionBar().setTitle("Connections");
+                new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                        .onPreExecute(this::onWaitFragmentInteractionShow)
+                        .onPostExecute(this::handleConnectionGetOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
+                //Hide wait fragment to go on to next ASYNC call
+                onWaitFragmentInteractionHide();
+                //Not successful return from webservice
+            } else {
+                //Delete unesuccessful
+                TextView delete = findViewById(R.id.textview_connections_details_deletebutton);
+                delete.setError("Unexpected error.");
+                mFab.hide();
+                mFab.setEnabled(false);
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            mFab.hide();
+            mFab.setEnabled(false);
+            onWaitFragmentInteractionHide();
+        }
+    }
+
+    /**
+     * Method used to handle the tasks after the ASYNC task returns for adding a contact.
+     * @param result String which represents the JSON result.
+     */
+    private void handleConnectionAddOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            if (success) {
+                //Hide wait fragment for next ASYNC task
+                //Build ASYNC task for getting new contact list
+                Uri uri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_getContacts))
+                        .build();
+                String msg = getIntent().getExtras().getString("email");
+
+                Credentials creds = new Credentials.Builder(msg).build();
+
+                getSupportActionBar().setTitle("Connections");
+                new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                        .onPreExecute(this::onWaitFragmentInteractionShow)
+                        .onPostExecute(this::handleConnectionGetOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
+                onWaitFragmentInteractionHide();
+                //Not successful return from webservice
+
+
+            } else {
+                //Add was unsuccessful, let user know the email is unavailable for adding.
+                EditText email = findViewById(R.id.edittext_newcontact_email);
+                email.setError(resultJSON.getString("message"));
+                mFab.hide();
+                mFab.setEnabled(false);
+                onWaitFragmentInteractionHide();
+            }
+         } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            mFab.hide();
+            mFab.setEnabled(false);
+            onWaitFragmentInteractionHide();
+        }
 
     }
 
@@ -672,9 +861,4 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onChangePasswordClicked() {
-        getSupportActionBar().setTitle("Messaging");
-        loadFragment(new ConversationFragment());
-    }
 }

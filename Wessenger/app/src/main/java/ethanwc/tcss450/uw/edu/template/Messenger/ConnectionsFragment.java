@@ -1,6 +1,5 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,22 +7,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 
 /**
@@ -37,9 +29,7 @@ public class ConnectionsFragment extends Fragment {
     public static final String ARG_CONNECTION_LIST = "connections list";
     private List<Connection> mConnections;
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnConnectionListFragmentInteractionListener mListener;
 
@@ -51,9 +41,6 @@ public class ConnectionsFragment extends Fragment {
     }
 
 
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static ConnectionsFragment newInstance(int columnCount) {
         ConnectionsFragment fragment = new ConnectionsFragment();
         Bundle args = new Bundle();
@@ -62,6 +49,10 @@ public class ConnectionsFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * OnCreate used to populate the list of connections.
+     * @param savedInstanceState Bundle.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +88,7 @@ public class ConnectionsFragment extends Fragment {
             }
             recyclerView.setAdapter(new MyConnectionsRecyclerViewAdapter(mConnections, mListener));
         }
-//        getActivity().getActionBar().hide();
+
 
         return view;
     }
@@ -138,7 +129,6 @@ public class ConnectionsFragment extends Fragment {
      */
     @SuppressWarnings("EmptyMethod")
     public interface OnConnectionListFragmentInteractionListener {
-        // TODO: Update what method does upon list interaction.
         void onConnectionListFragmentInteraction(Connection item);
         void onConnectionListDeleteFragmentInteraction(Connection item);
     }
