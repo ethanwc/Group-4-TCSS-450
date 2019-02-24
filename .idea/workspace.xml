@@ -7,8 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7f45b21d-ff4a-43e1-88e2-310f5f754f5a" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Group-4-TCSS-450.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Group-4-TCSS-450.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Group-4-TCSS-450.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -56,6 +55,15 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="-1271077186">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="1" />
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -65,7 +73,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="22" />
     <option name="width" value="1440" />
     <option name="height" value="821" />
@@ -81,129 +89,25 @@
         <subPane>
           <expand>
             <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
+              <item name="messenger" type="b2602c69:ProjectViewProjectNode" />
+              <item name="messenger" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
+              <item name="messenger" type="b2602c69:ProjectViewProjectNode" />
+              <item name="messenger" type="462c0819:PsiDirectoryNode" />
               <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="ethanwc" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="ethanwc" type="462c0819:PsiDirectoryNode" />
-              <item name="tcss450" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="ethanwc" type="462c0819:PsiDirectoryNode" />
-              <item name="tcss450" type="462c0819:PsiDirectoryNode" />
-              <item name="uw" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="ethanwc" type="462c0819:PsiDirectoryNode" />
-              <item name="tcss450" type="462c0819:PsiDirectoryNode" />
-              <item name="uw" type="462c0819:PsiDirectoryNode" />
-              <item name="edu" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="ethanwc" type="462c0819:PsiDirectoryNode" />
-              <item name="tcss450" type="462c0819:PsiDirectoryNode" />
-              <item name="uw" type="462c0819:PsiDirectoryNode" />
-              <item name="edu" type="462c0819:PsiDirectoryNode" />
-              <item name="template" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="rr" type="b2602c69:ProjectViewProjectNode" />
-              <item name="rr" type="462c0819:PsiDirectoryNode" />
-              <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="ethanwc" type="462c0819:PsiDirectoryNode" />
-              <item name="tcss450" type="462c0819:PsiDirectoryNode" />
-              <item name="uw" type="462c0819:PsiDirectoryNode" />
-              <item name="edu" type="462c0819:PsiDirectoryNode" />
-              <item name="template" type="462c0819:PsiDirectoryNode" />
-              <item name="Main" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Wessenger/app" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Wessenger" />
     <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
   </component>
   <component name="RunDashboard">
@@ -252,11 +156,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1440" height="821" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18603411" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Captures" order="2" weight="0.25" />
+      <window_info id="Captures" order="2" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
       <window_info id="Image Layers" order="5" />

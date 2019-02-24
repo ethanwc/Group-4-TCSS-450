@@ -19,4 +19,5 @@
     <string name="ep_deleteContact">deletecontact</string>
     <string name="ep_memberinfo">memberinfo</string>
     <string name="ep_getconversations">getconversations</string>
+    <string name="ep_getchatmembers">getchatmembers</string>
 </resources>

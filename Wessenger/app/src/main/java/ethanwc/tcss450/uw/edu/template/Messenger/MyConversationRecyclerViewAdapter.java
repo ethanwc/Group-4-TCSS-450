@@ -14,7 +14,7 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Message;
 
 /**
- * Class which handles creating and populating hte list for hte recyclerview.
+ * Class which handles creating and populating the list for the recyclerview.
  */
 public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyConversationRecyclerViewAdapter.ViewHolder> {
 
@@ -25,7 +25,7 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
         mValues = items;
         if (null == mValues) {
             mValues = new ArrayList<>();
-            mValues.add(new Message.Builder("").build());
+            mValues.add(new Message.Builder("NO MESSAGES LOADED").build());
         }
         mListener = listener;
     }
@@ -86,7 +86,7 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
         ViewHolder(View view) {
             super(view);
             mView = view;
-            //mIdView = (TextView) view.findViewById(R.id.item_number);
+//            mIdView = (TextView) view.findViewById(R.id.item_number);
             mUsers = view.findViewById(R.id.textview_conversation_users);
             mMessage = view.findViewById(R.id.textview_conversation_message);
         }

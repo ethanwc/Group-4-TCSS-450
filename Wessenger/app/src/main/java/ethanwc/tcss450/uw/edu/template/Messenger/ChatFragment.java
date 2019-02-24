@@ -28,12 +28,12 @@ import ethanwc.tcss450.uw.edu.template.R;
 public class ChatFragment extends Fragment {
 
     private static final String TAG = "CHAT_FRAG";
-    private static final String CHAT_ID = "1";
     private TextView mMessageOutputTextView;
     private EditText mMessageInputEditText;
     private String mEmail;
     private String mJwToken;
     private String mSendUrl;
+    private String mChatID;
     private PushMessageReceiver mPushMessageReciever;
 
     /**
@@ -104,6 +104,7 @@ public class ChatFragment extends Fragment {
         if (getArguments() != null) {
             mEmail = getArguments().getString("email_token_123");
             mJwToken = getArguments().getString("jwt_token");
+            mChatID = getArguments().getString("chat_id");
         }
 
         //Store url in variable.
@@ -127,7 +128,7 @@ public class ChatFragment extends Fragment {
         try {
             messageJson.put("email", mEmail);
             messageJson.put("message", msg);
-            messageJson.put("chatId", CHAT_ID);
+            messageJson.put("chatId", mChatID);
         } catch (JSONException e) {
             e.printStackTrace();
         }

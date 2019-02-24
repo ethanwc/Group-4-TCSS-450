@@ -1,5 +1,6 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,7 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
@@ -68,6 +71,9 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<String> mFirsts;
     private ArrayList<String> mLasts;
     private ArrayList<String> mUNames;
+    private ArrayList<String> mChats;
+    private int mChatCount = 0;
+    Map<Integer, List<Integer>> mChatMembers;
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
 
@@ -94,7 +100,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             Bundle extras = getIntent().getExtras();
 
             mEmailList = new ArrayList<String>();
-                    mEmailList = getIntent().getStringArrayListExtra("a");
+            mEmailList = getIntent().getStringArrayListExtra("a");
 
         }
 
@@ -204,18 +210,18 @@ public class MessagingHomeActivity extends AppCompatActivity
                 String queryString=(String)adapterView.getItemAtPosition(itemIndex);
                 searchAutoComplete.setText("" + queryString);
                 ConnectionViewFragment connectionViewFrag;
-        connectionViewFrag = new ConnectionViewFragment();
+                connectionViewFrag = new ConnectionViewFragment();
 
-        Bundle args = new Bundle();
+                Bundle args = new Bundle();
 
-        args.putSerializable("email", queryString);
+                args.putSerializable("email", queryString);
 
-        FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
-        connectionsFab.setEnabled(false);
-        connectionsFab.hide();
+                FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
+                connectionsFab.setEnabled(false);
+                connectionsFab.hide();
 
-        connectionViewFrag.setArguments(args);
-        loadFragment(connectionViewFrag);
+                connectionViewFrag.setArguments(args);
+                loadFragment(connectionViewFrag);
             }
         });
         return super.onCreateOptionsMenu(menu);
@@ -264,7 +270,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         //Chat has been chosen
         if (id == R.id.nav_global_chat) {
 
-
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
             String email = getIntent().getExtras().getString(("email"));
             Bundle args = new Bundle();
@@ -284,40 +289,25 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.hide();
             mFab.setEnabled(false);
             loadFragment(weatherHome);
-        //Change locations has been chosen
+            //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
             mFab.hide();
             mFab.setEnabled(false);
             loadFragment(changeLocationsFragment);
-        //Saved locations has been chosen
+            //Saved locations has been chosen
         } else if (id == R.id.nav_View_Saved_Location) {
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             mFab.hide();
             mFab.setEnabled(false);
             loadFragment(locationFragment);
-        //Messenger home has been chosen
+            //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_getconversations))
-                    .build();
-            String msg = getIntent().getExtras().getString("email");
-            Credentials creds = new Credentials.Builder(msg).build();
-            getSupportActionBar().setTitle("Conversations");
-            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-                    .onPreExecute(this::onWaitFragmentInteractionShow)
-                    .onPostExecute(this::handleConversationGetOnPostExecute)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build().execute();
-            //Show FAB
+            loadChats();
 
-            mFab.setEnabled(true);
-            mFab.show();
-        //Connections has been chosen
+            //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
 
             mEmails = new ArrayList<>();
@@ -330,7 +320,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .scheme("https")
                     .appendPath(getString(R.string.ep_base_url))
                     .appendPath(getString(R.string.ep_getContacts))
-                  .build();
+                    .build();
             String msg = getIntent().getExtras().getString("email");
             Credentials creds = new Credentials.Builder(msg).build();
             getSupportActionBar().setTitle("Connections");
@@ -343,7 +333,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             mFab.setEnabled(true);
             mFab.show();
-        //Requests/Invitations has been chosen
+            //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
             InvitationsFragment invitationsFragment = new InvitationsFragment();
             RequestsFragment requestsFragment = new RequestsFragment();
@@ -546,6 +536,16 @@ public class MessagingHomeActivity extends AppCompatActivity
         chatFrag = new ChatFragment();
 
         Bundle args = new Bundle();
+
+
+//        mEmail = getArguments().getString("email_token_123");
+//        mJwToken = getArguments().getString("jwt_token");
+//        mChatID = getArguments().getString("chat_id");
+
+
+        args.putSerializable("chat_id", item.getChatid());
+        args.putSerializable("email_token_123", getIntent().getExtras().getString("email"));
+        args.putSerializable("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
         mFab.setEnabled(false);
         mFab.hide();
 
@@ -553,7 +553,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //LOAD CHAT FRAGMENT CORRECTLY
 
-        //loadFragment(chatFrag);
+        loadFragment(chatFrag);
     }
 
     @Override
@@ -618,47 +618,59 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
     }
+    /**
+     * Get's the user's current chats and the people in them.
+     */
+    @SuppressLint("UseSparseArrays")
+    public void loadChats() {
+        mChatMembers = new HashMap<>();
+        mChats = new ArrayList<>();
+        mChatCount = 0;
+        //Get their current chats.
+
+        Uri conversations = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getconversations))
+                .build();
+
+        String msg = getIntent().getExtras().getString("email");
+
+        Credentials creds = new Credentials.Builder(msg.trim()).build();
+        getSupportActionBar().setTitle("Conversations");
+
+
+        Log.e("EMAILTEST", msg);
+        //Post request to get the user's list of chats.
+        new SendPostAsyncTask.Builder(conversations.toString(), creds.asJSONObject())
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConversationGetOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
 
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving message list.
      * @param result String which represents the JSON result.
      */
     private void handleConversationGetOnPostExecute(final String result) {
-        //parse JSON
         try {
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
-
-            //GET CORRECT JSON RESULT KEY
-
-//            JSONArray data = resultJSON.getJSONArray("message");
+            JSONArray chatid = resultJSON.getJSONArray("chatid");
 
             if (success) {
+                Log.e("WORKED", "success");
+                for(int i = 0; i < chatid.length(); i++) {
+                    Log.e("WORKED", "ADDING CHAT: " + chatid.get(i).toString());
+                    mChats.add(chatid.get(i).toString());
+                }
+                getMembers();
 
-                //HANDLE LIST LOGISTICS (MAYBE ALREADY HANDLED?)
 
-//                //Create list of conversations
-//                for(int i = 0; i < data.length(); i++) {
-//
-//                    String message = data.getString(i);
-//                    JSONArray users = data.getJSONArray(i);
-//
-//                    //Build ASNC task to grab connections from web service.
-//
-//                }
                 onWaitFragmentInteractionHide();
-//
-//                Connection[] conversationsAsArray = new Connection[data.size()];
-//                conversationsAsArray = data.toArray(conversationsAsArray);
-//                //Bundle connections and send as arguments
-//                Bundle args = new Bundle();
-//                args.putSerializable(ConversationFragment.ARG_MESSAGE_LIST, conversationsAsArray);
-//                Fragment frag = new ConversationFragment();
-//                frag.setArguments(args);
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_messaging_container, frag )
-//                        .addToBackStack(null);
-//                transaction.commit();
+
+
             } else {
                 //Not successful return from webservice
                 onWaitFragmentInteractionHide();
@@ -669,9 +681,112 @@ public class MessagingHomeActivity extends AppCompatActivity
             //notify user
             onWaitFragmentInteractionHide();
         }
-
     }
 
+    private void getMembers() {
+        Log.e("WORKED", "getting members?");
+        Uri chatmembers = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getchatmembers))
+                .build();
+        String msg = getIntent().getExtras().getString("email");
+        Log.e("CHATSIZE", mChats.size() + "second");
+        Credentials creds = new Credentials.Builder(msg).build();
+
+            Log.e("WORKED", "getting members for this chat?: " + mChats.get(0));
+
+        getSupportActionBar().setTitle("Conversations");
+
+        JSONObject id = new JSONObject();
+
+
+        for (int i = 0; i < mChats.size(); i++) {
+            Log.e("WORKED-ID", "Attempting to parse chat: " + (i+1));
+
+            try {
+                id.put("chatid", (i + 1) + "");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            //Post request to get the user's list of chats.
+            new SendPostAsyncTask.Builder(chatmembers.toString(), id)
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleChatMemberGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
+            //TODO: CHANGE THIS CODE BAD BAD
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void handleChatMemberGetOnPostExecute(final String result) {
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray id = resultJSON.getJSONArray("memberid");
+            int chatid = Integer.parseInt(resultJSON.getString("chatid"));
+//            Log.e("WORKED", "working with this chatid: " + chatid);
+
+            if (success) {
+                List<Integer> chatmembers = new ArrayList<>();
+                for(int i = 0; i < id.length(); i++) {
+                    chatmembers.add(Integer.parseInt(id.get(i).toString()));
+                }
+                mChatMembers.put(chatid, chatmembers);
+                Log.e("Results", "Chat " + chatid + " Members: " + chatmembers.toString());
+
+                onWaitFragmentInteractionHide();
+
+
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+        setChatInfo();
+    }
+
+
+    /**
+     * Setup chats after they are loaded.
+     */
+    public void setChatInfo() {
+        Log.e("SUCCESS", "size: " + mChats.size());
+
+        Message[] m = new Message[mChats.size()];
+        for (int i = 0; i < mChats.size(); i++) {
+            Log.e("SUCCESS", i + "");
+            m[i] = new Message.Builder("test").addUsers("steve jobs").build();
+        }
+
+
+        Bundle args = new Bundle();
+        args.putSerializable(ConversationFragment.ARG_MESSAGE_LIST, m);
+        Fragment frag = new ConversationFragment();
+        frag.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_messaging_container, frag )
+                .addToBackStack(null);
+        transaction.commit();
+
+
+        //Show FAB
+        mFab.setEnabled(true);
+        mFab.show();
+    }
 
     /**
      * Method listening for contact details button to be pressed.
@@ -815,7 +930,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 mFab.setEnabled(false);
                 onWaitFragmentInteractionHide();
             }
-         } catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
             //notify user
