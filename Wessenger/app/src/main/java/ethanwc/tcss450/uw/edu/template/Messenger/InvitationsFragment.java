@@ -11,9 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.Connection;
 
 /**
  * A fragment representing a list of Items.
@@ -22,6 +27,9 @@ import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
  * interface.
  */
 public class InvitationsFragment extends Fragment {
+
+    public static final String ARG_INVITATION_LIST = "invitations list";
+    private List<Connection> mConnections;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -36,8 +44,6 @@ public class InvitationsFragment extends Fragment {
     public InvitationsFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static InvitationsFragment newInstance(int columnCount) {
         InvitationsFragment fragment = new InvitationsFragment();
         Bundle args = new Bundle();
@@ -51,7 +57,7 @@ public class InvitationsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mConnections = new ArrayList<Connection>(Arrays.asList((Connection[]) getArguments().getSerializable(ARG_INVITATION_LIST)));
         }
     }
 
@@ -77,7 +83,7 @@ public class InvitationsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyInvitationsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyInvitationsRecyclerViewAdapter(mConnections, mListener));
         }
         return view;
     }
@@ -117,7 +123,8 @@ public class InvitationsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update what method does upon list interaction.
-        void onListFragmentInteraction(DummyItem item);
+
+        void onInvitationListAcceptFragmentInteraction(Connection item);
+        void onInvitationListDeclineFragmentInteraction(Connection item);
     }
 }

@@ -10,7 +10,9 @@ import android.widget.TextView;
 import ethanwc.tcss450.uw.edu.template.Messenger.InvitationsFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.Connection;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,14 +22,20 @@ import java.util.List;
  */
 public class MyInvitationsRecyclerViewAdapter extends RecyclerView.Adapter<MyInvitationsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Connection> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyInvitationsRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyInvitationsRecyclerViewAdapter(List<Connection> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
 
+    /**
+     * OnCreateViewHolder which is used to instantiate the views of each menu item.
+     * @param parent ViewGroup.
+     * @param viewType int.
+     * @return ViewHolder used to hold all the views to be used.
+     */
     @Override
     @NonNull
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,22 +44,30 @@ public class MyInvitationsRecyclerViewAdapter extends RecyclerView.Adapter<MyInv
         return new ViewHolder(view);
     }
 
+    /**
+     * OnBindViewHolder used to instantiate textfields and create button listeners.
+     * @param holder ViewHolder holding the views.
+     * @param position Int position in the viewholder.
+     */
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         //holder.mIdView.setText(mValues.get(position).id);
         //holder.mContentView.setText(mValues.get(position).content);
+        Collections.sort(mValues);
+        holder.mItem = mValues.get(position);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+        holder.mEmailView.setText(mValues.get(position).getEmail());
+//        holder.mView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (null != mListener) {
+//                    // Notify the active callbacks interface (the activity, if the
+//                    // fragment is attached to one) that an item has been selected.
+//                    mListener.onListFragmentInteraction(holder.mItem);
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -61,21 +77,13 @@ public class MyInvitationsRecyclerViewAdapter extends RecyclerView.Adapter<MyInv
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        //public final TextView mIdView;
-        final TextView mContentView;
-        DummyItem mItem;
+        final TextView mEmailView;
+        Connection mItem;
 
         ViewHolder(View view) {
             super(view);
             mView = view;
-            //mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = view.findViewById(R.id.content);
-        }
-
-        @Override
-        @NonNull
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            mEmailView = view.findViewById(R.id.textview_invitations_email);
         }
     }
 }
