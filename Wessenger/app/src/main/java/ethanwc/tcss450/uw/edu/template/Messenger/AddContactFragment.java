@@ -78,7 +78,7 @@ public class AddContactFragment extends WaitFragment {
                 } else {
                     mListener.addContactButton(new Credentials.Builder(mEmail.getText().toString())
                             .addEmail2(mEmail.getText().toString())
-                            .addVerify(1).build());
+                            .addVerify(0).build());
 
                 }
             }

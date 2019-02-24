@@ -10,6 +10,7 @@ import android.widget.TextView;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Messenger.RequestsFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.Connection;
 
 import java.util.List;
 
@@ -20,10 +21,10 @@ import java.util.List;
  */
 public class MyRequestsRecyclerViewAdapter extends RecyclerView.Adapter<MyRequestsRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Connection> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyRequestsRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyRequestsRecyclerViewAdapter(List<Connection> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -42,16 +43,17 @@ public class MyRequestsRecyclerViewAdapter extends RecyclerView.Adapter<MyReques
         //holder.mIdView.setText(mValues.get(position).id);
         //holder.mContentView.setText(mValues.get(position).content);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+        holder.mEmailView.setText(mValues.get(position).getEmail());
+//        holder.mView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (null != mListener) {
+//                    // Notify the active callbacks interface (the activity, if the
+//                    // fragment is attached to one) that an item has been selected.
+//                    mListener.onRequestListCancelFragmentInteraction(holder.mItem);
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -62,20 +64,16 @@ public class MyRequestsRecyclerViewAdapter extends RecyclerView.Adapter<MyReques
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         //public final TextView mIdView;
-        final TextView mContentView;
-        DummyItem mItem;
+        final TextView mEmailView;
+        Connection mItem;
+
 
         ViewHolder(View view) {
             super(view);
             mView = view;
             //mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = view.findViewById(R.id.content);
+            mEmailView = view.findViewById(R.id.textview_requests_email);
         }
 
-        @NonNull
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
     }
 }

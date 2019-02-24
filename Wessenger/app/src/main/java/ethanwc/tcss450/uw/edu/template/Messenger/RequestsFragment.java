@@ -11,9 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.Connection;
 
 /**
  * A fragment representing a list of Items.
@@ -22,6 +27,9 @@ import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
  * interface.
  */
 public class RequestsFragment extends Fragment {
+
+    public static final String ARG_REQUEST_LIST = "requests list";
+    private List<Connection> mConnections;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -51,7 +59,7 @@ public class RequestsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mConnections = new ArrayList<Connection>(Arrays.asList((Connection[]) getArguments().getSerializable(ARG_REQUEST_LIST)));
         }
     }
 
@@ -77,7 +85,7 @@ public class RequestsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyRequestsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyRequestsRecyclerViewAdapter(mConnections, mListener));
         }
         return view;
     }
@@ -118,6 +126,6 @@ public class RequestsFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update what method does upon list interaction.
-        void onListFragmentInteraction(DummyItem item);
+        void onRequestListCancelFragmentInteraction(Connection item);
     }
 }

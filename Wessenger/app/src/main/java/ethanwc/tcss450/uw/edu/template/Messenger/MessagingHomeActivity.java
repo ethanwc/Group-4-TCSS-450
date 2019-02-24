@@ -347,16 +347,36 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.show();
         //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
-            InvitationsFragment invitationsFragment = new InvitationsFragment();
-            RequestsFragment requestsFragment = new RequestsFragment();
-            InvReqFragment invReqFragment = new InvReqFragment();
-            getSupportActionBar().setTitle("Requests/Invitations");
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_messaging_container, invReqFragment)
-                    .replace(R.id.fragment_messaging_inv_container, invitationsFragment )
-                    .replace(R.id.fragment_messaging_req_container, requestsFragment )
-                    .addToBackStack(null);
-            transaction.commit();
+
+            mEmails = new ArrayList<>();
+
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getrequests))
+                    .build();
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+            getSupportActionBar().setTitle("Connections");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleRequestGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
+            Uri uri2 = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getinvitations))
+                    .build();
+            String msg2 = getIntent().getExtras().getString("email");
+            Credentials creds2 = new Credentials.Builder(msg2).build();
+            getSupportActionBar().setTitle("Connections");
+            new SendPostAsyncTask.Builder(uri2.toString(),creds2.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleInvitationGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
@@ -364,6 +384,57 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         return true;
+    }
+
+    private void handleRequestGetOnPostExecute(String result) {
+
+        //parse JSON
+        try {
+            mEmails = new ArrayList<>();
+            mConnections = new ArrayList<>();
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+                for (int j = 0; j < data.length(); j++) {
+                    mEmails.add(data.getString(j));
+                }
+                //When done parsing begin creating list of connections
+                for (int i = 0; i < mEmails.size(); i++) {
+                    Connection conn = new Connection.Builder(mEmails.get(i)).build();
+                    mConnections.add(conn);
+                }
+
+
+                //Bundle list of connections as arguments and load connection fragment
+                Connection[] connectionsAsArray = new Connection[mConnections.size()];
+                connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                //Bundle connections and send as arguments
+                Bundle args = new Bundle();
+
+                Fragment frag = new InvReqFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_messaging_container, frag );
+                transaction.commit();
+                args.putSerializable(RequestsFragment.ARG_REQUEST_LIST, connectionsAsArray);
+                frag = new RequestsFragment();
+                frag.setArguments(args);
+                transaction = getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_messaging_req_container, frag );
+                transaction.commit();
+                onWaitFragmentInteractionHide();
+                Log.e("duper!!!!", "yup");
+
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
     }
 
 
@@ -825,6 +896,161 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(false);
             onWaitFragmentInteractionHide();
         }
+
+    }
+
+    @Override
+    public void onInvitationListAcceptFragmentInteraction(Connection item) {
+//        //Build ASNYC  task for accepting the contact
+//        Uri uri = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(R.string.ep_base_url))
+//                .appendPath(getString(R.string.ep_acceptcontact))
+//                .build();
+//        String msg = getIntent().getExtras().getString("email");
+//        String msg2 = item.getEmail();
+//
+//        JSONObject json = new JSONObject();
+//        try {
+//
+//            json.put("email", msg);
+//            json.put("email2", msg2);
+//
+//
+//        } catch (JSONException e) {
+//            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+//        }
+//
+//        new SendPostAsyncTask.Builder(uri.toString(),json)
+//                .onPreExecute(this::onWaitFragmentInteractionShow)
+//                .onPostExecute(this::handleConnectionAcceptOnPostExecute)
+//                .onCancelled(this::handleErrorsInTask)
+//                .build().execute();
+    }
+
+    @Override
+    public void onInvitationListDeclineFragmentInteraction(Connection item) {
+        //Build ASNYC  task for deleteing the contact
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_deleteContact))
+                .build();
+        String msg = getIntent().getExtras().getString("email");
+        String msg2 = item.getEmail();
+
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("email", msg);
+            json.put("email2", msg2);
+
+
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+
+        new SendPostAsyncTask.Builder(uri.toString(),json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleInvitationDeleteOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    private void handleInvitationDeleteOnPostExecute(String result) {
+        //parse JSON
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            if (success) {
+                //Build ASYNC task to get the new contacts list.
+                Uri uri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_getinvitations))
+                        .build();
+                String msg = getIntent().getExtras().getString("email");
+                Credentials creds = new Credentials.Builder(msg).build();
+                getSupportActionBar().setTitle("Invitations/Requests");
+                new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                        .onPreExecute(this::onWaitFragmentInteractionShow)
+                        .onPostExecute(this::handleInvitationGetOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
+                //Hide wait fragment to go on to next ASYNC call
+                onWaitFragmentInteractionHide();
+                //Not successful return from webservice
+            } else {
+                //Delete unesuccessful
+                TextView delete = findViewById(R.id.textview_invitations_email);
+                delete.setError("Unexpected error.");
+                mFab.hide();
+                mFab.setEnabled(false);
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            mFab.hide();
+            mFab.setEnabled(false);
+            onWaitFragmentInteractionHide();
+        }
+    }
+
+
+
+    private void handleInvitationGetOnPostExecute(String result) {
+
+        //parse JSON
+        try {
+            mEmails = new ArrayList<>();
+            mConnections = new ArrayList<>();
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray data = resultJSON.getJSONArray("message");
+
+            if (success) {
+                for (int j = 0; j < data.length(); j++) {
+                    mEmails.add(data.getString(j));
+                }
+                //When done parsing begin creating list of connections
+                for (int i = 0; i < mEmails.size(); i++) {
+                        Connection conn = new Connection.Builder(mEmails.get(i)).build();
+                        mConnections.add(conn);
+                }
+
+
+                    //Bundle list of connections as arguments and load connection fragment
+                    Connection[] connectionsAsArray = new Connection[mConnections.size()];
+                    connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                    //Bundle connections and send as arguments
+                    Bundle args = new Bundle();
+                    args.putSerializable(InvitationsFragment.ARG_INVITATION_LIST, connectionsAsArray);
+
+
+                    Fragment frag = new InvitationsFragment();
+                    frag.setArguments(args);
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_messaging_inv_container, frag );
+                    transaction.commit();
+                onWaitFragmentInteractionHide();
+                Log.e("duper!!!!", "yup");
+
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+    @Override
+    public void onRequestListCancelFragmentInteraction(Connection item) {
 
     }
 

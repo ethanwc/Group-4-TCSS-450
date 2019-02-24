@@ -20,4 +20,6 @@
     <string name="ep_deleteContact">deletecontact</string>
     <string name="ep_memberinfo">memberinfo</string>
     <string name="ep_getconversations">getconversations</string>
+    <string name="ep_getinvitations">getinvitations</string>
+    <string name="ep_getrequests">getrequests</string>
 </resources>
