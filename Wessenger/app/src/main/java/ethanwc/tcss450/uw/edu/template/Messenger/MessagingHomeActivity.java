@@ -694,7 +694,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         Log.e("CHATSIZE", mChats.size() + "second");
         Credentials creds = new Credentials.Builder(msg).build();
 
-            Log.e("WORKED", "getting members for this chat?: " + mChats.get(0));
+        Log.e("WORKED", "getting members for this chat?: " + mChats.get(0));
 
         getSupportActionBar().setTitle("Conversations");
 
@@ -725,6 +725,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+
     }
 
     private void handleChatMemberGetOnPostExecute(final String result) {
@@ -745,6 +746,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 onWaitFragmentInteractionHide();
 
+                setChatInfo();
+
 
             } else {
                 //Not successful return from webservice
@@ -756,7 +759,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             //notify user
             onWaitFragmentInteractionHide();
         }
-        setChatInfo();
     }
 
 
@@ -764,12 +766,19 @@ public class MessagingHomeActivity extends AppCompatActivity
      * Setup chats after they are loaded.
      */
     public void setChatInfo() {
-        Log.e("SUCCESS", "size: " + mChats.size());
 
         Message[] m = new Message[mChats.size()];
+        Log.e("Chats", mChats.toString());
         for (int i = 0; i < mChats.size(); i++) {
-            Log.e("SUCCESS", i + "");
-            m[i] = new Message.Builder("test").addUsers("steve jobs").build();
+            Log.e("Checking chat ", i + " " + mChats.size() + " " + mChats.toString() + "  ");
+            List<Integer> people = mChatMembers.get(Integer.parseInt(mChats.get(i)));
+            StringBuilder members = new StringBuilder(256);
+            if (people != null) {
+            for (int j = 0; j < people.size(); j++) {
+                members.append(people.get(j));
+            }
+            }
+            m[i] = new Message.Builder("howdy").addUsers(("" + members.toString())).build();
         }
 
 
