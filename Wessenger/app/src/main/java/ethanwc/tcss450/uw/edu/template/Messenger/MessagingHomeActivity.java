@@ -131,6 +131,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         Fragment fragment;
         if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_msg), false)) {
             fragment = new ChatFragment();
+        } else if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_invitation), false)) {
+            fragment = new InvitationsFragment();
         } else {
             fragment = new ConversationFragment();
         }
