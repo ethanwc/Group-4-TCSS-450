@@ -70,7 +70,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnMessageListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnInvitationListFragmentInteractionListener,
-        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener, OnNewContactFragmentButtonAction {
+        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener, SavedLocationFragment.OnListFragmentInteractionListener, OnNewContactFragmentButtonAction, WeatherHome.OnFragmentInteractionListener {
 
 
     private Bundle mArgs;
@@ -198,8 +198,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     /**
      * OnBackPressed used to handle minimizing of the navigation drawer and closing the FAB on inappropriate windows.
      */
-//    @Override
-//    public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
 //        View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
 //        View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
 //        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
@@ -218,7 +218,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 //            mFab.setEnabled(false);
 //            super.onBackPressed();
 //        }
-//    }
+//        getSupportFragmentManager().addT
+    }
 
     /**
      * OnCreateOptionsMenu used to help create the options menu.
@@ -439,19 +440,7 @@ System.out.println("===========");
 //                    .onPostExecute(this::handleRequestGetOnPostExecute)
 //                    .onCancelled(this::handleErrorsInTask)
 //                    .build().execute();
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_getrequests))
-                    .build();
-            String msg = getIntent().getExtras().getString("email");
-            Credentials creds = new Credentials.Builder(msg).build();
-            getSupportActionBar().setTitle("Invitation/Request");
-            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-                    .onPreExecute(this::onWaitFragmentInteractionShow)
-                    .onPostExecute(this::handleRequestGetOnPostExecute)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build().execute();
+
 
 
 //
@@ -1306,6 +1295,16 @@ System.out.println("from handle connection get on post execute");
             onWaitFragmentInteractionHide();
         }
 
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
     }
 

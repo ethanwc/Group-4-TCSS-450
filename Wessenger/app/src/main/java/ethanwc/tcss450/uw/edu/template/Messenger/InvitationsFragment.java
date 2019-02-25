@@ -44,7 +44,7 @@ public class InvitationsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnInvitationListFragmentInteractionListener mListener;
 
-    private OnListFragmentInteractionListener mListener;
+//    private RequestsFragment.OnListFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
