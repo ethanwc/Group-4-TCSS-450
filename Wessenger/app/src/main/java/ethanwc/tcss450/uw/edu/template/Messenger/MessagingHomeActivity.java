@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
@@ -254,19 +255,128 @@ public class MessagingHomeActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
                 String queryString = (String) adapterView.getItemAtPosition(itemIndex);
                 searchAutoComplete.setText("" + queryString);
-                ConnectionViewFragment connectionViewFrag;
-                connectionViewFrag = new ConnectionViewFragment();
+                //
 
-                Bundle args = new Bundle();
+                Uri uri = new Uri.Builder()
+                        .scheme("https")
+                        .appendPath(getString(R.string.ep_base_url))
+                        .appendPath(getString(R.string.ep_userdetail))
+                        .build();
+                //handleConnectionGetInfoOnPostExecute
+//                System.out.println("===>"+uri.toString());
+                String msg = getIntent().getExtras().getString("email");
+//                System.out.println("====---------->"+queryString);
+                Credentials creds = new Credentials.Builder(queryString).build();
+//                errorhere
 
-                args.putSerializable("email", queryString);
+//            Uri uri = new Uri.Builder()
+//                    .scheme("https")
+//                    .appendPath(getString(R.string.ep_base_url))
+//                    .appendPath(getString(R.string.ep_getrequests))
+//                    .build();
+//            String msg = getIntent().getExtras().getString("email");
+//            Credentials creds = new Credentials.Builder(msg).build();
+//            getSupportActionBar().setTitle("Connections");
+//            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
+//                    .onPostExecute(this::handleRequestGetOnPostExecute)
+//                    .onCancelled(this::handleErrorsInTask)
+//                    .build().execute();
+                new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                        .onPreExecute(this::onWaitFragmentInteractionShow)
+                        .onPostExecute(this::handleConnectionGetDetailOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
+                //
 
-                FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
-                connectionsFab.setEnabled(false);
-                connectionsFab.hide();
 
-                connectionViewFrag.setArguments(args);
-                loadFragment(connectionViewFrag);
+                //--->
+
+
+                //
+            }
+            public void onWaitFragmentInteractionShow() {
+//                System.out.println("======>onwaitshow");
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.activity_messaging_container, new WaitFragment(), "WAIT")
+                        .addToBackStack(null)
+                        .commit();
+            }
+            /**
+             * Helper method used to hide the wait fragment.
+             */
+            public void onWaitFragmentInteractionHide() {
+
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
+                        .commit();
+            }
+            public void handleConnectionGetDetailOnPostExecute(final String result){
+                //parse JSON
+                try {
+//                    System.out.println("======>try");
+                    mEmails = new ArrayList<>();
+                    mConnections = new ArrayList<>();
+                    JSONObject resultJSON = new JSONObject(result);
+                    boolean success = resultJSON.getBoolean("success");
+
+
+                    onWaitFragmentInteractionHide();
+                    if (success) {
+//                        onWaitFragmentInteractionHide();
+//System.out.println("======>Success"+resultJSON.toString());
+
+//                        String email = getArguments().getString("email");
+//                        String username = getArguments().getString("username");
+//                        String first = getArguments().getString("first");
+//                        String last = getArguments().getString("last");
+//
+
+                        //
+                        ConnectionViewFragment connectionViewFrag;
+                        connectionViewFrag = new ConnectionViewFragment();
+
+                        Bundle args = new Bundle();
+                        String email = resultJSON.getString("email");
+                        String username = resultJSON.getString("username");
+                        String first = resultJSON.getString("firstname");
+                        String last = resultJSON.getString("lastname");
+                        args.putSerializable("email", email);
+                        args.putSerializable("username", username);
+                        args.putSerializable("first", first);
+                        args.putSerializable("last", last);
+//                        String email = getArguments().getString("email");
+//                        String username = getArguments().getString("username");
+//                        String first = getArguments().getString("first");
+//                        String last = getArguments().getString("last");
+                        FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
+                        connectionsFab.setEnabled(false);
+                        connectionsFab.hide();
+
+                        connectionViewFrag.setArguments(args);
+                        loadFragment(connectionViewFrag);
+
+
+
+                    }
+                    onWaitFragmentInteractionHide();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e("SUPER!!", e.getMessage());
+                    //notify user
+                    onWaitFragmentInteractionHide();
+                }
+
+            }
+            /**
+             * Handle errors that may occur during the AsyncTask.
+             *
+             * @param result the error message provide from the AsyncTask
+             */
+            private void handleErrorsInTask(String result) {
+                Log.e("ASYNC_TASK_ERROR", result);
             }
         });
         return super.onCreateOptionsMenu(menu);
@@ -386,6 +496,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadFragment(locationFragment);
             //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
+            getSupportActionBar().setTitle("Chat");
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {

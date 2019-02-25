@@ -25,6 +25,7 @@
     <string name="ep_getchatmembers">getchatmembers</string>
     <string name="ep_getinformation">getinformation</string>
     <string name="ep_getchats">getchats</string>
+    <string name="ep_userdetail">getdetailfromemail</string>
 
 
     <string name="ep_acceptinvitation">acceptinvitation</string>
