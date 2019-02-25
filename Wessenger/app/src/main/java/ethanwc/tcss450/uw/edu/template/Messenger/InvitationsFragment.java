@@ -43,6 +43,7 @@ public class InvitationsFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnInvitationListFragmentInteractionListener mListener;
+    private String mMyEmail;
 
 //    private RequestsFragment.OnListFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
@@ -65,8 +66,12 @@ public class InvitationsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         if (getArguments() != null) {
             mConnections = new ArrayList<Connection>(Arrays.asList((Connection[]) getArguments().getSerializable(ARG_INVITATION_LIST)));
+            mMyEmail = getArguments().getString("passemail");
+
+//            System.out.println("-from Invitations Fragment---"+mMyEmail);
         }
     }
 
@@ -169,30 +174,30 @@ public class InvitationsFragment extends Fragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---+++++->MainActivity---."+intent.toString());
+            System.out.println("in push message receive---+++++->invitation- fragment---."+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 System.out.println("The message is: " + messageText);
                 if (type.equals("inv")) {
-                    System.out.println("For invitation request");
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setAutoCancel(true)
-                            .setSmallIcon(R.drawable.ic_person_black_24dp)
-                            .setContentTitle("New Contact Request from : " + sender)
-                            .setContentText(messageText)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-                    // Automatically configure a Notification Channel for devices running Android O+
-                    Pushy.setNotificationChannel(builder, context);
-
-                    // Get an instance of the NotificationManager service
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-
-                    // Build the notification and display it
-                    notificationManager.notify(1, builder.build());
-
+//                    System.out.println("For invitation request");
+//                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+//                            .setAutoCancel(true)
+//                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+//                            .setContentTitle("New Contact Request from : " + sender)
+//                            .setContentText(messageText)
+//                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//
+//                    // Automatically configure a Notification Channel for devices running Android O+
+//                    Pushy.setNotificationChannel(builder, context);
+//
+//                    // Get an instance of the NotificationManager service
+//                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+//
+//                    // Build the notification and display it
+//                    notificationManager.notify(1, builder.build());
 
                 } else if(type.equals("msg")) {
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -201,6 +206,9 @@ public class InvitationsFragment extends Fragment {
                             .setContentTitle("Message from: " + sender)
                             .setContentText(messageText)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    if(sender.equals(mMyEmail)){
+//                        System.out.println("no notification for your own---");
+                    } else{
 
                     // Automatically configure a Notification Channel for devices running Android O+
                     Pushy.setNotificationChannel(builder, context);
@@ -210,6 +218,7 @@ public class InvitationsFragment extends Fragment {
 
                     // Build the notification and display it
                     notificationManager.notify(1, builder.build());
+                    }
                 }
             }
         }

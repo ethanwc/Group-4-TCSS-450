@@ -54,7 +54,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        System.out.println("in push message receive---->On Resume");
+        System.out.println("chat fragment ---->On Resume");
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
@@ -221,6 +221,7 @@ public class ChatFragment extends Fragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
+
             System.out.println("in push message receive---+++++->chatfragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 

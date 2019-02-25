@@ -139,7 +139,7 @@ public class ConversationFragment extends Fragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---+++++->MainActivity---."+intent.toString());
+            System.out.println("in push message receive---+++++->ConversationFragment---."+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
