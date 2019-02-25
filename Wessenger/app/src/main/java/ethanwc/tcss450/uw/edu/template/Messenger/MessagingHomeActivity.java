@@ -76,13 +76,10 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<String> mUNames;
     private ArrayList<String> mChats;
     private Map<String, String> mPeople;
-    private int mChatCount = 0;
     Multimap<String, String> mChatMembers;
-    Map<Integer, String> mChatUsernames;
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
-    public String mMyEmail="a";
 
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
@@ -126,9 +123,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
-        String emails = getIntent().getExtras().getString(("email"));
-        mMyEmail = emails;
-        System.out.println("...=====..."+mMyEmail);
 
         loadChats();
         //Hide the FAB upon main activity loading.
@@ -147,23 +141,9 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //Set on click listener for FAB
         mFab.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
-                System.out.println("---add contact listener--"+mMyEmail);
-                AddContactFragment addContact = new AddContactFragment();
-                //
-                Bundle args = new Bundle();
-
-
-                args.putSerializable("passEmail", mMyEmail);
-
-                addContact.setArguments(args);
-
-
-
-                //
-                loadFragment(addContact);
+                loadFragment(new AddContactFragment());
                 mFab.hide();
                 mFab.setEnabled(false);
             }
@@ -451,10 +431,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        mMenuItem.setTitle(s);
 
     }
-    public String getEmail(){
-        System.out.println("--->"+mMyEmail);
-        return mMyEmail;
-    }
 
     /**
      * Method used to handle when menu items are selected.
@@ -467,15 +443,12 @@ public class MessagingHomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 //        mMenuItem = R.id.nav_global_chat
         // Handle navigation view item clicks here.
-
         int id = item.getItemId();
         //Chat has been chosen
         if (id == R.id.nav_global_chat) {
 
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
             String email = getIntent().getExtras().getString(("email"));
-            mMyEmail = email;
-
             Bundle args = new Bundle();
             args.putString("jwt_token", jwt);
             args.putString("email_token_123", email);
@@ -541,7 +514,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                   .build();
             //handleConnectionGetInfoOnPostExecute
             String msg = getIntent().getExtras().getString("email");
-            System.out.println("from view connection call"+msg);
             Credentials creds = new Credentials.Builder(msg).build();
             getSupportActionBar().setTitle("Connections");
             new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
@@ -554,54 +526,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(true);
             mFab.show();
 
-        //Requests/Invitations has been chosen
             //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
-
             mEmails = new ArrayList<>();
-
-//            Uri uri = new Uri.Builder()
-//                    .scheme("https")
-//                    .appendPath(getString(R.string.ep_base_url))
-//                    .appendPath(getString(R.string.ep_getrequests))
-//                    .build();
-//            String msg = getIntent().getExtras().getString("email");
-//            Credentials creds = new Credentials.Builder(msg).build();
-//            getSupportActionBar().setTitle("Connections");
-//            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
-//                    .onPostExecute(this::handleRequestGetOnPostExecute)
-//                    .onCancelled(this::handleErrorsInTask)
-//                    .build().execute();
-
-
-
-//
-//
-//            Uri uri2 = new Uri.Builder()
-//                    .scheme("https")
-//                    .appendPath(getString(R.string.ep_base_url))
-//                    .appendPath(getString(R.string.ep_getinvitations))
-//                    .build();
-//            String msg2 = getIntent().getExtras().getString("email");
-//            Credentials creds2 = new Credentials.Builder(msg2).build();
-//            getSupportActionBar().setTitle("Connections");
-//            new SendPostAsyncTask.Builder(uri2.toString(),creds2.asJSONObject())
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
-//                    .onPostExecute(this::handleInvitationGetOnPostExecute)
-//                    .onCancelled(this::handleErrorsInTask)
-//                    .build().execute();
-//
-//            InvitationsFragment invitationsFragment = new InvitationsFragment();
-//            RequestsFragment requestsFragment = new RequestsFragment();
-//            InvReqFragment invReqFragment = new InvReqFragment();
-//            getSupportActionBar().setTitle("Requests/Invitations");
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.fragment_messaging_container, invReqFragment)
-//                    .replace(R.id.fragment_messaging_inv_container, invitationsFragment)
-//                    .replace(R.id.fragment_messaging_req_container, requestsFragment)
-//                    .addToBackStack(null);
-//            transaction.commit();
             Uri uri2 = new Uri.Builder()
                     .scheme("https")
                     .appendPath(getString(R.string.ep_base_url))
@@ -626,61 +553,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         return true;
     }
-
-//    private void handleRequestGetOnPostExecute(String result) {
-//
-//        //parse JSON
-//        try {
-//            mEmails = new ArrayList<>();
-//            mConnections = new ArrayList<>();
-//            JSONObject resultJSON = new JSONObject(result);
-//            boolean success = resultJSON.getBoolean("success");
-//            JSONArray data = resultJSON.getJSONArray("message");
-//            onWaitFragmentInteractionHide();
-//            if (success) {
-//                onWaitFragmentInteractionHide();
-//                for (int j = 0; j < data.length(); j++) {
-//                    mEmails.add(data.getString(j));
-//                }
-//                //When done parsing begin creating list of connections
-//                for (int i = 0; i < mEmails.size(); i++) {
-//                    Connection conn = new Connection.Builder(mEmails.get(i)).build();
-//                    mConnections.add(conn);
-//                }
-//
-//
-//                //Bundle list of connections as arguments and load connection fragment
-//                Connection[] connectionsAsArray = new Connection[mConnections.size()];
-//                connectionsAsArray = mConnections.toArray(connectionsAsArray);
-//                //Bundle connections and send as arguments
-//                Bundle args = new Bundle();
-//
-//                Fragment frag = new InvReqFragment();
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_messaging_container, frag );
-//                transaction.commit();
-//                args.putSerializable(RequestsFragment.ARG_REQUEST_LIST, connectionsAsArray);
-//                frag = new RequestsFragment();
-//                frag.setArguments(args);
-//                transaction = getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_messaging_req_container, frag );
-//                transaction.commit();
-//
-//
-//                Log.e("duper!!!!", "yup");
-//
-//
-//            }
-//            onWaitFragmentInteractionHide();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e("SUPER!!", e.getMessage());
-//            //notify user
-//            onWaitFragmentInteractionHide();
-//        }
-//
-//    }
-
 
     /**
      * Method to logout of the app, and delete saved password information
@@ -790,13 +662,18 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .appendPath(getString(R.string.ep_deleteContact))
                 .build();
         String msg = getIntent().getExtras().getString("email");
+        Log.e("Deleting", msg);
         String msg2 = item.getEmail();
 
         JSONObject json = new JSONObject();
+        JSONObject json2 = new JSONObject();
         try {
 
             json.put("email", msg);
             json.put("email2", msg2);
+
+            json.put("email2", msg);
+            json.put("email", msg2);
 
 
         } catch (JSONException e) {
@@ -804,6 +681,14 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
         new SendPostAsyncTask.Builder(uri.toString(), json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConnectionDeleteOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+        //todo remove this
+
+        new SendPostAsyncTask.Builder(uri.toString(), json2)
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleConnectionDeleteOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
@@ -898,18 +783,15 @@ public class MessagingHomeActivity extends AppCompatActivity
     private void handleConnectionGetOnPostExecute(final String result) {
         //parse JSON
         try {
+            mEmails.clear();
 
             mCounter=0;
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray data = resultJSON.getJSONArray("message");
-System.out.println("data"+data.toString());
+
             if (success) {
                 System.out.println("1------_>");
-
-                System.out.println("  -  "+getIntent().getExtras().getString("email"));
-                String passEmail = getIntent().getExtras().getString("email");
-                System.out.println("  1 - "+passEmail);
                 //Create list of connections
                 for (int i = 0; i < data.length(); i++) {
 
@@ -919,7 +801,8 @@ System.out.println("data"+data.toString());
                     //Build ASNC task to grab connections from web service.
 
                 }
-                System.out.println("  2 - "+passEmail);
+
+
                 for (int i = 0; i < mEmails.size(); i++) {
                     Uri uri = new Uri.Builder()
                             .scheme("https")
@@ -933,29 +816,22 @@ System.out.println("data"+data.toString());
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
                 }
-                System.out.println("  3 - "+passEmail);
+
                 if (mEmails.isEmpty()) {
                     Connection[] connectionsAsArray = new Connection[mConnections.size()];
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
                     //Bundle connections and send as arguments
-                    System.out.println("4------_>  "+passEmail);
                     Bundle args = new Bundle();
-                    System.out.println("4------_>  "+passEmail);
-
-
+                    System.out.println("4------_>");
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
-                    args.putSerializable("pass", passEmail);
-
                     Fragment frag = new ConnectionsFragment();
                     frag.setArguments(args);
-                    System.out.println("   ---- "+mMyEmail);
-                    System.out.println("connection ---------->"+passEmail);
+                    System.out.println("connection ---------->");
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_messaging_container, frag)
                             .addToBackStack(null);
                     transaction.commit();
                 }
-                System.out.println("  4 - "+passEmail);
                 //
 
                 //
@@ -1101,6 +977,11 @@ System.out.println("data"+data.toString());
             JSONArray data = resultJSON.getJSONArray("message");
 
             if (success) {
+                mFirsts.clear();
+                mLasts.clear();
+                mUNames.clear();
+                mCounter = 0;
+
                 //Grab contact info from JSON result
                 mFirsts.add(data.getString(0));
                 mLasts.add(data.getString(1));
@@ -1119,9 +1000,6 @@ System.out.println("data"+data.toString());
                     }
 
                     onWaitFragmentInteractionHide();
-                    String passEmail = getIntent().getExtras().getString("email");
-                    System.out.println("  1 - "+passEmail);
-                    System.out.println("Yahooo     "+passEmail);
                     //Bundle list of connections as arguments and load connection fragment
                     Connection[] connectionsAsArray = new Connection[mConnections.size()];
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
@@ -1129,7 +1007,6 @@ System.out.println("data"+data.toString());
                     Bundle args = new Bundle();
                     System.out.println("4------_>");
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
-                    args.putSerializable("passEmail", passEmail);
                     Fragment frag = new ConnectionsFragment();
                     frag.setArguments(args);
                     System.out.println("connection ---------->");
@@ -1309,6 +1186,7 @@ System.out.println("data"+data.toString());
             onWaitFragmentInteractionHide();
             if (success) {
                 onWaitFragmentInteractionHide();
+                mEmails.clear();
                 for (int j = 0; j < data.length(); j++) {
                     mEmails.add(data.getString(j));
                 }
