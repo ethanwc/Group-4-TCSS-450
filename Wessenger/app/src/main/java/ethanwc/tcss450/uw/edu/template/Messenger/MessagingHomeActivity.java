@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
@@ -22,8 +21,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +30,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -53,14 +49,12 @@ import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContactFragmentButtonAction;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.Message;
-import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
-import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
-import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
-import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -198,8 +192,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     /**
      * OnBackPressed used to handle minimizing of the navigation drawer and closing the FAB on inappropriate windows.
      */
-    @Override
-    public void onBackPressed() {
+//    @Override
+//    public void onBackPressed() {
 //        View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
 //        View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
 //        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
@@ -219,7 +213,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //            super.onBackPressed();
 //        }
 //        getSupportFragmentManager().addT
-    }
+//    }
 
     /**
      * OnCreateOptionsMenu used to help create the options menu.

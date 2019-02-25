@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,6 +96,7 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootLayout = inflater.inflate(R.layout.fragment_chat, container, false);
         mMessageOutputTextView = rootLayout.findViewById(R.id.text_chat_message_display);
+        mMessageOutputTextView.setMovementMethod(new ScrollingMovementMethod());
         mMessageInputEditText = rootLayout.findViewById(R.id.edit_chat_message_input);
         rootLayout.findViewById(R.id.button_send_message).setOnClickListener(this::handleSendClick);
 
