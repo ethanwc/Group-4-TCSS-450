@@ -354,7 +354,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
                         connectionsFab.setEnabled(false);
                         connectionsFab.hide();
-
+                        getSupportActionBar().setTitle("User Detail");
                         connectionViewFrag.setArguments(args);
                         loadFragment(connectionViewFrag);
 
@@ -515,7 +515,7 @@ System.out.println("===========");
             //handleConnectionGetInfoOnPostExecute
             String msg = getIntent().getExtras().getString("email");
             Credentials creds = new Credentials.Builder(msg).build();
-            getSupportActionBar().setTitle("Connections-");
+            getSupportActionBar().setTitle("Connections");
             new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleConnectionGetOnPostExecute)
@@ -1455,7 +1455,7 @@ System.out.println("from handle connection get on post execute");
     private class PushMessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---+++++->MainActivity--->>>>>><<<."+intent.toString());
+            System.out.println("in push message receive---testingte+++++->MessagingHome--->>>>>><<<."+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
