@@ -16,8 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 import ethanwc.tcss450.uw.edu.template.model.Message;
 
 /**
@@ -45,7 +43,6 @@ public class ConversationFragment extends Fragment {
     }
 
     // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static ConversationFragment newInstance(int columnCount) {
         ConversationFragment fragment = new ConversationFragment();
         Bundle args = new Bundle();
