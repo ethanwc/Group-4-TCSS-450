@@ -221,6 +221,7 @@ public class ChatFragment extends Fragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
+
             System.out.println("in push message receive---+++++->chatfragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 

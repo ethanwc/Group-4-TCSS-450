@@ -82,6 +82,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
+    public String mMyEmail="a";
 
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
@@ -125,6 +126,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
+        String emails = getIntent().getExtras().getString(("email"));
+        mMyEmail = emails;
+        System.out.println("...=====..."+mMyEmail);
 
         loadChats();
         //Hide the FAB upon main activity loading.
@@ -143,9 +147,23 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //Set on click listener for FAB
         mFab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                loadFragment(new AddContactFragment());
+                System.out.println("---add contact listener--"+mMyEmail);
+                AddContactFragment addContact = new AddContactFragment();
+                //
+                Bundle args = new Bundle();
+
+
+                args.putSerializable("passEmail", mMyEmail);
+
+                addContact.setArguments(args);
+
+
+
+                //
+                loadFragment(addContact);
                 mFab.hide();
                 mFab.setEnabled(false);
             }
@@ -433,6 +451,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        mMenuItem.setTitle(s);
 
     }
+    public String getEmail(){
+        System.out.println("--->"+mMyEmail);
+        return mMyEmail;
+    }
 
     /**
      * Method used to handle when menu items are selected.
@@ -445,12 +467,15 @@ public class MessagingHomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 //        mMenuItem = R.id.nav_global_chat
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
         //Chat has been chosen
         if (id == R.id.nav_global_chat) {
 
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
             String email = getIntent().getExtras().getString(("email"));
+            mMyEmail = email;
+
             Bundle args = new Bundle();
             args.putString("jwt_token", jwt);
             args.putString("email_token_123", email);
@@ -516,6 +541,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                   .build();
             //handleConnectionGetInfoOnPostExecute
             String msg = getIntent().getExtras().getString("email");
+            System.out.println("from view connection call"+msg);
             Credentials creds = new Credentials.Builder(msg).build();
             getSupportActionBar().setTitle("Connections");
             new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
@@ -877,9 +903,13 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray data = resultJSON.getJSONArray("message");
-
+System.out.println("data"+data.toString());
             if (success) {
                 System.out.println("1------_>");
+
+                System.out.println("  -  "+getIntent().getExtras().getString("email"));
+                String passEmail = getIntent().getExtras().getString("email");
+                System.out.println("  1 - "+passEmail);
                 //Create list of connections
                 for (int i = 0; i < data.length(); i++) {
 
@@ -889,6 +919,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     //Build ASNC task to grab connections from web service.
 
                 }
+                System.out.println("  2 - "+passEmail);
                 for (int i = 0; i < mEmails.size(); i++) {
                     Uri uri = new Uri.Builder()
                             .scheme("https")
@@ -902,22 +933,29 @@ public class MessagingHomeActivity extends AppCompatActivity
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
                 }
-
+                System.out.println("  3 - "+passEmail);
                 if (mEmails.isEmpty()) {
                     Connection[] connectionsAsArray = new Connection[mConnections.size()];
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
                     //Bundle connections and send as arguments
+                    System.out.println("4------_>  "+passEmail);
                     Bundle args = new Bundle();
-                    System.out.println("4------_>");
+                    System.out.println("4------_>  "+passEmail);
+
+
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                    args.putSerializable("pass", passEmail);
+
                     Fragment frag = new ConnectionsFragment();
                     frag.setArguments(args);
-                    System.out.println("connection ---------->");
+                    System.out.println("   ---- "+mMyEmail);
+                    System.out.println("connection ---------->"+passEmail);
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_messaging_container, frag)
                             .addToBackStack(null);
                     transaction.commit();
                 }
+                System.out.println("  4 - "+passEmail);
                 //
 
                 //
@@ -1081,6 +1119,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                     }
 
                     onWaitFragmentInteractionHide();
+                    String passEmail = getIntent().getExtras().getString("email");
+                    System.out.println("  1 - "+passEmail);
+                    System.out.println("Yahooo     "+passEmail);
                     //Bundle list of connections as arguments and load connection fragment
                     Connection[] connectionsAsArray = new Connection[mConnections.size()];
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
@@ -1088,6 +1129,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     Bundle args = new Bundle();
                     System.out.println("4------_>");
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                    args.putSerializable("passEmail", passEmail);
                     Fragment frag = new ConnectionsFragment();
                     frag.setArguments(args);
                     System.out.println("connection ---------->");

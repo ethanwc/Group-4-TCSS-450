@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 import ethanwc.tcss450.uw.edu.template.Main.LoginFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -32,13 +34,28 @@ public class AddContactFragment extends WaitFragment {
     private OnNewContactFragmentButtonAction mListener;
     private EditText mEmail;
     private PushMessageReceiver mPushMessageReciever;
-
+private String mMyEmail;
 
     public AddContactFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * OnCreate used to populate the list of connections.
+     * @param savedInstanceState Bundle.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        if (getArguments() != null) {
+
+            mMyEmail = getArguments().getString("passEmail");
+            System.out.println(mMyEmail+"----- in Addcontact");
+        }
+
+
+    }
     /**
      * OnCreateView used to instantiate relevant items to the fragment.
      *
@@ -75,6 +92,7 @@ public class AddContactFragment extends WaitFragment {
     @Override
     public void onStart() {
         super.onStart();
+
         mEmail = getActivity().findViewById(R.id.edittext_newcontact_email);
 
         Button addButton = getActivity().findViewById(R.id.button_newcontact_add);
@@ -137,12 +155,13 @@ public class AddContactFragment extends WaitFragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---+++++->MainActivity---."+intent.toString());
+            System.out.println("in push message receive---+++++->AddContactFragment---."+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 System.out.println("The message is: " + messageText);
+                System.out.println("--->"+mMyEmail+"---->"+sender);
                 if (type.equals("inv")) {
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                             .setAutoCancel(true)
@@ -150,15 +169,22 @@ public class AddContactFragment extends WaitFragment {
                             .setContentTitle("New Contact Request from : " + sender)
                             .setContentText(messageText)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    System.out.println("in Push Message Receiver ---");
+                    System.out.println("in push Message Receiver---->"+mMyEmail);
+                    if(!sender.equals(mMyEmail)){
+                        System.out.println("---same email ---");
+// Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel(builder, context);
 
-                    // Automatically configure a Notification Channel for devices running Android O+
-                    Pushy.setNotificationChannel(builder, context);
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
-                    // Get an instance of the NotificationManager service
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+                        // Build the notification and display it
+                        notificationManager.notify(1, builder.build());
+                    }
+                    System.out.println("---Not same email ---");
 
-                    // Build the notification and display it
-                    notificationManager.notify(1, builder.build());
+
 
 
                 } else if(type.equals("msg")) {

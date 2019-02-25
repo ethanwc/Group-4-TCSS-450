@@ -20,6 +20,7 @@ import android.widget.Toast;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import me.pushy.sdk.Pushy;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
@@ -45,6 +46,9 @@ public class PushReceiver extends BroadcastReceiver {
         //feel free to change the key or type of values. You could use numbers like HTTP: 404 etc
         String typeOfMessage = intent.getStringExtra("type");
         System.out.println("type of msg =========>  "+typeOfMessage);
+        MessagingHomeActivity ho = new MessagingHomeActivity();
+//System.out.println("----------<>"+context.getString(R.string.new_user_first_name));
+        System.out.println("-----"+ho.getEmail());
 
         //The WS sent us the name of the sender
         String sender = intent.getStringExtra("sender");

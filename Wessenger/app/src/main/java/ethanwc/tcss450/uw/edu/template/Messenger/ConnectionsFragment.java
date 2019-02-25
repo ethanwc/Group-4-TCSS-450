@@ -40,6 +40,7 @@ public class ConnectionsFragment extends Fragment {
     private int mColumnCount = 1;
     private OnConnectionListFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
+    private String mMyEmail;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -66,6 +67,8 @@ public class ConnectionsFragment extends Fragment {
 
         if (getArguments() != null) {
             mConnections = new ArrayList<Connection> (Arrays.asList((Connection[]) getArguments().getSerializable(ARG_CONNECTION_LIST)));
+            mMyEmail = getArguments().getString("passEmail");
+            System.out.println(mMyEmail+"----- in connections");
         }
 
 
@@ -178,6 +181,8 @@ public class ConnectionsFragment extends Fragment {
                 String messageText = intent.getStringExtra("MESSAGE");
                 System.out.println("The message is: " + messageText);
                 if (type.equals("inv")) {
+                    System.out.println("i got it----- ");
+                    System.out.println("i got it "+mMyEmail);
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                             .setAutoCancel(true)
                             .setSmallIcon(R.drawable.ic_person_black_24dp)
