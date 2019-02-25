@@ -103,7 +103,7 @@ public class ChatFragment extends Fragment {
         JSONObject messageJson = new JSONObject();
         //Build message for web service.
         try {
-            messageJson.put("chatId", CHAT_ID);
+            messageJson.put("chatId", "1");
         } catch (JSONException e) {
             e.printStackTrace();
         }
