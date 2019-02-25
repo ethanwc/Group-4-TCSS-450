@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
@@ -136,7 +135,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
-//System.out.println("+=======from pushy");
+            //System.out.println("+=======from pushy");
             mEmailList = new ArrayList<String>();
             mEmailList = getIntent().getStringArrayListExtra("a");
 
@@ -497,10 +496,13 @@ public class MessagingHomeActivity extends AppCompatActivity
             //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
             getSupportActionBar().setTitle("Chat");
+            mFab.setEnabled(false);
+            mFab.hide();
+
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
-System.out.println("===========");
+            System.out.println("===========");
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
             mLasts = new ArrayList<>();
@@ -587,6 +589,9 @@ System.out.println("===========");
                     .onPostExecute(this::handleInvitationGetOnPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
+            mFab.setEnabled(false);
+            mFab.hide();
+
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
@@ -867,14 +872,14 @@ System.out.println("===========");
     private void handleConnectionGetOnPostExecute(final String result) {
         //parse JSON
         try {
-            System.out.println("1------_>");
+
             mCounter=0;
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray data = resultJSON.getJSONArray("message");
 
             if (success) {
-
+                System.out.println("1------_>");
                 //Create list of connections
                 for (int i = 0; i < data.length(); i++) {
 
@@ -890,12 +895,28 @@ System.out.println("===========");
                             .appendPath(getString(R.string.ep_base_url))
                             .appendPath(getString(R.string.ep_memberinfo))
                             .build();
-System.out.println("from handle connection get on post execute");
+                    System.out.println("from handle connection get on post execute");
                     Credentials creds = new Credentials.Builder(mEmails.get(i)).build();
                     new SendPostAsyncTask.Builder(uri.toString(), creds.asJSONObject())
                             .onPostExecute(this::handleConnectionGetInfoOnPostExecute)
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
+                }
+
+                if (mEmails.isEmpty()) {
+                    Connection[] connectionsAsArray = new Connection[mConnections.size()];
+                    connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                    //Bundle connections and send as arguments
+                    Bundle args = new Bundle();
+                    System.out.println("4------_>");
+                    args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                    Fragment frag = new ConnectionsFragment();
+                    frag.setArguments(args);
+                    System.out.println("connection ---------->");
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_messaging_container, frag)
+                            .addToBackStack(null);
+                    transaction.commit();
                 }
                 //
 
@@ -1023,9 +1044,9 @@ System.out.println("from handle connection get on post execute");
         transaction.commit();
 
 
-        //Show FAB
-        mFab.setEnabled(true);
-        mFab.show();
+//        //Show FAB
+//        mFab.setEnabled(true);
+//        mFab.show();
     }
 
     /**
@@ -1296,9 +1317,18 @@ System.out.println("from handle connection get on post execute");
                 .appendPath(getString(R.string.ep_acceptinvitation))
                 .build();
         String msg = getIntent().getExtras().getString("email");
-        Credentials creds = new Credentials.Builder(msg).build();
+        String email2 = item.getEmail();
+        JSONObject json = new JSONObject();
+        try {
+            json.put("email", msg);
+            json.put("email2", email2);
+
+
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
         getSupportActionBar().setTitle("Invitations");
-        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+        new SendPostAsyncTask.Builder(uri.toString(),json)
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleInvitationAcceptOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
