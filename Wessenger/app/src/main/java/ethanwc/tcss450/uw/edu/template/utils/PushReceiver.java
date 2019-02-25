@@ -48,7 +48,7 @@ public class PushReceiver extends BroadcastReceiver {
         System.out.println("type of msg =========>  "+typeOfMessage);
         MessagingHomeActivity ho = new MessagingHomeActivity();
 //System.out.println("----------<>"+context.getString(R.string.new_user_first_name));
-        System.out.println("-----"+ho.getEmail());
+//        System.out.println("-----"+ho.getEmail());
 
         //The WS sent us the name of the sender
         String sender = intent.getStringExtra("sender");
