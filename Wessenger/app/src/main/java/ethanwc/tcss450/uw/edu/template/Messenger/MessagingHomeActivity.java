@@ -47,7 +47,6 @@ import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContactFragmentButtonAction;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.Message;
@@ -363,30 +362,34 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                    .onPostExecute(this::handleRequestGetOnPostExecute)
 //                    .onCancelled(this::handleErrorsInTask)
 //                    .build().execute();
-            Uri uri2 = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_getinvitations))
-                    .build();
-            String msg2 = getIntent().getExtras().getString("email");
-            Credentials creds2 = new Credentials.Builder(msg2).build();
-            getSupportActionBar().setTitle("Connections");
-            new SendPostAsyncTask.Builder(uri2.toString(),creds2.asJSONObject())
-                    .onPreExecute(this::onWaitFragmentInteractionShow)
-                    .onPostExecute(this::handleInvitationGetOnPostExecute)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build().execute();
 
-            InvitationsFragment invitationsFragment = new InvitationsFragment();
-            RequestsFragment requestsFragment = new RequestsFragment();
-            InvReqFragment invReqFragment = new InvReqFragment();
-            getSupportActionBar().setTitle("Requests/Invitations");
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_messaging_container, invReqFragment)
-                    .replace(R.id.fragment_messaging_inv_container, invitationsFragment)
-                    .replace(R.id.fragment_messaging_req_container, requestsFragment)
-                    .addToBackStack(null);
-            transaction.commit();
+
+//
+//
+//            Uri uri2 = new Uri.Builder()
+//                    .scheme("https")
+//                    .appendPath(getString(R.string.ep_base_url))
+//                    .appendPath(getString(R.string.ep_getinvitations))
+//                    .build();
+//            String msg2 = getIntent().getExtras().getString("email");
+//            Credentials creds2 = new Credentials.Builder(msg2).build();
+//            getSupportActionBar().setTitle("Connections");
+//            new SendPostAsyncTask.Builder(uri2.toString(),creds2.asJSONObject())
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
+//                    .onPostExecute(this::handleInvitationGetOnPostExecute)
+//                    .onCancelled(this::handleErrorsInTask)
+//                    .build().execute();
+//
+//            InvitationsFragment invitationsFragment = new InvitationsFragment();
+//            RequestsFragment requestsFragment = new RequestsFragment();
+//            InvReqFragment invReqFragment = new InvReqFragment();
+//            getSupportActionBar().setTitle("Requests/Invitations");
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.fragment_messaging_container, invReqFragment)
+//                    .replace(R.id.fragment_messaging_inv_container, invitationsFragment)
+//                    .replace(R.id.fragment_messaging_req_container, requestsFragment)
+//                    .addToBackStack(null);
+//            transaction.commit();
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
