@@ -27,4 +27,6 @@
     <string name="ep_getchats">getchats</string>
 
 
+    <string name="ep_acceptinvitation">acceptinvitation</string>
+    <string name="ep_declineinvitation">declineinvitation</string>
 </resources>

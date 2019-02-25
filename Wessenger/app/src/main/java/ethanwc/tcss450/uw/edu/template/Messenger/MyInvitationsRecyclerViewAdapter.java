@@ -5,9 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
-import ethanwc.tcss450.uw.edu.template.Messenger.InvitationsFragment.OnListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.Messenger.InvitationsFragment.OnInvitationListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
@@ -17,15 +18,15 @@ import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnInvitationListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyInvitationsRecyclerViewAdapter extends RecyclerView.Adapter<MyInvitationsRecyclerViewAdapter.ViewHolder> {
 
     private final List<Connection> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnInvitationListFragmentInteractionListener mListener;
 
-    public MyInvitationsRecyclerViewAdapter(List<Connection> items, OnListFragmentInteractionListener listener) {
+    public MyInvitationsRecyclerViewAdapter(List<Connection> items, OnInvitationListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -57,17 +58,23 @@ public class MyInvitationsRecyclerViewAdapter extends RecyclerView.Adapter<MyInv
         Collections.sort(mValues);
         holder.mItem = mValues.get(position);
 
-        holder.mEmailView.setText(mValues.get(position).getEmail());
-//        holder.mView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (null != mListener) {
-//                    // Notify the active callbacks interface (the activity, if the
-//                    // fragment is attached to one) that an item has been selected.
-//                    mListener.onListFragmentInteraction(holder.mItem);
-//                }
-//            }
-//        });
+        holder.mAcceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    mListener.onInvitationAcceptFragmentInteraction(holder.mItem);
+                }
+            }
+        });
+
+        holder.mDeclineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    mListener.onInvitationDeclineFragmentInteraction(holder.mItem);
+                }
+            }
+        });
     }
 
     @Override
@@ -78,11 +85,15 @@ public class MyInvitationsRecyclerViewAdapter extends RecyclerView.Adapter<MyInv
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         final TextView mEmailView;
+        final Button mAcceptButton;
+        final Button mDeclineButton;
         Connection mItem;
 
         ViewHolder(View view) {
             super(view);
             mView = view;
+            mAcceptButton = view.findViewById(R.id.button_invitations_accept);
+            mDeclineButton = view.findViewById(R.id.button_invitations_cancel);
             mEmailView = view.findViewById(R.id.textview_invitations_email);
         }
     }
