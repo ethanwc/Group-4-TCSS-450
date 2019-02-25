@@ -3,24 +3,15 @@ package ethanwc.tcss450.uw.edu.template.utils;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.Context;
 import android.content.BroadcastReceiver;
-import android.graphics.Color;
-import android.support.design.widget.NavigationView;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import me.pushy.sdk.Pushy;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
@@ -60,7 +51,7 @@ public class PushReceiver extends BroadcastReceiver {
 
         if (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE) {
             //app is in the foreground so send the message to the active Activities
-            Log.d("PhishApp", "Message received in foreground:"+messageText);
+            Log.d("Wessenger", "Message received in foreground:"+messageText);
 
 
             //create an Intent to broadcast a message to other parts of the app.
@@ -76,8 +67,9 @@ public class PushReceiver extends BroadcastReceiver {
 
 
         } else {
+            if (typeOfMessage.equals("msg")) {
             //app is in the background so create and post a notification
-            Log.d("PhishApp", "Message received in background: " + messageText);
+            Log.d("Wessenger", "Message received in background: " + messageText);
             System.out.println("Background------->");
             Intent i = new Intent(context, MainActivity.class);
             i.putExtras(intent.getExtras());
@@ -85,24 +77,57 @@ public class PushReceiver extends BroadcastReceiver {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                     i, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            //research more on notifications the how to display them
-            //https://developer.android.com/guide/topics/ui/notifiers/notifications
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.ic_message_black_24dp)
-                    .setContentTitle("Message from: " + sender)
-                    .setContentText(messageText)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setContentIntent(pendingIntent);
 
-            // Automatically configure a Notification Channel for devices running Android O+
-            Pushy.setNotificationChannel(builder, context);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.ic_message_black_24dp)
+                        .setContentTitle("Message from: " + sender)
+                        .setContentText(messageText)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent);
 
-            // Get an instance of the NotificationManager service
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+                //research more on notifications the how to display them
+                //https://developer.android.com/guide/topics/ui/notifiers/notifications
 
-            // Build the notification and display it
-            notificationManager.notify(1, builder.build());
+
+                // Automatically configure a Notification Channel for devices running Android O+
+                Pushy.setNotificationChannel(builder, context);
+
+                // Get an instance of the NotificationManager service
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                // Build the notification and display it
+                notificationManager.notify(1, builder.build());
+            } else {
+                Log.d("Wessenger", "Message received in background: " + messageText);
+                System.out.println("Background------->");
+                Intent i = new Intent(context, MainActivity.class);
+                i.putExtras(intent.getExtras());
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                        i, PendingIntent.FLAG_UPDATE_CURRENT);
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.ic_message_black_24dp)
+                        .setContentTitle("Contact invitation from: " + sender)
+                        .setContentText(messageText)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent);
+
+                //research more on notifications the how to display them
+                //https://developer.android.com/guide/topics/ui/notifiers/notifications
+
+
+                // Automatically configure a Notification Channel for devices running Android O+
+                Pushy.setNotificationChannel(builder, context);
+
+                // Get an instance of the NotificationManager service
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                // Build the notification and display it
+                notificationManager.notify(1, builder.build());
+            }
+
         }
 
     }
