@@ -95,6 +95,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
 
+        loadChats();
         //Hide the FAB upon main activity loading.
         mFab = findViewById(R.id.fab_messaging_fab);
         mFab.setEnabled(false);
@@ -122,12 +123,12 @@ public class MessagingHomeActivity extends AppCompatActivity
              * Load the desired fragment.
              * @param frag
              */
-            private void loadFragment(Fragment frag) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_messaging_container, frag)
-                        .addToBackStack(null);
-                transaction.commit();
-            }
+//            private void loadFragment(Fragment frag) {
+//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+//                        .replace(R.id.fragment_messaging_container, frag)
+//                        .addToBackStack(null);
+//                transaction.commit();
+//            }
         });
 
         //Setup the navigation
@@ -143,43 +144,44 @@ public class MessagingHomeActivity extends AppCompatActivity
         Fragment fragment;
         if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_msg), false)) {
             fragment = new ChatFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_messaging_container, fragment)
+                    .commit();
         } else if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_invitation), false)) {
             fragment = new InvitationsFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_messaging_container, fragment)
+                    .commit();
         } else {
-            fragment = new ConversationFragment();
+            loadChats();
+
         }
-
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_messaging_container, fragment)
-                .commit();
-
-
     }
 
     /**
      * OnBackPressed used to handle minimizing of the navigation drawer and closing the FAB on inappropriate windows.
      */
-    @Override
-    public void onBackPressed() {
-        View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
-        View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
-        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-
-
-        } else if (connectionViewFrag != null || addcontactViewFrag != null) {
-            //Show the FAB on correct windows when back is pressed.
-            mFab.show();
-            mFab.setEnabled(true);
-            super.onBackPressed();
-        } else {
-            //Hide the FAB on correct windows when back is pressed
-            mFab.hide();
-            mFab.setEnabled(false);
-            super.onBackPressed();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
+//        View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
+//        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//
+//
+//        } else if (connectionViewFrag != null || addcontactViewFrag != null) {
+//            //Show the FAB on correct windows when back is pressed.
+//            mFab.show();
+//            mFab.setEnabled(true);
+//            super.onBackPressed();
+//        } else {
+//            //Hide the FAB on correct windows when back is pressed
+//            mFab.hide();
+//            mFab.setEnabled(false);
+//            super.onBackPressed();
+//        }
+//    }
 
     /**
      * OnCreateOptionsMenu used to help create the options menu.
@@ -287,6 +289,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             Bundle args = new Bundle();
             args.putString("jwt_token", jwt);
             args.putString("email_token_123", email);
+            args.putString("chat_id", "1");
             Fragment chatFrag = new ChatFragment();
             chatFrag.setArguments(args);
 
@@ -649,7 +652,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab.hide();
 
         chatFrag.setArguments(args);
-        //LOAD CHAT FRAGMENT CORRECTLY
         loadFragment(chatFrag);
     }
 
@@ -660,7 +662,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onChangePasswordClicked() {
         getSupportActionBar().setTitle("Messaging");
-        loadFragment(new ConversationFragment());
+        loadChats();
     }
 
     /**
@@ -742,11 +744,10 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
 
-
     /**
      * Setup chats after they are loaded.
      */
-    private void setChatInfo() {
+    private Message[] setChatInfo() {
 
         Message[] m = new Message[mChats.size()];
         for (int i = 0; i < mChats.size(); i++) {
@@ -755,24 +756,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                 for (String person: peopleInChat)
                     members.append(mPeople.get(person) + " ");
 
-                //TODO most recent message
-            m[i] = new Message.Builder("chat name?").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
+                m[i] = new Message.Builder("chat name?").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
-
-
-        Bundle args = new Bundle();
-        args.putSerializable(ConversationFragment.ARG_MESSAGE_LIST, m);
-        Fragment frag = new ConversationFragment();
-        frag.setArguments(args);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_messaging_container, frag)
-                .addToBackStack(null);
-        transaction.commit();
-
-
-        //Show FAB
-        mFab.setEnabled(true);
-        mFab.show();
+        return m;
     }
 
     /**
@@ -810,8 +796,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 Log.e("Output", mChatMembers.toString());
 
                 Log.e("Output", mPeople.toString());
-
-                setChatInfo();
+                swapToChats();
             }
 
 
@@ -823,6 +808,26 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
     }
 
+
+    /*
+    Just loads the chats fragment.
+     */
+    private void swapToChats() {
+        Message[] m = setChatInfo();
+        Bundle args = new Bundle();
+        args.putSerializable(ConversationFragment.ARG_MESSAGE_LIST, m);
+        Fragment frag = new ConversationFragment();
+        frag.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_messaging_container, frag)
+                .addToBackStack(null);
+        transaction.commit();
+
+
+        //Show FAB
+        mFab.setEnabled(true);
+        mFab.show();
+    }
 
     /**
      * Method listening for contact details button to be pressed.

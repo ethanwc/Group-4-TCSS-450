@@ -93,27 +93,6 @@ public class ChatFragment extends Fragment {
         mMessageInputEditText = rootLayout.findViewById(R.id.edit_chat_message_input);
         rootLayout.findViewById(R.id.button_send_message).setOnClickListener(this::handleSendClick);
 
-        String getAll = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_messaging_base))
-                .appendPath(getString(R.string.ep_messaging_getAll))
-                .build()
-                .toString();
-        JSONObject messageJson = new JSONObject();
-        //Build message for web service.
-        try {
-            messageJson.put("chatId", "1");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        new SendPostAsyncTask.Builder(getAll, messageJson)
-                .onPostExecute(this::getAllHistory)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken)
-                .build().execute();
-
         return rootLayout;
     }
 
@@ -138,6 +117,8 @@ public class ChatFragment extends Fragment {
                 .appendPath(getString(R.string.ep_messaging_send))
                 .build()
                 .toString();
+
+        setChatHistory();
     }
 
     /**
@@ -181,6 +162,30 @@ public class ChatFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
+    private void setChatHistory() {
+        String getAll = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_messaging_base))
+                .appendPath(getString(R.string.ep_messaging_getAll))
+                .build()
+                .toString();
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("chatId", mChatID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new SendPostAsyncTask.Builder(getAll, messageJson)
+                .onPostExecute(this::getAllHistory)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken)
+                .build().execute();
+    }
+
 
     //output the chat history result
     private void getAllHistory(final String result) {

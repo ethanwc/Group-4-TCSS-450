@@ -6,10 +6,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7f45b21d-ff4a-43e1-88e2-310f5f754f5a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Group-4-TCSS-450.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Group-4-TCSS-450.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="7f45b21d-ff4a-43e1-88e2-310f5f754f5a" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -64,6 +61,15 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="265850807">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="1" />
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -84,23 +90,23 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="messenger" type="b2602c69:ProjectViewProjectNode" />
-              <item name="messenger" type="462c0819:PsiDirectoryNode" />
+              <item name="tryagain" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tryagain" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="messenger" type="b2602c69:ProjectViewProjectNode" />
-              <item name="messenger" type="462c0819:PsiDirectoryNode" />
+              <item name="tryagain" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tryagain" type="462c0819:PsiDirectoryNode" />
               <item name="Wessenger" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="AndroidView" />
     </panes>
