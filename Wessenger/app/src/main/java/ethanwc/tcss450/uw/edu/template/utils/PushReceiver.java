@@ -3,24 +3,15 @@ package ethanwc.tcss450.uw.edu.template.utils;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.Context;
 import android.content.BroadcastReceiver;
-import android.graphics.Color;
-import android.support.design.widget.NavigationView;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import me.pushy.sdk.Pushy;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
@@ -48,7 +39,7 @@ public class PushReceiver extends BroadcastReceiver {
         System.out.println("type of msg =========>  "+typeOfMessage);
         MessagingHomeActivity ho = new MessagingHomeActivity();
 //System.out.println("----------<>"+context.getString(R.string.new_user_first_name));
-        System.out.println("-----"+ho.getEmail());
+        //System.out.println("-----"+ho.getEmail());
 
         //The WS sent us the name of the sender
         String sender = intent.getStringExtra("sender");

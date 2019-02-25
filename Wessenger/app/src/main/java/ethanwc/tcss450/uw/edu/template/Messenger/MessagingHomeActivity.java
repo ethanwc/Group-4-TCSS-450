@@ -686,17 +686,33 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-        //todo remove this
+//        //todo remove this
+//
+//        new SendPostAsyncTask.Builder(uri.toString(), json2)
+//                .onPreExecute(this::onWaitFragmentInteractionShow)
+//                .onPostExecute(this::handleConnectionDeleteOnPostExecute)
+//                .onCancelled(this::handleErrorsInTask)
+//                .build().execute();
 
-        new SendPostAsyncTask.Builder(uri.toString(), json2)
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleConnectionDeleteOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
 
 
         mFab.setEnabled(true);
         mFab.show();
+
+
+                Uri uri2 = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getContacts))
+                .build();
+        String msg3 = getIntent().getExtras().getString("email");
+        Credentials creds2 = new Credentials.Builder(msg3).build();
+        getSupportActionBar().setTitle("Connections");
+        new SendPostAsyncTask.Builder(uri2.toString(), creds2.asJSONObject())
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleConnectionGetOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
 
     }
 
@@ -816,7 +832,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
                 }
-
                 if (mEmails.isEmpty()) {
                     Connection[] connectionsAsArray = new Connection[mConnections.size()];
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
@@ -1043,20 +1058,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             boolean success = resultJSON.getBoolean("success");
 
             if (success) {
-                //Build ASYNC task to get the new contacts list.
-                Uri uri = new Uri.Builder()
-                        .scheme("https")
-                        .appendPath(getString(R.string.ep_base_url))
-                        .appendPath(getString(R.string.ep_getContacts))
-                        .build();
-                String msg = getIntent().getExtras().getString("email");
-                Credentials creds = new Credentials.Builder(msg).build();
-                getSupportActionBar().setTitle("Connections");
-                new SendPostAsyncTask.Builder(uri.toString(), creds.asJSONObject())
-                        .onPreExecute(this::onWaitFragmentInteractionShow)
-                        .onPostExecute(this::handleConnectionGetOnPostExecute)
-                        .onCancelled(this::handleErrorsInTask)
-                        .build().execute();
+
                 //Hide wait fragment to go on to next ASYNC call
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
