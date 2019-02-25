@@ -47,11 +47,13 @@
     <string name="title_activity_weather_home">Weather</string>
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
+    <string name="keys_intent_notification_invitation">was app started from invitation notification?</string>
+
 
     <string name="keys_json_authentication_code">code</string>
 
     <string name="keys_intent_notification_msg">was app started from message notification?</string>
-    <string name="keys_intent_notification_invitation">was app started from invitation notification?</string>
+
 
     <string name="keys_intent_credentials">intent key for creds</string>
     <string name="keys_intent_jwt">intent key for jwt</string>
@@ -70,7 +72,7 @@
     <string name="Menu_Chat">Chat</string>
     <string name="Chat_Home">Home</string>
     <string name="Chat_View_Connections">View Connections</string>
-    <string name="Chat_requests_Invitations">Requests/Invitations</string>
+    <string name="Chat_requests_Invitations">Invitations</string>
     <string name="password_reset_prompt">Please enter the email for your account.</string>
     <string name="temoraryPassword_reset">Send Password</string>
     <string name="edittext_temporarypassword">Temporary Password</string>

@@ -1,6 +1,7 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.R;
+import me.pushy.sdk.Pushy;
 
 /**
  * Fragment used to represent an individual chat window.
@@ -29,12 +32,12 @@ import ethanwc.tcss450.uw.edu.template.R;
 public class ChatFragment extends Fragment {
 
     private static final String TAG = "CHAT_FRAG";
-    private static final String CHAT_ID = "1";
     private TextView mMessageOutputTextView;
     private EditText mMessageInputEditText;
     private String mEmail;
     private String mJwToken;
     private String mSendUrl;
+    private String mChatID;
     private PushMessageReceiver mPushMessageReciever;
 
     /**
@@ -50,6 +53,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+//        System.out.println("in push message receive---->On Resume");
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
@@ -62,6 +66,7 @@ public class ChatFragment extends Fragment {
      */
     @Override
     public void onPause() {
+//        System.out.println("in push message receive---->On Pause");
         super.onPause();
         if (mPushMessageReciever != null){
             getActivity().unregisterReceiver(mPushMessageReciever);
@@ -93,27 +98,6 @@ public class ChatFragment extends Fragment {
         mMessageInputEditText = rootLayout.findViewById(R.id.edit_chat_message_input);
         rootLayout.findViewById(R.id.button_send_message).setOnClickListener(this::handleSendClick);
 
-        String getAll = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_messaging_base))
-                .appendPath(getString(R.string.ep_messaging_getAll))
-                .build()
-                .toString();
-        JSONObject messageJson = new JSONObject();
-        //Build message for web service.
-        try {
-            messageJson.put("chatId", CHAT_ID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        new SendPostAsyncTask.Builder(getAll, messageJson)
-                .onPostExecute(this::getAllHistory)
-                .onCancelled(error -> Log.e(TAG, error))
-                .addHeaderField("authorization", mJwToken)
-                .build().execute();
-
         return rootLayout;
     }
 
@@ -127,6 +111,7 @@ public class ChatFragment extends Fragment {
         if (getArguments() != null) {
             mEmail = getArguments().getString("email_token_123");
             mJwToken = getArguments().getString("jwt_token");
+            mChatID = getArguments().getString("chat_id");
         }
 
         //Store url in variable.
@@ -137,6 +122,8 @@ public class ChatFragment extends Fragment {
                 .appendPath(getString(R.string.ep_messaging_send))
                 .build()
                 .toString();
+
+        setChatHistory();
     }
 
     /**
@@ -150,7 +137,7 @@ public class ChatFragment extends Fragment {
         try {
             messageJson.put("email", mEmail);
             messageJson.put("message", msg);
-            messageJson.put("chatId", CHAT_ID);
+            messageJson.put("chatId", mChatID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -181,6 +168,30 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    private void setChatHistory() {
+        String getAll = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_messaging_base))
+                .appendPath(getString(R.string.ep_messaging_getAll))
+                .build()
+                .toString();
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("chatId", mChatID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        new SendPostAsyncTask.Builder(getAll, messageJson)
+                .onPostExecute(this::getAllHistory)
+                .onCancelled(error -> Log.e(TAG, error))
+                .addHeaderField("authorization", mJwToken)
+                .build().execute();
+    }
+
+
     //output the chat history result
     private void getAllHistory(final String result) {
         try {
@@ -205,14 +216,38 @@ public class ChatFragment extends Fragment {
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
     private class PushMessageReceiver extends BroadcastReceiver {
+        private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
+            System.out.println("in push message receive---+++++->chatfragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+
+                String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 mMessageOutputTextView.append(sender + ":" + messageText);
                 mMessageOutputTextView.append(System.lineSeparator());
                 mMessageOutputTextView.append(System.lineSeparator());
+
+                if (type.equals("inv")) {
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("New Contact Request from : " + sender)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
+
+
+                }
             }
         }
     }

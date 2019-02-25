@@ -252,6 +252,7 @@ public class LoginFragment extends WaitFragment {
                     .setError("Incorrect format returned.");
         }
     }
+
     private void attemptLogin() {
         boolean hasError = false;
         if (mEditEmail.getText().length() == 0) {
