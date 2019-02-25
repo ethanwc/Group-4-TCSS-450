@@ -235,8 +235,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         // Get SearchView autocomplete object.
         final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchAutoComplete.setBackgroundColor(Color.BLUE);
-        searchAutoComplete.setTextColor(Color.GREEN);
+        searchAutoComplete.setBackgroundColor(getResources().getColor(R.color.backgroundDark));
+        searchAutoComplete.setTextColor(getResources().getColor(R.color.messageText));
         searchAutoComplete.setDropDownBackgroundResource(android.R.color.holo_blue_light);
         String dataArr[] = new String[mEmailList.size()];
         for (int i = 0; i < mEmailList.size(); i++) {
