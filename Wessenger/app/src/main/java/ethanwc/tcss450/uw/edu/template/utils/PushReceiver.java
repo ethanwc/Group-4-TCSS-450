@@ -6,10 +6,19 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.content.BroadcastReceiver;
+import android.graphics.Color;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 import me.pushy.sdk.Pushy;
 
@@ -19,6 +28,7 @@ import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIB
 public class PushReceiver extends BroadcastReceiver {
 
     public static final String RECEIVED_NEW_MESSAGE = "new message from pushy";
+//    public static
 
     private static final String CHANNEL_ID = "1";
 
@@ -34,6 +44,7 @@ public class PushReceiver extends BroadcastReceiver {
         //perform so logic/routing based on the "type"
         //feel free to change the key or type of values. You could use numbers like HTTP: 404 etc
         String typeOfMessage = intent.getStringExtra("type");
+        System.out.println("type of msg =========>  "+typeOfMessage);
 
         //The WS sent us the name of the sender
         String sender = intent.getStringExtra("sender");
@@ -45,20 +56,25 @@ public class PushReceiver extends BroadcastReceiver {
 
         if (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE) {
             //app is in the foreground so send the message to the active Activities
-            Log.d("PhishApp", "Message received in foreground: " + messageText);
+            Log.d("PhishApp", "Message received in foreground:"+messageText);
+
 
             //create an Intent to broadcast a message to other parts of the app.
             Intent i = new Intent(RECEIVED_NEW_MESSAGE);
             i.putExtra("SENDER", sender);
             i.putExtra("MESSAGE", messageText);
+            i.putExtra("TYPE", typeOfMessage);
             i.putExtras(intent.getExtras());
 
             context.sendBroadcast(i);
 
+
+
+
         } else {
             //app is in the background so create and post a notification
             Log.d("PhishApp", "Message received in background: " + messageText);
-
+            System.out.println("Background------->");
             Intent i = new Intent(context, MainActivity.class);
             i.putExtras(intent.getExtras());
 
