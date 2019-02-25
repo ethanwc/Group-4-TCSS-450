@@ -23,7 +23,7 @@ import ethanwc.tcss450.uw.edu.template.model.Connection;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnInvitationListFragmentInteractionListener}
  * interface.
  */
 public class InvitationsFragment extends Fragment {
@@ -35,7 +35,7 @@ public class InvitationsFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnInvitationListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -95,8 +95,8 @@ public class InvitationsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnInvitationListFragmentInteractionListener) {
+            mListener = (OnInvitationListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -122,9 +122,10 @@ public class InvitationsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
+    public interface OnInvitationListFragmentInteractionListener {
 
-        void onInvitationListAcceptFragmentInteraction(Connection item);
-        void onInvitationListDeclineFragmentInteraction(Connection item);
+        void onInvitationAcceptFragmentInteraction(Connection item);
+        void onInvitationDeclineFragmentInteraction(Connection item);
     }
+
 }

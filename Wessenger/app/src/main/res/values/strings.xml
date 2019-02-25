@@ -70,7 +70,7 @@
     <string name="Menu_Chat">Chat</string>
     <string name="Chat_Home">Home</string>
     <string name="Chat_View_Connections">View Connections</string>
-    <string name="Chat_requests_Invitations">Requests/Invitations</string>
+    <string name="Chat_requests_Invitations">Invitations</string>
     <string name="password_reset_prompt">Please enter the email for your account.</string>
     <string name="temoraryPassword_reset">Send Password</string>
     <string name="edittext_temporarypassword">Temporary Password</string>
