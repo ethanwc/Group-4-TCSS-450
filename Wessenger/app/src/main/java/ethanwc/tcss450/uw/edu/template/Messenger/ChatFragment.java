@@ -54,7 +54,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        System.out.println("in push message receive---->On Resume");
+        System.out.println("chat fragment ---->On Resume");
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }

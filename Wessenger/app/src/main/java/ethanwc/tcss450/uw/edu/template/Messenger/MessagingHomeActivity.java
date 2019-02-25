@@ -177,10 +177,24 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .add(R.id.fragment_messaging_container, fragment)
                     .commit();
         } else if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_invitation), false)) {
-            fragment = new InvitationsFragment();
+            InvitationsFragment invitation = new InvitationsFragment();
+//            fragment = new InvitationsFragment();
+//            System.out.println("invitation intent------>"+getIntent().getExtras().getString(("email")));
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_messaging_container, fragment)
+                    .add(R.id.fragment_messaging_container, invitation)
                     .commit();
+            //
+//            String email = getIntent().getExtras().getString(("email"));
+//            Bundle args = new Bundle();
+//            args.putString("jwt_token", jwt);
+//            args.putString("email_token_123", email);
+//            args.putString("chat_id", "1");
+//            Fragment chatFrag = new ChatFragment();
+//            chatFrag.setArguments(args);
+//            fragment = new InvitationsFragment();
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.fragment_messaging_container, fragment)
+//                    .commit();
         } else {
             loadChats();
 
@@ -528,6 +542,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
+
             mEmails = new ArrayList<>();
             Uri uri2 = new Uri.Builder()
                     .scheme("https")
@@ -1187,6 +1202,8 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONArray data = resultJSON.getJSONArray("message");
             onWaitFragmentInteractionHide();
             if (success) {
+                String email = getIntent().getExtras().getString(("email"));
+                System.out.println(email+"  nav_request invitaions");
                 onWaitFragmentInteractionHide();
                 mEmails.clear();
                 for (int j = 0; j < data.length(); j++) {
@@ -1203,14 +1220,19 @@ public class MessagingHomeActivity extends AppCompatActivity
                     Connection[] connectionsAsArray = new Connection[mConnections.size()];
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
                     //Bundle connections and send as arguments
+
                     Bundle args = new Bundle();
                     args.putSerializable(InvitationsFragment.ARG_INVITATION_LIST, connectionsAsArray);
+//                rgs.putString("jwt_token", jwt);
+                    args.putString("passemail", email);
+                    System.out.println("before calling inv/req "+email);
                 Fragment frag = new InvReqFragment();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_messaging_container, frag );
                 transaction.commit();
 
                     frag = new InvitationsFragment();
+//                args.putString("passemail", email);
                     frag.setArguments(args);
                     transaction = getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_messaging_inv_container, frag );
