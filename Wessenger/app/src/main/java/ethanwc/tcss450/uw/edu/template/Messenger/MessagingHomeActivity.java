@@ -721,6 +721,8 @@ System.out.println("===========");
     private void handleConnectionGetOnPostExecute(final String result) {
         //parse JSON
         try {
+            System.out.println("1------_>");
+            mCounter=0;
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray data = resultJSON.getJSONArray("message");
@@ -827,6 +829,7 @@ System.out.println("from handle connection get on post execute");
     private void handleConnectionGetInfoOnPostExecute(final String result) {
         //parse JSON
         try {
+            System.out.println("2------_>");
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray data = resultJSON.getJSONArray("message");
@@ -837,6 +840,7 @@ System.out.println("from handle connection get on post execute");
                 mLasts.add(data.getString(1));
                 mUNames.add(data.getString(2));
                 mCounter++;
+                System.out.println("3------_>");
                 //When done parsing begin creating list of connections
                 if (mCounter == mEmails.size()) {
                     for (int i = 0; i < mEmails.size(); i++) {
@@ -844,6 +848,7 @@ System.out.println("from handle connection get on post execute");
                                 .addFirst(mFirsts.get(i)).addLast(mLasts.get(i))
                                 .addUsername(mUNames.get(i)).build();
                         mConnections.add(conn);
+                        System.out.println("from email loop--->"+i);
                     }
 
                     onWaitFragmentInteractionHide();
@@ -852,6 +857,7 @@ System.out.println("from handle connection get on post execute");
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
                     //Bundle connections and send as arguments
                     Bundle args = new Bundle();
+                    System.out.println("4------_>");
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
                     Fragment frag = new ConnectionsFragment();
                     frag.setArguments(args);
