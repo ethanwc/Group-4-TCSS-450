@@ -9,43 +9,35 @@
             android:id="@+id/text_chat_message_display"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="bottom"
+            android:textSize="18sp"
             android:scrollbars="vertical"
+            android:gravity="bottom"
             app:layout_constraintBottom_toTopOf="@+id/edit_chat_message_input"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <EditText
             android:id="@+id/edit_chat_message_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:ems="10"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_send_message"
-            app:layout_constraintTop_toBottomOf="@+id/text_chat_message_display" />
+            app:layout_constraintEnd_toStartOf="@+id/button_send_message" />
+
 
 
         <ImageButton
             android:id="@+id/button_send_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_menu_send"
             app:layout_constraintBottom_toBottomOf="parent"

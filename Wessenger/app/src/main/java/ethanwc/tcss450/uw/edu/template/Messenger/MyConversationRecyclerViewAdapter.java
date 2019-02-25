@@ -2,6 +2,7 @@ package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,7 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
         holder.mItem = mValues.get(position);
         holder.mUsers.setText(mValues.get(position).getUsers());
         holder.mMessage.setText(mValues.get(position).getMessage());
-
+        holder.mMessage.setMovementMethod(new ScrollingMovementMethod());
         //Create listener for click on message.
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +90,7 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
 //            mIdView = (TextView) view.findViewById(R.id.item_number);
             mUsers = view.findViewById(R.id.textview_conversation_users);
             mMessage = view.findViewById(R.id.textview_conversation_message);
+
         }
     }
 }
