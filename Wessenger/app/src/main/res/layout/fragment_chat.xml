@@ -5,18 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text_chat_message_display"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:textSize="18sp"
-            android:scrollbars="vertical"
-            android:gravity="bottom"
-            app:layout_constraintBottom_toTopOf="@+id/edit_chat_message_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/text_chat_message_display"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        android:gravity="bottom"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/edit_chat_message_input"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
         <EditText

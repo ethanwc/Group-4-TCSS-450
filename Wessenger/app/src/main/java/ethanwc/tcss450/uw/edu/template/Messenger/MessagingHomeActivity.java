@@ -1,6 +1,7 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -185,7 +187,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .commit();
         } else {
             loadChats();
-
         }
     }
 
@@ -1342,15 +1343,52 @@ System.out.println("from handle connection get on post execute");
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
     private class PushMessageReceiver extends BroadcastReceiver {
+        private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
             System.out.println("in push message receive---+++++->MainActivity--->>>>>><<<."+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
-                String sender = intent.getStringExtra("SENDER");
-                String messageText = intent.getStringExtra("MESSAGE");
-//                mMessageOutputTextView.append(sender + ":" + messageText);
-//                mMessageOutputTextView.append(System.lineSeparator());
-//                mMessageOutputTextView.append(System.lineSeparator());
+                if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+                    String type = intent.getStringExtra("TYPE");
+                    String sender = intent.getStringExtra("SENDER");
+                    String messageText = intent.getStringExtra("MESSAGE");
+                    System.out.println("The message is: " + messageText);
+                    if (type.equals("inv")) {
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                                .setAutoCancel(true)
+                                .setSmallIcon(R.drawable.ic_person_black_24dp)
+                                .setContentTitle("New Contact Request from : " + sender)
+                                .setContentText(messageText)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel(builder, context);
+
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                        // Build the notification and display it
+                        notificationManager.notify(1, builder.build());
+
+
+                    } else if(type.equals("msg")) {
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                                .setAutoCancel(true)
+                                .setSmallIcon(R.drawable.ic_message_black_24dp)
+                                .setContentTitle("Message from: " + sender)
+                                .setContentText(messageText)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel(builder, context);
+
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                        // Build the notification and display it
+                        notificationManager.notify(1, builder.build());
+                    }
+                }
             }
         }
     }
