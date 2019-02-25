@@ -1,8 +1,10 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
@@ -20,6 +22,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -47,12 +52,15 @@ import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContactFragmentButtonAction;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
+import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.Message;
-import ethanwc.tcss450.uw.edu.template.weather.ChangeLocationsFragment;
-import ethanwc.tcss450.uw.edu.template.weather.SavedLocationFragment;
-import ethanwc.tcss450.uw.edu.template.weather.WeatherHome;
+import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
+import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -79,9 +87,38 @@ public class MessagingHomeActivity extends AppCompatActivity
     Map<Integer, String> mChatUsernames;
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
+    DrawerLayout mdrawer;
+
+    private PushMessageReceiver mPushMessageReciever;
+//    private MenuItem mMenuItem;
 
     private static final String[] COUNTRIES = new String[]{"Belgium",
             "France", "France_", "Italy", "Germany", "Spain"};
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("=>>>><<<<<-====");
+        if (mPushMessageReciever == null) {
+            mPushMessageReciever = new PushMessageReceiver();
+        }
+
+        System.out.println("ole");
+//        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+//        getActivity().registerReceiver(mPushMessageReciever, iFilter);
+    }
+    /**
+     * OnPause handles push notifications.
+     */
+    @Override
+    public void onPause() {
+//        System.out.println("in push message receive---->On Pause");
+        super.onPause();
+        System.out.println("ole");
+        if (mPushMessageReciever != null){
+//            getActivity().unregisterReceiver(mPushMessageReciever);
+        }
+    }
+
 
     /**
      * OnCreate used to instantiate the starting state of the application.
@@ -104,7 +141,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
-
+//System.out.println("+=======from pushy");
             mEmailList = new ArrayList<String>();
             mEmailList = getIntent().getStringArrayListExtra("a");
 
@@ -132,10 +169,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         });
 
         //Setup the navigation
-        DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
+        mdrawer = findViewById(R.id.activity_messaging_container);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, mdrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mdrawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.navview_messanging_nav);
@@ -191,10 +228,11 @@ public class MessagingHomeActivity extends AppCompatActivity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+//    mMenu = menu;
         // Inflate the search menu action bar.
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.messaging_home, menu);
+
 
         // Get the search menu.
         MenuItem searchMenu = menu.findItem(R.id.app_bar_menu_search);
@@ -269,6 +307,28 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
         return super.onOptionsItemSelected(item);
     }
+    public void messageIn(){
+
+
+
+        mdrawer.closeDrawers();
+//        drawer.closeDrawers();
+//        System.out.println(mMenu.size());
+//        System.out.println( mMenu.findItem(R.id.nav_global_chat).toString());
+//        Toast toast = Toast.makeText(getApplicationContext(),
+//                "This is a message displayed in a Toast",
+//                Toast.LENGTH_SHORT);
+
+//        toast.show();
+//        MenuItem mMenuItem = mMenu.findItem(R.id.nav_global_chat);
+
+//        MenuItem items = item;
+//            items.setTitle("title changed");
+//        SpannableString s = new SpannableString("Global Chat");
+//        s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+//        mMenuItem.setTitle(s);
+
+    }
 
     /**
      * Method used to handle when menu items are selected.
@@ -279,6 +339,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        mMenuItem = R.id.nav_global_chat
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         //Chat has been chosen
@@ -292,7 +353,16 @@ public class MessagingHomeActivity extends AppCompatActivity
             args.putString("chat_id", "1");
             Fragment chatFrag = new ChatFragment();
             chatFrag.setArguments(args);
-
+            getSupportActionBar().setTitle("Global chat");
+//--set  color
+//            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_global_chat);
+//
+////
+////
+//            Menu menu = navigationView.getMenu();
+//            MenuItem message = menu.findItem(id);
+//
+//            System.out.println(message);
 
             loadFragment(chatFrag);
         }
@@ -317,13 +387,14 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Saved Location");
             mFab.hide();
             mFab.setEnabled(false);
+
             loadFragment(locationFragment);
             //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
-
+System.out.println("===========");
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
             mLasts = new ArrayList<>();
@@ -335,9 +406,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .appendPath(getString(R.string.ep_base_url))
                     .appendPath(getString(R.string.ep_getContacts))
                   .build();
+            //handleConnectionGetInfoOnPostExecute
             String msg = getIntent().getExtras().getString("email");
             Credentials creds = new Credentials.Builder(msg).build();
-            getSupportActionBar().setTitle("Connections");
+            getSupportActionBar().setTitle("Connections-");
             new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleConnectionGetOnPostExecute)
@@ -347,6 +419,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             mFab.setEnabled(true);
             mFab.show();
+
+        //Requests/Invitations has been chosen
             //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
 
@@ -365,6 +439,19 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                    .onPostExecute(this::handleRequestGetOnPostExecute)
 //                    .onCancelled(this::handleErrorsInTask)
 //                    .build().execute();
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getrequests))
+                    .build();
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+            getSupportActionBar().setTitle("Invitation/Request");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleRequestGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
 
 
 //
@@ -393,6 +480,19 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                    .replace(R.id.fragment_messaging_req_container, requestsFragment)
 //                    .addToBackStack(null);
 //            transaction.commit();
+            Uri uri2 = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getinvitations))
+                    .build();
+            String msg2 = getIntent().getExtras().getString("email");
+            Credentials creds2 = new Credentials.Builder(msg2).build();
+            getSupportActionBar().setTitle("Invitation/Request");
+            new SendPostAsyncTask.Builder(uri2.toString(),creds2.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleInvitationGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
@@ -673,6 +773,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     private void handleConnectionGetOnPostExecute(final String result) {
         //parse JSON
         try {
+            System.out.println("1------_>");
+            mCounter=0;
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray data = resultJSON.getJSONArray("message");
@@ -694,13 +796,16 @@ public class MessagingHomeActivity extends AppCompatActivity
                             .appendPath(getString(R.string.ep_base_url))
                             .appendPath(getString(R.string.ep_memberinfo))
                             .build();
-
+System.out.println("from handle connection get on post execute");
                     Credentials creds = new Credentials.Builder(mEmails.get(i)).build();
                     new SendPostAsyncTask.Builder(uri.toString(), creds.asJSONObject())
                             .onPostExecute(this::handleConnectionGetInfoOnPostExecute)
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
                 }
+                //
+
+                //
                 onWaitFragmentInteractionHide();
             } else {
                 //Not successful return from webservice
@@ -837,6 +942,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private void handleConnectionGetInfoOnPostExecute(final String result) {
         //parse JSON
         try {
+            System.out.println("2------_>");
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray data = resultJSON.getJSONArray("message");
@@ -846,6 +952,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                 mFirsts.add(data.getString(0));
                 mLasts.add(data.getString(1));
                 mUNames.add(data.getString(2));
+                mCounter++;
+                System.out.println("3------_>");
 
                 //When done parsing begin creating list of connections
                 if (mCounter == mEmails.size()) {
@@ -854,6 +962,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                                 .addFirst(mFirsts.get(i)).addLast(mLasts.get(i))
                                 .addUsername(mUNames.get(i)).build();
                         mConnections.add(conn);
+                        System.out.println("from email loop--->"+i);
                     }
 
                     onWaitFragmentInteractionHide();
@@ -862,9 +971,11 @@ public class MessagingHomeActivity extends AppCompatActivity
                     connectionsAsArray = mConnections.toArray(connectionsAsArray);
                     //Bundle connections and send as arguments
                     Bundle args = new Bundle();
+                    System.out.println("4------_>");
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
                     Fragment frag = new ConnectionsFragment();
                     frag.setArguments(args);
+                    System.out.println("connection ---------->");
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_messaging_container, frag)
                             .addToBackStack(null);
@@ -1234,5 +1345,20 @@ public class MessagingHomeActivity extends AppCompatActivity
             // finish();
         }
     }
-
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class PushMessageReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("in push message receive---+++++->MainActivity--->>>>>><<<."+intent.toString());
+            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+                String sender = intent.getStringExtra("SENDER");
+                String messageText = intent.getStringExtra("MESSAGE");
+//                mMessageOutputTextView.append(sender + ":" + messageText);
+//                mMessageOutputTextView.append(System.lineSeparator());
+//                mMessageOutputTextView.append(System.lineSeparator());
+            }
+        }
+    }
 }

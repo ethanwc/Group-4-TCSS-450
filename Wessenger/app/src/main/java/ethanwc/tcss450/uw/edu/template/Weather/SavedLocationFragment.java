@@ -1,9 +1,14 @@
-package ethanwc.tcss450.uw.edu.template.weather;
+package ethanwc.tcss450.uw.edu.template.Weather;
 
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
+import me.pushy.sdk.Pushy;
 
 /**
  * A fragment representing a list of Items.
@@ -28,7 +36,32 @@ public class SavedLocationFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private PushMessageReceiver mPushMessageReciever;
+//    private MenuItem mMenuItem;
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        System.out.println("in push message receive---->On Resume");
+        if (mPushMessageReciever == null) {
+            mPushMessageReciever = new PushMessageReceiver();
+        }
+
+        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        getActivity().registerReceiver(mPushMessageReciever, iFilter);
+    }
+    /**
+     * OnPause handles push notifications.
+     */
+    @Override
+    public void onPause() {
+//        System.out.println("in push message receive---->On Pause");
+        super.onPause();
+        if (mPushMessageReciever != null){
+//            getActivity().unregisterReceiver(mPushMessageReciever);
+        }
+    }
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -69,7 +102,7 @@ public class SavedLocationFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.weather.MySavedLocationRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.Weather.MySavedLocationRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
         return view;
     }
@@ -105,5 +138,56 @@ public class SavedLocationFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update what method does upon list interaction.
         void onListFragmentInteraction(DummyItem item);
+    }
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class PushMessageReceiver extends BroadcastReceiver {
+        private static final String CHANNEL_ID = "1";
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("in push message receive---+++++->MainActivity---."+intent.toString());
+            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+                String type = intent.getStringExtra("TYPE");
+                String sender = intent.getStringExtra("SENDER");
+                String messageText = intent.getStringExtra("MESSAGE");
+                System.out.println("The message is: " + messageText);
+                if (type.equals("inv")) {
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("New Contact Request from : " + sender)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
+
+
+                } else if(type.equals("msg")) {
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_message_black_24dp)
+                            .setContentTitle("Message from: " + sender)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
+                }
+            }
+        }
     }
 }
