@@ -30,6 +30,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,8 +75,9 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<String> mLasts;
     private ArrayList<String> mUNames;
     private ArrayList<String> mChats;
+    private Map<String, String> mPeople;
     private int mChatCount = 0;
-    Map<Integer, List<Integer>> mChatMembers;
+    Multimap<String, String> mChatMembers;
     Map<Integer, String> mChatUsernames;
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
@@ -97,8 +101,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab = findViewById(R.id.fab_messaging_fab);
         mFab.setEnabled(false);
         mFab.hide();
-
-        loadChats();
 
 
         if (getIntent().getExtras() != null) {
@@ -315,7 +317,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadFragment(locationFragment);
             //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
-            setChatInfo();
+            loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
 
@@ -632,184 +634,35 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-    /**
-     * Get's the user's current chats and the people in them.
-     */
-    @SuppressLint("UseSparseArrays")
-    public void loadChats() {
-        mChatMembers = new HashMap<>();
-        mChatUsernames = new HashMap<>();
-        mChats = new ArrayList<>();
-        mChatCount = 0;
-        //Get their current chats.
-
-        Uri conversations = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_getconversations))
-                .build();
-
-        String msg = getIntent().getExtras().getString("email");
-
-        Credentials creds = new Credentials.Builder(msg.trim()).build();
-        getSupportActionBar().setTitle("Conversations");
-
-
-        Log.e("EMAILTEST", msg);
-        //Post request to get the user's list of chats.
-        new SendPostAsyncTask.Builder(conversations.toString(), creds.asJSONObject())
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleConversationGetOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-    }
 
     /**
-     * Helper method used to handle the tasks after the async task has been completed for receiving message list.
-     *
-     * @param result String which represents the JSON result.
+     * Makes a request, if wish is granted, makes stuff happen.
      */
-    private void handleConversationGetOnPostExecute(final String result) {
-        try {
-            JSONObject resultJSON = new JSONObject(result);
-            boolean success = resultJSON.getBoolean("success");
-            JSONArray chatid = resultJSON.getJSONArray("chatid");
-
-            if (success) {
-//                Log.e("WORKED", "success");
-                for (int i = 0; i < chatid.length(); i++) {
-//                    Log.e("WORKED", "ADDING CHAT: " + chatid.get(i).toString());
-                    mChats.add(chatid.get(i).toString());
-                }
-                getMembers();
-                onWaitFragmentInteractionHide();
-
-            } else {
-                //Not successful return from webservice
-                onWaitFragmentInteractionHide();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("SUPER!!", e.getMessage());
-            //notify user
-            onWaitFragmentInteractionHide();
-        }
-    }
-
-    private void getMembers() {
-//        Log.e("WORKED", "getting members?");
-        Uri chatmembers = new Uri.Builder()
+    private void loadChats() {
+        //web request to /getchats
+        Uri getchats = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_getchatmembers))
-                .build();
-        String msg = getIntent().getExtras().getString("email");
-//        Log.e("CHATSIZE", mChats.size() + "second");
-        Credentials creds = new Credentials.Builder(msg).build();
-
-        JSONObject id = new JSONObject();
-
-
-        for (int i = 0; i < mChats.size(); i++) {
-            Log.e("WORKED-ID", "Attempting to parse chat: " + (i + 1));
-            try {
-                id.put("chatid", (i + 1) + "");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            //Post request to get the user's list of chats.
-            new SendPostAsyncTask.Builder(chatmembers.toString(), id)
-                    .onPreExecute(this::onWaitFragmentInteractionShow)
-                    .onPostExecute(this::handleChatMemberGetOnPostExecute)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build().execute();
-
-            //prevents values from being overwritten in the web request, not sure how to do correctly
-
-        }
-
-    }
-
-    private void handleChatMemberGetOnPostExecute(final String result) {
-        try {
-            JSONObject resultJSON = new JSONObject(result);
-            boolean success = resultJSON.getBoolean("success");
-            JSONArray id = resultJSON.getJSONArray("memberid");
-            int chatid = Integer.parseInt(resultJSON.getString("chatid"));
-//            Log.e("WORKED", "working with this chatid: " + chatid);
-
-            if (success) {
-                List<Integer> chatmembers = new ArrayList<>();
-                for (int i = 0; i < id.length(); i++) {
-                    int userid = Integer.parseInt(id.get(i).toString());
-                    chatmembers.add(userid);
-                    if (null == mChatUsernames.get(userid)) {
-                        Log.e("username", "Id nameless: " + userid);
-                        lookupUsername(userid);
-                    }
-                }
-                mChatMembers.put(chatid, chatmembers);
-                Log.e("Results", "Chat " + chatid + " Members: " + chatmembers.toString());
-
-                onWaitFragmentInteractionHide();
-
-
-            } else {
-                Log.e("results", "error occured");
-                //Not successful return from webservice
-                onWaitFragmentInteractionHide();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("SUPER!!", e.getMessage());
-            //notify user
-            onWaitFragmentInteractionHide();
-        }
-    }
-
-
-    private void lookupUsername(int memberid) throws JSONException {
-        //web service request to whatever?
-        Uri username = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_getinformation))
+                .appendPath(getString(R.string.ep_getchats))
                 .build();
 
         JSONObject id = new JSONObject();
-        id.put("memberid", memberid);
+        String email = getIntent().getExtras().getString("email");
 
-        //Post request to get the user's list of chats.
-        new SendPostAsyncTask.Builder(username.toString(), id)
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleLookupUsernameOnPost)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-    }
-
-    private void handleLookupUsernameOnPost(final String result) {
         try {
-            JSONObject resultJSON = new JSONObject(result);
-            boolean success = resultJSON.getBoolean("success");
-            String username = resultJSON.getString("username");
-            Integer id = resultJSON.getInt("memberid");
-
-            if (success) {
-                mChatUsernames.put(id, username);
-                Log.e("Username", "Name is: " + username);
-                onWaitFragmentInteractionHide();
-            } else {
-                Log.e("Username", "Error occured");
-//                onWaitFragmentInteractionHide();
-            }
+            id.put("email", email);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("SUPER!!", e.getMessage());
-            onWaitFragmentInteractionHide();
         }
+
+        new SendPostAsyncTask.Builder(getchats.toString(), id)
+                .onPostExecute(this::handleGetChatsOnPost)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
     }
+
+
 
     /**
      * Setup chats after they are loaded.
@@ -817,20 +670,14 @@ public class MessagingHomeActivity extends AppCompatActivity
     private void setChatInfo() {
 
         Message[] m = new Message[mChats.size()];
-        Log.e("Chats", mChats.toString());
         for (int i = 0; i < mChats.size(); i++) {
-            Log.e("Checking chat ", i + " " + mChats.size() + " " + mChats.toString() + "  ");
-            List<Integer> people = mChatMembers.get(Integer.parseInt(mChats.get(i)));
             StringBuilder members = new StringBuilder(256);
-            if (people != null) {
-                for (int j = 0; j < people.size(); j++) {
-                    if (mChatUsernames.get(people.get(j)) != null) {
-                        members.append(mChatUsernames.get(people.get(j)) + " ");
-                    }
+                List<String> peopleInChat = new ArrayList(mChatMembers.get(mChats.get(i)));
+                for (String person: peopleInChat)
+                    members.append(mPeople.get(person) + " ");
 
-                }
-            }
-            m[i] = new Message.Builder("todo add message body??????? or chat name").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
+                //TODO most recent message
+            m[i] = new Message.Builder("chat name?").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
 
 
@@ -848,6 +695,55 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab.setEnabled(true);
         mFab.show();
     }
+
+    /**
+     * Method to get all the chat's a user is in.
+     * @param result Chats of the user, wow.
+     */
+    @SuppressLint("UseSparseArrays")
+    private void handleGetChatsOnPost(final String result) {
+        try {
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+            JSONArray chatids = resultJSON.getJSONArray("chatid");
+            JSONArray people = resultJSON.getJSONArray("people");
+            JSONArray usernames = resultJSON.getJSONArray("username");
+
+
+            if (success) {
+                mChats = new ArrayList<>();
+                mPeople = new HashMap<>();
+                mChatMembers = ArrayListMultimap.create();
+
+                for (int i = 0; i < chatids.length(); i ++)
+                    mChats.add(chatids.get(i).toString());
+
+                for (int i = 0; i < people.length(); i ++)
+                    mChatMembers.put(people.getJSONObject(i).getString("id"), people.getJSONObject(i).getString("member"));
+
+                for (int i = 0; i < usernames.length(); i ++)
+                    if (!mPeople.containsKey(usernames.getJSONObject(i).getString("id")))
+                        mPeople.put(usernames.getJSONObject(i).getString("id"), usernames.getJSONObject(i).getString("username"));
+
+
+                Log.e("Output", mChats.toString());
+
+                Log.e("Output", mChatMembers.toString());
+
+                Log.e("Output", mPeople.toString());
+
+                setChatInfo();
+            }
+
+
+            else onWaitFragmentInteractionHide();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            onWaitFragmentInteractionHide();
+        }
+    }
+
 
     /**
      * Method listening for contact details button to be pressed.

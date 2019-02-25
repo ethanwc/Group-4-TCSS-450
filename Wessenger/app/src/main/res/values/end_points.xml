@@ -21,5 +21,7 @@
     <string name="ep_getconversations">getconversations</string>
     <string name="ep_getchatmembers">getchatmembers</string>
     <string name="ep_getinformation">getinformation</string>
+    <string name="ep_getchats">getchats</string>
+
 
 </resources>
