@@ -12,6 +12,7 @@ import android.util.Log;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import me.pushy.sdk.Pushy;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
@@ -26,6 +27,8 @@ public class PushReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        System.out.println("");
+
 
         //the following variables are used to store the information sent from Pushy
         //In the WS, you define what gets sent. You can change it there to suit your needs
@@ -45,6 +48,8 @@ public class PushReceiver extends BroadcastReceiver {
         String sender = intent.getStringExtra("sender");
 
         String messageText = intent.getStringExtra("message");
+        String receiver = intent.getStringExtra("receiver");
+        System.out.println("The email receiver---->"+receiver);
 
         ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
         ActivityManager.getMyMemoryState(appProcessInfo);
@@ -59,6 +64,8 @@ public class PushReceiver extends BroadcastReceiver {
             i.putExtra("SENDER", sender);
             i.putExtra("MESSAGE", messageText);
             i.putExtra("TYPE", typeOfMessage);
+            i.putExtra("Receiver",receiver);
+
             i.putExtras(intent.getExtras());
 
             context.sendBroadcast(i);

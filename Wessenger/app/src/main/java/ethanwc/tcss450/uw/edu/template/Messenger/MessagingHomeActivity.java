@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,7 +81,6 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
-    private String mEmail2 = "";
 
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
@@ -111,7 +112,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
     }
 
-
+//public void setColortitle(){
+//    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0000ff")));
+//}
     /**
      * OnCreate used to instantiate the starting state of the application.
      *
@@ -120,9 +123,11 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
+
 
         //loadChats();
         //Hide the FAB upon main activity loading.
@@ -1187,24 +1192,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .appendPath(getString(R.string.ep_declineinvitation))
                 .build();
         String msg = getIntent().getExtras().getString("email");
-        mEmail2 = item.getEmail();
-        JSONObject json = new JSONObject();
-
-        try {
-
-            json.put("email", msg);
-            json.put("email2", mEmail2);
-
-            json.put("email2", msg);
-            json.put("email", mEmail2);
-
-
-        } catch (JSONException e) {
-            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
-        }
-
+        Credentials creds = new Credentials.Builder(msg).build();
         getSupportActionBar().setTitle("Invitations");
-        new SendPostAsyncTask.Builder(uri.toString(),json)
+        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleInvitationDeclineOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
@@ -1228,23 +1218,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .appendPath(getString(R.string.ep_base_url))
                         .appendPath(getString(R.string.ep_getinvitations))
                         .build();
-                String msg = getIntent().getExtras().getString("email");
-                JSONObject json = new JSONObject();
-                JSONObject json2 = new JSONObject();
-                try {
-
-                    json.put("email", msg);
-                    json.put("email2", mEmail2);
-
-                    json.put("email2", msg);
-                    json.put("email", mEmail2);
-
-
-                } catch (JSONException e) {
-                    Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
-                }
+                String msg2 = getIntent().getExtras().getString("email");
+                Credentials creds2 = new Credentials.Builder(msg2).build();
                 getSupportActionBar().setTitle("Connections");
-                new SendPostAsyncTask.Builder(uri2.toString(),json)
+                new SendPostAsyncTask.Builder(uri2.toString(),creds2.asJSONObject())
                         .onPreExecute(this::onWaitFragmentInteractionShow)
                         .onPostExecute(this::handleInvitationGetOnPostExecute)
                         .onCancelled(this::handleErrorsInTask)
@@ -1316,7 +1293,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private class PushMessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---testingte+++++->MessagingHome--->>>>>><<<."+intent.toString());
+            System.out.println("in push message receive---testingte+++++->MessagingHomeActivity--->>>>>><<<."+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");

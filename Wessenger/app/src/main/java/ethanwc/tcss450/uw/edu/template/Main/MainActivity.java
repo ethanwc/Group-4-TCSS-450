@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
     public static final String EXTRA_MESSAGE = "email";
     private boolean mLoadFromChatNotification = false;
-    private boolean mAcceptFromInvitationNotification = false;
 
     /**
      * OnCreate used to setup the fragment.
@@ -48,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().containsKey("type")) {
                 mLoadFromChatNotification = Objects.requireNonNull(getIntent().getExtras().getString("type")).equals("msg");
-            } else if (getIntent().getExtras().containsKey("type")) {
-                mAcceptFromInvitationNotification = Objects.requireNonNull(getIntent().getExtras().getString("type")).equals("inv");
             }
         }
 
@@ -129,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         intent.putExtra(getString(R.string.email_registerToLogin), credentials);
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
         intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
-        intent.putExtra(getString(R.string.keys_intent_notification_invitation), mAcceptFromInvitationNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
         intent.putStringArrayListExtra("a", emailList);
         Log.e("mainactivity: ", " " + credentials.getEmail());
