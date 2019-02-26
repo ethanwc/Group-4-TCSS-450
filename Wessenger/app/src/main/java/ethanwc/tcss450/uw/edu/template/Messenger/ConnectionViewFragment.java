@@ -174,22 +174,22 @@ public class ConnectionViewFragment extends Fragment {
 
 
                 }else if(type.equals("msg")) {
-                    changeColorOnMsg();
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setAutoCancel(true)
-                            .setSmallIcon(R.drawable.ic_message_black_24dp)
-                            .setContentTitle("Message from: " + sender)
-                            .setContentText(messageText)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-                    // Automatically configure a Notification Channel for devices running Android O+
-                    Pushy.setNotificationChannel(builder, context);
-
-                    // Get an instance of the NotificationManager service
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-
-                    // Build the notification and display it
-                    notificationManager.notify(1, builder.build());
+//                    changeColorOnMsg();
+//                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+//                            .setAutoCancel(true)
+//                            .setSmallIcon(R.drawable.ic_message_black_24dp)
+//                            .setContentTitle("Message from: " + sender)
+//                            .setContentText(messageText)
+//                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//
+//                    // Automatically configure a Notification Channel for devices running Android O+
+//                    Pushy.setNotificationChannel(builder, context);
+//
+//                    // Get an instance of the NotificationManager service
+//                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+//
+//                    // Build the notification and display it
+//                    notificationManager.notify(1, builder.build());
                 }
             }
         }

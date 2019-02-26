@@ -56,6 +56,29 @@ public class ConversationFragment extends Fragment {
      */
     public ConversationFragment() {
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+//        System.out.println("in push message receive---->On Resume");
+        if (mPushMessageReciever == null) {
+            mPushMessageReciever = new PushMessageReceiver();
+        }
+//        System.out.println("from weather");
+        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        getActivity().registerReceiver(mPushMessageReciever, iFilter);
+    }
+
+    /**
+     * OnPause handles push notifications.
+     */
+    @Override
+    public void onPause() {
+//        System.out.println("in push message receive---->On Pause");
+        super.onPause();
+        if (mPushMessageReciever != null){
+            getActivity().unregisterReceiver(mPushMessageReciever);
+        }
+    }
 
     // TODO: Customize parameter initialization
     public static ConversationFragment newInstance(int columnCount) {
