@@ -127,8 +127,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         //loadChats();
         //Hide the FAB upon main activity loading.
         mFab = findViewById(R.id.fab_messaging_fab);
-        mFab.setEnabled(false);
-        mFab.hide();
+        mFab.setEnabled(true);
+        mFab.show();
 
 
         if (getIntent().getExtras() != null) {
@@ -139,13 +139,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         }
 
-        //Set on click listener for FAB
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadFragment(new AddContactFragment());
-                mFab.hide();
-                mFab.setEnabled(false);
+
             }
 
         });
@@ -173,18 +170,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_messaging_container, invitation)
                     .commit();
-            //
-//            String email = getIntent().getExtras().getString(("email"));
-//            Bundle args = new Bundle();
-//            args.putString("jwt_token", jwt);
-//            args.putString("email_token_123", email);
-//            args.putString("chat_id", "1");
-//            Fragment chatFrag = new ChatFragment();
-//            chatFrag.setArguments(args);
-//            fragment = new InvitationsFragment();
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.fragment_messaging_container, fragment)
-//                    .commit();
+
 
         } else {
             loadChats();
@@ -195,28 +181,29 @@ public class MessagingHomeActivity extends AppCompatActivity
     /**
      * OnBackPressed used to handle minimizing of the navigation drawer and closing the FAB on inappropriate windows.
      */
-//    @Override
-//    public void onBackPressed() {
-//        View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
-//        View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
-//        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//
-//
-//        } else if (connectionViewFrag != null || addcontactViewFrag != null) {
-//            //Show the FAB on correct windows when back is pressed.
-//            mFab.show();
-//            mFab.setEnabled(true);
-//            super.onBackPressed();
-//        } else {
-//            //Hide the FAB on correct windows when back is pressed
-//            mFab.hide();
-//            mFab.setEnabled(false);
-//            super.onBackPressed();
-//        }
-//        getSupportFragmentManager().addT
-//    }
+    @Override
+    public void onBackPressed() {
+        View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
+        View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
+        View conversationViewFrag = findViewById(R.id.fragment_messagelist_conversation);
+        @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+
+
+        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null) {
+            //Show the FAB on correct windows when back is pressed.
+            mFab.show();
+            mFab.setEnabled(true);
+            super.onBackPressed();
+        } else {
+            //Hide the FAB on correct windows when back is pressed
+            mFab.hide();
+            mFab.setEnabled(false);
+            super.onBackPressed();
+        }
+
+    }
 
     /**
      * OnCreateOptionsMenu used to help create the options menu.
@@ -265,37 +252,15 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .appendPath(getString(R.string.ep_userdetail))
                         .build();
                 //handleConnectionGetInfoOnPostExecute
-//                System.out.println("===>"+uri.toString());
-                String msg = getIntent().getExtras().getString("email");
-//                System.out.println("====---------->"+queryString);
-                Credentials creds = new Credentials.Builder(queryString).build();
-//                errorhere
+              String msg = getIntent().getExtras().getString("email");
+              Credentials creds = new Credentials.Builder(queryString).build();
 
-//            Uri uri = new Uri.Builder()
-//                    .scheme("https")
-//                    .appendPath(getString(R.string.ep_base_url))
-//                    .appendPath(getString(R.string.ep_getrequests))
-//                    .build();
-//            String msg = getIntent().getExtras().getString("email");
-//            Credentials creds = new Credentials.Builder(msg).build();
-//            getSupportActionBar().setTitle("Connections");
-//            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
-//                    .onPostExecute(this::handleRequestGetOnPostExecute)
-//                    .onCancelled(this::handleErrorsInTask)
-//                    .build().execute();
                 new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                         .onPreExecute(this::onWaitFragmentInteractionShow)
                         .onPostExecute(this::handleConnectionGetDetailOnPostExecute)
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
-                //
 
-
-                //--->
-
-
-                //
             }
             public void onWaitFragmentInteractionShow() {
 //                System.out.println("======>onwaitshow");
@@ -327,16 +292,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                     onWaitFragmentInteractionHide();
                     if (success) {
-//                        onWaitFragmentInteractionHide();
-//System.out.println("======>Success"+resultJSON.toString());
 
-//                        String email = getArguments().getString("email");
-//                        String username = getArguments().getString("username");
-//                        String first = getArguments().getString("first");
-//                        String last = getArguments().getString("last");
-//
-
-                        //
                         ConnectionViewFragment connectionViewFrag;
                         connectionViewFrag = new ConnectionViewFragment();
 
@@ -349,10 +305,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         args.putSerializable("username", username);
                         args.putSerializable("first", first);
                         args.putSerializable("last", last);
-//                        String email = getArguments().getString("email");
-//                        String username = getArguments().getString("username");
-//                        String first = getArguments().getString("first");
-//                        String last = getArguments().getString("last");
+
                         FloatingActionButton connectionsFab = findViewById(R.id.fab_messaging_fab);
                         connectionsFab.setEnabled(false);
                         connectionsFab.hide();
@@ -419,21 +372,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         mdrawer.closeDrawers();
-//        drawer.closeDrawers();
-//        System.out.println(mMenu.size());
-//        System.out.println( mMenu.findItem(R.id.nav_global_chat).toString());
-//        Toast toast = Toast.makeText(getApplicationContext(),
-//                "This is a message displayed in a Toast",
-//                Toast.LENGTH_SHORT);
 
-//        toast.show();
-//        MenuItem mMenuItem = mMenu.findItem(R.id.nav_global_chat);
-
-//        MenuItem items = item;
-//            items.setTitle("title changed");
-//        SpannableString s = new SpannableString("Global Chat");
-//        s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
-//        mMenuItem.setTitle(s);
 
     }
 
@@ -461,15 +400,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             Fragment chatFrag = new ChatFragment();
             chatFrag.setArguments(args);
             getSupportActionBar().setTitle("Global chat");
-//--set  color
-//            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_global_chat);
-//
-////
-////
-//            Menu menu = navigationView.getMenu();
-//            MenuItem message = menu.findItem(id);
-//
-//            System.out.println(message);
+
 
             loadFragment(chatFrag);
         }
@@ -499,9 +430,15 @@ public class MessagingHomeActivity extends AppCompatActivity
             //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
             getSupportActionBar().setTitle("Chat");
-            mFab.setEnabled(false);
-            mFab.hide();
+            mFab.setEnabled(true);
+            mFab.show();
+            mFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
+                }
+
+            });
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
@@ -530,6 +467,18 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             mFab.setEnabled(true);
             mFab.show();
+
+            //Set on click listener for FAB
+            mFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    loadFragment(new AddContactFragment());
+                    mFab.hide();
+                    mFab.setEnabled(false);
+                }
+
+            });
 
             //Requests/Invitations has been chosen
         } else if (id == R.id.nav_Request_Invitations) {
