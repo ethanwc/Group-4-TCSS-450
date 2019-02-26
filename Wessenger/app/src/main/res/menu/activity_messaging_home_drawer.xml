@@ -4,33 +4,17 @@
 
     tools:showIn="navigation_view">
 
-    <item android:title="@string/Menu_Weather">
-        <menu android:theme="@style/WeatherTheme">
-            <item
-                android:id="@+id/nav_weather_home"
-                android:icon="@drawable/ic_home"
-                android:title="@string/Menu_Home" />
-            <item
-                android:id="@+id/nav_Change_Locations"
-                android:icon="@drawable/ic_change_location"
-                android:title="@string/Menu_Change_Location" />
-            <item
-                android:id="@+id/nav_View_Saved_Location"
-                android:icon="@drawable/ic_saved_location"
-                android:title="@string/Menu_View_Saved_Locations" />
-        </menu>
-    </item>
-
     <item android:title="@string/menu_chat">
         <menu>
-            <item
-                android:id="@+id/nav_global_chat"
-                android:icon="@drawable/ic_message_black_24dp"
-                android:title="Global Chat" />
             <item
                 android:id="@+id/nav_chat_home"
                 android:icon="@drawable/ic_home"
                 android:title="@string/Chat_Home" />
+            <item
+                android:id="@+id/nav_global_chat"
+                android:icon="@drawable/ic_message_black_24dp"
+                android:title="Global Chat" />
+
             <item
                 android:id="@+id/nav_chat_view_connections"
                 android:icon="@drawable/ic_view_connections"
@@ -39,6 +23,22 @@
                 android:id="@+id/nav_Request_Invitations"
                 android:icon="@drawable/ic_request_invitations"
                 android:title="@string/Chat_requests_Invitations" />
+        </menu>
+    </item>
+    <item android:title="@string/Menu_Weather">
+        <menu android:theme="@style/WeatherTheme">
+            <item
+                android:id="@+id/nav_weather_home"
+                android:icon="@drawable/ic_method_draw_image"
+                android:title="@string/nav_weather_home" />
+            <item
+                android:id="@+id/nav_Change_Locations"
+                android:icon="@drawable/ic_change_location"
+                android:title="@string/Menu_Change_Location" />
+            <item
+                android:id="@+id/nav_View_Saved_Location"
+                android:icon="@drawable/ic_saved_location"
+                android:title="@string/Menu_View_Saved_Locations" />
         </menu>
     </item>
 

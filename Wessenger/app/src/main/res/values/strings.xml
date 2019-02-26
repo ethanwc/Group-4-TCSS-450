@@ -38,7 +38,7 @@
     <string name="authenticationHeader">Authentication Code Sent</string>
     <string name="password_recovery_email_prompt">Please check your email for the new temporary password.</string>
     <string name="action_logout">Logout</string>
-
+    <string name="weather_home">Current Weather</string>
 
     <string name="new_message_send">Send</string>
     <string name="menu_chat">Messenger</string>
@@ -48,7 +48,7 @@
     <string name="keys_json_login_success">success</string>
     <string name="keys_json_login_jwt">token</string>
     <string name="keys_intent_notification_invitation">was app started from invitation notification?</string>
-
+    <string name="nav_weather_home">Current Weather</string>
 
     <string name="keys_json_authentication_code">code</string>
 
