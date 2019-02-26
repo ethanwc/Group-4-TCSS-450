@@ -1,21 +1,19 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Collections;
+import java.util.List;
+
 import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment.OnConnectionListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Class which handles creating and populating the list for the recyclerview.
@@ -100,18 +98,18 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
             }
         });
 
-        //Set listener on send message button.
-        holder.mSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Need to handle
-            }
-        });
+//        //Set listener on send message button.
+//        holder.mSendButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //Need to handle
+//            }
+//        });
     }
 
     /**
      * Helper method used to return the size of the list.
-     * @return Int used to represent the size of the list.
+     * @return Int used to represent the size of the list .
      */
     @Override
     public int getItemCount() {
@@ -128,7 +126,7 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
         final LinearLayout details;
         final TextView mDetailsButton;
         final TextView mDeleteButton;
-        final TextView mSendButton;
+//        final TextView mSendButton;
         Connection mItem;
 
 
@@ -142,7 +140,7 @@ public class MyConnectionsRecyclerViewAdapter extends RecyclerView.Adapter<MyCon
             mDeleteButton = view.findViewById(R.id.textview_connections_details_deletebutton);
             mUsernameView = (TextView) view.findViewById(R.id.textview_connections_username);
             mEmailView = (TextView) view.findViewById(R.id.textview_connections_email);
-            mSendButton = view.findViewById(R.id.textview_connections_details_messagebutton);
+//            mSendButton = view.findViewById(R.id.textview_connections_details_messagebutton);
 
 
 

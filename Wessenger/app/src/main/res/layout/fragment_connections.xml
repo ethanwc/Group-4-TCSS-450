@@ -63,30 +63,31 @@
                 app:layout_constraintVertical_bias="0.0">
 
 
-                <TextView
-                    android:id="@+id/textview_connections_details_messagebutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:text="@string/connectionview_details_messagebutton" />
+                <!--<TextView-->
+                <!--android:id="@+id/textview_connections_details_messagebutton"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="5dp"-->
+                <!--android:paddingLeft="10dp"-->
+                <!--android:paddingRight="10dp"-->
+                <!--android:text="@string/connectionview_details_messagebutton" />-->
 
                 <TextView
                     android:id="@+id/textview_connections_details_detailsbutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="50dp"
                     android:paddingRight="10dp"
-                    android:text="@string/connectionview_details_detailsbutton" />
+                    android:text="@string/connectionview_details_detailsbutton"
+                    android:textAlignment="center" />
 
                 <TextView
                     android:id="@+id/textview_connections_details_deletebutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:paddingLeft="10dp"
+                    android:paddingLeft="50dp"
                     android:paddingRight="10dp"
                     android:text="@string/connectionview_details_deletebutton"
                     android:textAlignment="center" />
