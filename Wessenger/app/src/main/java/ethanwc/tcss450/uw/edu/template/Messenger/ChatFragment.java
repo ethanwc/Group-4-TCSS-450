@@ -33,8 +33,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -235,6 +235,10 @@ public class ChatFragment extends Fragment {
                 String chatHistoryText = "";
                 //Log.e("history: ", "  " + res.get("messages"));
                 for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
+
+//                    if (chatHistoryArray.getString(i).substring(0, emailLength - 1).equals(email)) {
+//                        System.out.println("GOD POOPING ON MORTALS");
+//                    }
                     chatHistoryText += chatHistoryArray.getString(i) + "\n";
                 }
                 mMessageOutputTextView.setText(chatHistoryText);

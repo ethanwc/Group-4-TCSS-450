@@ -147,7 +147,16 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
+                        loadFragment(new AddChatFragment());
+                        mFab.hide();
+                        mFab.setEnabled(false);
+                    }
+
+                });
             }
 
         });
@@ -191,12 +200,14 @@ public class MessagingHomeActivity extends AppCompatActivity
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
         View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
         View conversationViewFrag = findViewById(R.id.fragment_messagelist_conversation);
+        View chatFrag = findViewById(R.id.fragment_chat);
+        View addChatFrag = findViewById(R.id.fragment_messenger_addchat);
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
 
-        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null) {
+        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null || addChatFrag != null || chatFrag != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
             mFab.setEnabled(true);
@@ -440,7 +451,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    loadFragment(new AddChatFragment());
+                    mFab.hide();
+                    mFab.setEnabled(false);
                 }
 
             });
@@ -773,7 +786,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                args.putString("passemail", email);
                 frag.setArguments(args);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_messaging_connection_container, frag );
+                        .replace(R.id.fragment_messaging_connection_container, frag )
+                        .addToBackStack(null);
                 transaction.commit();
 
                 Log.e("super!!!!!", "yup");
@@ -791,7 +805,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                args.putString("passemail", email);
                     frag.setArguments(args);
                     transaction = getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_messaging_connection_container, frag );
+                            .replace(R.id.fragment_messaging_connection_container, frag )
+                            .addToBackStack(null);
                     transaction.commit();
                 }
 
