@@ -1,11 +1,15 @@
 package ethanwc.tcss450.uw.edu.template.temp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -15,15 +19,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.cloudinary.Transformation;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
+import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.R;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -31,69 +52,252 @@ import ethanwc.tcss450.uw.edu.template.R;
  * Activities that contain this fragment must implement the
  * {@link ChatFragment2.OnChatFragmentInteraction} interface
  * to handle interaction events.
- * Use the {@link ChatFragment2#newInstance} factory method to
+ * Use the {@link ChatFragment2#} factory method to
  * create an instance of this fragment.
  */
 public class ChatFragment2 extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int SELECT_IMAGE = 1;
+    private static final int SELECT_VIDEO = 2;
+    static final int REQUEST_TAKE_PHOTO = 1111;
+    static final int TAKEN_PHOTO_UPLOAD = 444;
     private EditText mMessageInputEditText;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String currentPhotoPath;
     private String mEmail;
     private String mJwToken;
     private String mSendUrl;
     private String mChatID;
     ArrayList<ChatModel> list;
     private OnChatFragmentInteraction mListener;
+    LinearLayout mediaBar;
 
     public ChatFragment2() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ChatFragment2.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ChatFragment2 newInstance(String param1, String param2) {
-        ChatFragment2 fragment = new ChatFragment2();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        list.add(new ChatModel(ChatModel.IMAGE_TYPE,"HI.I.AM.AN.IMAGE.WITH.TEXT",
-//                R.drawable.ic_mail_outline_black_24dp));
-
-
     }
 
-    public void finalizeChat() {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        mMessageInputEditText = getView().findViewById(R.id.edit_chat_message_input);
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
 
-        MultiViewTypeAdapter adapter = new MultiViewTypeAdapter(list, getContext());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, true);
+            boolean r = data == null;
 
-        RecyclerView mRecyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(adapter);
+            Log.e("nullcheck", r + " does it?");
+
+
+        }
+
+        if (requestCode == SELECT_VIDEO && resultCode == RESULT_OK) {
+
+            Uri selectedVideo = data.getData();
+            MediaManager.get()
+                    .upload(selectedVideo)
+                    .unsigned("u48dpnqx")
+                    .option("resource_type", "video")
+                    .callback(new UploadCallback() {
+                        @Override
+                        public void onStart(String requestId) {
+                            Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onProgress(String requestId, long bytes, long totalBytes) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(String requestId, Map resultData) {
+
+                            Toast.makeText(getActivity(), "Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+
+                            String publicId = resultData.get("public_id").toString();
+
+                            String firstImgUrl = MediaManager.get().url().transformation(new Transformation().startOffset("12")
+                                    .border("5px_solid_black").border("5px_solid_black")).resourceType("video")
+                                    .generate(publicId + ".jpg");
+//                            Picasso.get().load(firstImgUrl).into(img1);
+
+                            //todo: handle this
+
+                        }
+
+                        @Override
+                        public void onError(String requestId, ErrorInfo error) {
+
+                            Toast.makeText(getActivity(), "Upload Error", Toast.LENGTH_SHORT).show();
+                            Log.v("ERROR!!", " VIDEO " + error.getDescription());
+                        }
+
+                        @Override
+                        public void onReschedule(String requestId, ErrorInfo error) {
+
+                        }
+
+                    }).dispatch();
+        } else if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK) {
+
+            Uri selectedImage = data.getData();
+            MediaManager.get()
+                    .upload(selectedImage)
+                    .unsigned("u48dpnqx")
+                    .option("resource_type", "image")
+                    .callback(new UploadCallback() {
+                        @Override
+                        public void onStart(String requestId) {
+                            Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onProgress(String requestId, long bytes, long totalBytes) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(String requestId, Map resultData) {
+
+                            Toast.makeText(getActivity(), "Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+
+                            String publicId = resultData.get("public_id").toString();
+
+                            String firstImgUrl = MediaManager.get().url().transformation(new Transformation().startOffset("12")
+                                    .border("5px_solid_black").border("5px_solid_black")).resourceType("video")
+                                    .generate(publicId + ".jpg");
+//                            Picasso.get().load(firstImgUrl).into(img1);
+                        }
+
+                        @Override
+                        public void onError(String requestId, ErrorInfo error) {
+
+                            Toast.makeText(getActivity(), "Upload Error", Toast.LENGTH_SHORT).show();
+                            Log.v("ERROR!!", " IMAGE: " + error.getDescription());
+                        }
+
+                        @Override
+                        public void onReschedule(String requestId, ErrorInfo error) {
+
+                        }
+
+                    }).dispatch();
+        } else if (requestCode == TAKEN_PHOTO_UPLOAD && resultCode == RESULT_OK) {
+
+            galleryAddPic();
+        } else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+            }
+            if (photoFile != null) {
+
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                        "ethanwc.tcss450.uw.edu.template.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, TAKEN_PHOTO_UPLOAD);
+            }
+        }
+    }
+
+
+    private void pickImageFromGallery(View view) {
+        Intent GalleryIntent = new Intent();
+        GalleryIntent.setType("image/*");
+        GalleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(GalleryIntent, "select image"), SELECT_IMAGE);
+    }
+
+    private void pickVideoFromGallery(View view) {
+        Intent GalleryIntent = new Intent();
+        GalleryIntent.setType("video/*");
+        GalleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(GalleryIntent, "select video"), SELECT_VIDEO);
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(currentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        uploadPhoto(contentUri);
+        mediaScanIntent.setData(contentUri);
+        getActivity().sendBroadcast(mediaScanIntent);
+    }
+
+    private void uploadPhoto(Uri uri) {
+        MediaManager.get()
+                .upload(uri)
+                .unsigned("u48dpnqx")
+                .option("resource_type", "image")
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {
+                        Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+
+                        Toast.makeText(getActivity(), "Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+
+
+                        String publicId = resultData.get("public_id").toString();
+
+                        String firstImgUrl = MediaManager.get().url().transformation(new Transformation().startOffset("12")
+                                .border("5px_solid_black").border("5px_solid_black")).resourceType("video")
+                                .generate(publicId + ".jpg");
+//                        Picasso.get().load(firstImgUrl).into(img1);
+
+                    }
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+
+                        Toast.makeText(getActivity(), "Upload Error", Toast.LENGTH_SHORT).show();
+                        Log.v("ERROR!!", " IMAGE: " + error.getDescription());
+                    }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {
+
+                    }
+
+                }).dispatch();
     }
 
     @Override
@@ -109,6 +313,13 @@ public class ChatFragment2 extends Fragment {
                 .build()
                 .toString();
 
+        mediaBar = (LinearLayout) getView().findViewById(R.id.menubar_chat);
+        mediaBar.setVisibility(View.GONE);
+
+        getView().findViewById(R.id.button_chatbox_plus).setOnClickListener(this::toggleMediaMenu);
+        getView().findViewById(R.id.button_chat_takeImage).setOnClickListener(this::dispatchTakePictureIntent);
+        getView().findViewById(R.id.button_chat_takeVideo).setOnClickListener(this::pickVideoFromGallery);
+        getView().findViewById(R.id.button_chat_uploadMedia).setOnClickListener(this::pickImageFromGallery);
 
         //Store arguments in variables.
 
@@ -116,11 +327,30 @@ public class ChatFragment2 extends Fragment {
 
     }
 
+    public void toggleMediaMenu(View view) {
+        if (mediaBar.getVisibility() == View.GONE) mediaBar.setVisibility(View.VISIBLE);
+        else mediaBar.setVisibility(View.GONE);
+    }
+
+    public void handleNewImage(String string) {
+//        Picasso.get().load(firstImgUrl).into(img1);
+    }
+
+    public void finalizeChat() {
+        mMessageInputEditText = getView().findViewById(R.id.edit_chat_message_input);
+        MultiViewTypeAdapter adapter = new MultiViewTypeAdapter(list, getActivity());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, true);
+        RecyclerView mRecyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(adapter);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        MediaManager.init(getActivity());
+
         if (getArguments() != null) {
             mEmail = getArguments().getString("email_token_123");
             mJwToken = getArguments().getString("jwt_token");
@@ -136,6 +366,7 @@ public class ChatFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_chat_fragment2, container, false);
     }

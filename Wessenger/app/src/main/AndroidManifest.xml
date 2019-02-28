@@ -57,6 +57,9 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true" />
         <!-- End Pushy Declarations -->
+        <meta-data
+            android:name="CLOUDINARY_URL"
+            android:value="cloudinary://441484749567548:y-tioaBU0Th9tJGgvpzNpWJp03g@hjfck3co8"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
