@@ -2,8 +2,10 @@ package ethanwc.tcss450.uw.edu.template.temp;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +24,6 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
     private ArrayList<ChatModel>dataSet;
     Context mContext;
     int total_types;
-    MediaPlayer mPlayer;
-    private boolean fabStateVolume = false;
 
     public static class TextTypeViewHolder extends RecyclerView.ViewHolder {
 
@@ -36,6 +36,9 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
             this.txtType = (TextView) itemView.findViewById(R.id.type);
             this.cardView = (CardView) itemView.findViewById(R.id.card_view);
         }
+
+
+
     }
 
     public static class ImageTypeViewHolder extends RecyclerView.ViewHolder {
@@ -93,7 +96,11 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
         if (object != null) {
             switch (object.type) {
                 case ChatModel.TEXT_TYPE:
-                    ((TextTypeViewHolder) holder).txtType.setText(object.text);
+                   ((TextTypeViewHolder) holder).txtType.setText(object.text);
+
+
+                    if (object.data == 1)  ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.RIGHT);
+                    else  ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.LEFT);
 
                     break;
                 case ChatModel.IMAGE_TYPE:

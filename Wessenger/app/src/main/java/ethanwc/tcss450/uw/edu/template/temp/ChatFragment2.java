@@ -88,7 +88,7 @@ public class ChatFragment2 extends Fragment {
         mMessageInputEditText = getView().findViewById(R.id.edit_chat_message_input);
 
         MultiViewTypeAdapter adapter = new MultiViewTypeAdapter(list, getContext());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, true);
 
         RecyclerView mRecyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -119,6 +119,8 @@ public class ChatFragment2 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LinearLayoutManager linearLayoutManager =
+                new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         if (getArguments() != null) {
             mEmail = getArguments().getString("email_token_123");
             mJwToken = getArguments().getString("jwt_token");
@@ -222,7 +224,8 @@ public class ChatFragment2 extends Fragment {
                 //Log.e("history: ", "  " + res.get("messages"));
                 for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
                     Log.e("MESSAGEIS" ," " + chatHistoryArray.getString(i));
-                    list.add(new ChatModel(ChatModel.TEXT_TYPE, chatHistoryArray.getJSONObject(i).getString("messages"), 0));
+                    int data = chatHistoryArray.getJSONObject(i).getString("email").equals(mEmail) ? 1 : 0;
+                    list.add(new ChatModel(ChatModel.TEXT_TYPE, chatHistoryArray.getJSONObject(i).getString("messages"), data));
                 }
                 finalizeChat();
 
