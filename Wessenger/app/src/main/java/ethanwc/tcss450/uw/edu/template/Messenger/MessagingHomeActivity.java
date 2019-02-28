@@ -721,15 +721,14 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         Bundle args = new Bundle();
 
-
 //        mEmail = getArguments().getString("email_token_123");
 //        mJwToken = getArguments().getString("jwt_token");
 //        mChatID = getArguments().getString("chat_id");
+        Log.e("CHATID", "it is: " + item.getChatid());
 
-
-        args.putSerializable("chat_id", item.getChatid());
-        args.putSerializable("email_token_123", getIntent().getExtras().getString("email"));
-        args.putSerializable("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
+        args.putString("chat_id", item.getChatid());
+        args.putString("email_token_123", getIntent().getExtras().getString("email"));
+        args.putString("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
         mFab.setEnabled(false);
         mFab.hide();
 
@@ -886,7 +885,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                 for (String person: peopleInChat)
                     members.append(mPeople.get(person) + " ");
 
-                m[i] = new Message.Builder("chat name?").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
+            Log.e("CHATID", "it is: " + mChats.get(i));
+
+            m[i] = new Message.Builder("chat name?").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
         return m;
     }

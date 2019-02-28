@@ -288,7 +288,7 @@ public class ChatFragment extends Fragment {
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
-    private class PushMessageReceiver extends BroadcastReceiver {
+    private class PushMessageReceiver extends BroadcastReceiver  {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
