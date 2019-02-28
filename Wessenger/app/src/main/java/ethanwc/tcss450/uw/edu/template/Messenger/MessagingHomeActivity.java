@@ -56,6 +56,7 @@ import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.Message;
+import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -65,7 +66,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewMessageFragment.OnSendBtnNewMessage,
         ConversationFragment.OnMessageListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnInvitationListFragmentInteractionListener,
-        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener, SavedLocationFragment.OnListFragmentInteractionListener, OnNewContactFragmentButtonAction, WeatherHome.OnFragmentInteractionListener {
+        ChangePasswordFragment.OnChangePasswordFragmentInteractionListener,
+        SavedLocationFragment.OnListFragmentInteractionListener,
+        OnNewContactFragmentButtonAction,
+        WeatherHome.OnFragmentInteractionListener,
+        ChatFragment2.OnChatFragmentInteraction {
 
 
     private Bundle mArgs;
@@ -711,8 +716,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onMessageListFragmentInteraction(Message item) {
 
-        ChatFragment chatFrag;
-        chatFrag = new ChatFragment();
+        Fragment chatFrag;
+        chatFrag = new ChatFragment2();
 
         Bundle args = new Bundle();
 
@@ -1263,6 +1268,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void onChatFragmentInteraction(Uri uri) {
 
     }
 

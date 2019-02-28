@@ -23,7 +23,6 @@
     <string name="ep_getinvitations">getinvitations</string>
     <string name="ep_getrequests">getrequests</string>
     <string name="ep_getchatmembers">getchatmembers</string>
-    <string name="ep_getinformation">getinformation</string>
     <string name="ep_getchats">getchats</string>
     <string name="ep_userdetail">getdetailfromemail</string>
 
