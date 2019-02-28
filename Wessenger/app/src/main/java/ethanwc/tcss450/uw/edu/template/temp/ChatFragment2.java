@@ -35,10 +35,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
@@ -60,8 +62,9 @@ public class ChatFragment2 extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final int SELECT_IMAGE = 1;
     private static final int SELECT_VIDEO = 2;
-    static final int REQUEST_TAKE_PHOTO = 1111;
-    static final int TAKEN_PHOTO_UPLOAD = 444;
+    private static final int REQUEST_TAKE_PHOTO = 1111;
+    private static final int TAKEN_PHOTO_UPLOAD = 444;
+    private static final int REQUEST_VIDEO_CAPTURE = 555;
     private EditText mMessageInputEditText;
     private String currentPhotoPath;
     private String mEmail;
@@ -87,22 +90,12 @@ public class ChatFragment2 extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-
-            boolean r = data == null;
-
-            Log.e("nullcheck", r + " does it?");
-
-
-        }
-
         if (requestCode == SELECT_VIDEO && resultCode == RESULT_OK) {
 
             Uri selectedVideo = data.getData();
             MediaManager.get()
                     .upload(selectedVideo)
                     .unsigned("u48dpnqx")
-                    .option("resource_type", "video")
                     .callback(new UploadCallback() {
                         @Override
                         public void onStart(String requestId) {
@@ -145,52 +138,20 @@ public class ChatFragment2 extends Fragment {
                     }).dispatch();
         } else if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK) {
 
-            Uri selectedImage = data.getData();
-            MediaManager.get()
-                    .upload(selectedImage)
-                    .unsigned("u48dpnqx")
-                    .option("resource_type", "image")
-                    .callback(new UploadCallback() {
-                        @Override
-                        public void onStart(String requestId) {
-                            Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
-                        }
+            Uri media = data.getData();
 
-                        @Override
-                        public void onProgress(String requestId, long bytes, long totalBytes) {
+            if (isImageFile(Objects.requireNonNull(media).getPath())) uploadPhoto(media);
+            else uploadVideo(media);
+        }
 
-                        }
+        else if (requestCode == TAKEN_PHOTO_UPLOAD && resultCode == RESULT_OK) galleryAddPic();
 
-                        @Override
-                        public void onSuccess(String requestId, Map resultData) {
+        else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+            Uri videoUri = data.getData();
+            uploadVideo(videoUri);
 
-                            Toast.makeText(getActivity(), "Uploaded Succesfully", Toast.LENGTH_SHORT).show();
-
-                            String publicId = resultData.get("public_id").toString();
-
-                            String firstImgUrl = MediaManager.get().url().transformation(new Transformation().startOffset("12")
-                                    .border("5px_solid_black").border("5px_solid_black")).resourceType("video")
-                                    .generate(publicId + ".jpg");
-//                            Picasso.get().load(firstImgUrl).into(img1);
-                        }
-
-                        @Override
-                        public void onError(String requestId, ErrorInfo error) {
-
-                            Toast.makeText(getActivity(), "Upload Error", Toast.LENGTH_SHORT).show();
-                            Log.v("ERROR!!", " IMAGE: " + error.getDescription());
-                        }
-
-                        @Override
-                        public void onReschedule(String requestId, ErrorInfo error) {
-
-                        }
-
-                    }).dispatch();
-        } else if (requestCode == TAKEN_PHOTO_UPLOAD && resultCode == RESULT_OK) {
-
-            galleryAddPic();
-        } else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
+        }
+        else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
     }
 
     private File createImageFile() throws IOException {
@@ -230,25 +191,26 @@ public class ChatFragment2 extends Fragment {
         }
     }
 
-
-    private void pickImageFromGallery(View view) {
-        Intent GalleryIntent = new Intent();
-        GalleryIntent.setType("image/*");
-        GalleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(GalleryIntent, "select image"), SELECT_IMAGE);
+    private void dispatchTakeVideoIntent(View view) {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+        }
     }
 
-    private void pickVideoFromGallery(View view) {
+    private void pickFromGallery(View view) {
         Intent GalleryIntent = new Intent();
-        GalleryIntent.setType("video/*");
+        GalleryIntent.setType("image/* video/*");
         GalleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(GalleryIntent, "select video"), SELECT_VIDEO);
+        startActivityForResult(Intent.createChooser(GalleryIntent, "select media"), SELECT_IMAGE);
     }
+
 
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
+        Log.e("PHOTOURI", contentUri.toString());
         uploadPhoto(contentUri);
         mediaScanIntent.setData(contentUri);
         getActivity().sendBroadcast(mediaScanIntent);
@@ -258,7 +220,52 @@ public class ChatFragment2 extends Fragment {
         MediaManager.get()
                 .upload(uri)
                 .unsigned("u48dpnqx")
-                .option("resource_type", "image")
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {
+                        Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+
+                        Toast.makeText(getActivity(), "Uploaded Succesfully", Toast.LENGTH_SHORT).show();
+
+
+                        String publicId = resultData.get("public_id").toString();
+
+                        String firstImgUrl = MediaManager.get().url().transformation(new Transformation().startOffset("12")
+                                .border("5px_solid_black").border("5px_solid_black")).resourceType("video")
+                                .generate(publicId + ".jpg");
+//                        Picasso.get().load(firstImgUrl).into(img1);
+
+                    }
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+
+                        Toast.makeText(getActivity(), "Upload Error", Toast.LENGTH_SHORT).show();
+                        Log.v("ERROR!!", " IMAGE: " + error.getDescription());
+                    }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {
+
+                    }
+
+                }).dispatch();
+    }
+
+    private void uploadVideo(Uri uri) {
+        MediaManager.get()
+                .upload(uri)
+                .option("resource_type", "video")
+                .unsigned("u48dpnqx")
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
@@ -318,8 +325,8 @@ public class ChatFragment2 extends Fragment {
 
         getView().findViewById(R.id.button_chatbox_plus).setOnClickListener(this::toggleMediaMenu);
         getView().findViewById(R.id.button_chat_takeImage).setOnClickListener(this::dispatchTakePictureIntent);
-        getView().findViewById(R.id.button_chat_takeVideo).setOnClickListener(this::pickVideoFromGallery);
-        getView().findViewById(R.id.button_chat_uploadMedia).setOnClickListener(this::pickImageFromGallery);
+        getView().findViewById(R.id.button_chat_takeVideo).setOnClickListener(this::dispatchTakeVideoIntent);
+        getView().findViewById(R.id.button_chat_uploadMedia).setOnClickListener(this::pickFromGallery);
 
         //Store arguments in variables.
 
@@ -482,6 +489,12 @@ public class ChatFragment2 extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    public static boolean isImageFile(String path) {
+        String mimeType = URLConnection.guessContentTypeFromName(path);
+        return mimeType != null && mimeType.startsWith("image");
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
