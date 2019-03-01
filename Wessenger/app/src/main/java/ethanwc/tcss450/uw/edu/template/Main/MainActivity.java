@@ -3,15 +3,9 @@ package ethanwc.tcss450.uw.edu.template.Main;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -31,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
 
     public static final String EXTRA_MESSAGE = "email";
     private boolean mLoadFromChatNotification = false;
-    private boolean mAcceptFromInvitationNotification = false;
 
     /**
      * OnCreate used to setup the fragment.
@@ -48,8 +41,6 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         if (getIntent().getExtras() != null) {
             if (getIntent().getExtras().containsKey("type")) {
                 mLoadFromChatNotification = Objects.requireNonNull(getIntent().getExtras().getString("type")).equals("msg");
-            } else if (getIntent().getExtras().containsKey("type")) {
-                mAcceptFromInvitationNotification = Objects.requireNonNull(getIntent().getExtras().getString("type")).equals("inv");
             }
         }
 
@@ -127,12 +118,12 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         //Bundle user information from input into intent and send to messaging home activity.
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
         intent.putExtra(getString(R.string.email_registerToLogin), credentials);
+
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
         intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
-        intent.putExtra(getString(R.string.keys_intent_notification_invitation), mAcceptFromInvitationNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
         intent.putStringArrayListExtra("a", emailList);
-        Log.e("mainactivity: ", " " + credentials.getEmail());
+        System.out.println("GOD MODE!!!" + credentials.getUsername());
         startActivity(intent);
         finish();
     }

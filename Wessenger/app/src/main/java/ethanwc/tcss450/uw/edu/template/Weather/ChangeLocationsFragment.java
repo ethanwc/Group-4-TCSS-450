@@ -1,19 +1,29 @@
 package ethanwc.tcss450.uw.edu.template.Weather;
 
 
+import android.app.ActionBar;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -40,6 +50,8 @@ private PushMessageReceiver mPushMessageReciever;
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
+
+//        System.out.println((AppCompatActivity)getActivity());
 //        System.out.println("from weather");
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
@@ -62,7 +74,16 @@ private PushMessageReceiver mPushMessageReciever;
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_change_locations, container, false);
+//        getActivity().getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0000ff")));
+
+        View view= inflater.inflate(R.layout.fragment_change_locations, container, false);
+//    view.g
+
+//        getActivity().setTitle("test");
+//        getActivity().getActionBar().setTitle("testing");
+//        getSupportActionBar().setTitle("Weather Home");
+        System.out.println("from test");
+        return view;
     }
 
     /**
@@ -164,6 +185,44 @@ private PushMessageReceiver mPushMessageReciever;
             void onFragmentInteraction(Uri uri);
         }
     }
+    public void changeColorOnMsg(){
+
+        Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
+        text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
+
+
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_global_chat);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+            item.setTitle(s);
+
+        }
+
+    }
+    public void changeColorOnInv(){
+
+        Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
+        text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
+
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_chat_view_connections);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+            item.setTitle(s);
+
+        }
+
+    }
+
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
@@ -171,13 +230,16 @@ private PushMessageReceiver mPushMessageReciever;
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---+++++->MainActivity---."+intent.toString());
+
+            System.out.println("in push message receive---+++++->ChangeLocationsFragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                System.out.println("The message is: " + messageText);
+
                 if (type.equals("inv")) {
+                    changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                             .setAutoCancel(true)
                             .setSmallIcon(R.drawable.ic_person_black_24dp)
@@ -195,7 +257,8 @@ private PushMessageReceiver mPushMessageReciever;
                     notificationManager.notify(1, builder.build());
 
 
-                } else if(type.equals("msg")) {
+                }else if(type.equals("msg")) {
+                    changeColorOnMsg();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                             .setAutoCancel(true)
                             .setSmallIcon(R.drawable.ic_message_black_24dp)

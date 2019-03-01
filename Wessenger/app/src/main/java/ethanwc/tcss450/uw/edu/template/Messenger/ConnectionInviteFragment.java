@@ -1,4 +1,5 @@
-package ethanwc.tcss450.uw.edu.template.Weather;
+package ethanwc.tcss450.uw.edu.template.Messenger;
+
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -6,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -25,30 +25,45 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
-
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SavedLocationViewFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SavedLocationViewFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
-public class SavedLocationViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+public class ConnectionInviteFragment extends Fragment {
     private PushMessageReceiver mPushMessageReciever;
-//    private MenuItem mMenuItem;
 
+    public ConnectionInviteFragment() {
+        // Required empty public constructor
+    }
 
+    /**
+     * OnStart used to grab email and jwt token from arguments and set url string.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        // change color of title
+        Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
+        text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.messageText)), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
+
+        // change color of menuitem
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if (navigationView != null) {
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_chat_view_connections);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.messageText)), 0, s.length(), 0);
+            item.setTitle(s);
+
+        }
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_connection_invite, container, false);
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -56,10 +71,11 @@ public class SavedLocationViewFragment extends Fragment {
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
-
+//        System.out.println("from weather");
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
+
     /**
      * OnPause handles push notifications.
      */
@@ -68,85 +84,11 @@ public class SavedLocationViewFragment extends Fragment {
 //        System.out.println("in push message receive---->On Pause");
         super.onPause();
         if (mPushMessageReciever != null){
-//            getActivity().unregisterReceiver(mPushMessageReciever);
-        }
-    }
-    public SavedLocationViewFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SavedLocationViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SavedLocationViewFragment newInstance(String param1, String param2) {
-        SavedLocationViewFragment fragment = new SavedLocationViewFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_saved_location_view, container, false);
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -193,7 +135,7 @@ public class SavedLocationViewFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->SavedLocationViewFragment"+intent.toString());
+            System.out.println("in push message receive---+++++->ConnectionInviteFragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
@@ -241,3 +183,4 @@ public class SavedLocationViewFragment extends Fragment {
         }
     }
 }
+
