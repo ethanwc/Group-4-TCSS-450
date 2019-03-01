@@ -10,8 +10,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.AlignmentSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +65,7 @@ public class ChatFragment extends Fragment {
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
+        setChatHistory();
     }
 
     /**
@@ -202,12 +208,26 @@ public class ChatFragment extends Fragment {
             if(res.has("messages")) {
 
                 JSONArray chatHistoryArray = res.getJSONArray("messages");
+                //JSONObject eachLine = new JSONObject();
+
+                Log.e("email: ", " " + mEmail);
                 String chatHistoryText = "";
-                //Log.e("history: ", "  " + res.get("messages"));
+
                 for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
-                    chatHistoryText += chatHistoryArray.getString(i) + "\n";
+                    String username = chatHistoryArray.getJSONObject(i).getString("username");
+                    String message = chatHistoryArray.getJSONObject(i).getString("messages");
+                    final SpannableString spannableString = new SpannableString(message);
+                    if (chatHistoryArray.getJSONObject(i).getString("email").equals(mEmail)) {
+                        spannableString.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_OPPOSITE)
+                                , 0
+                                , message.length()
+                                , Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                        mMessageOutputTextView.append(username + ":" + spannableString + "\n");
+                        mMessageOutputTextView.setGravity(Gravity.RIGHT);
+                    } else {
+                        mMessageOutputTextView.append(username + ":" + message + "\n");
+                    }
                 }
-                mMessageOutputTextView.setText(chatHistoryText);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -222,35 +242,35 @@ public class ChatFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->chatfragment"+intent.toString());
+            Log.e("recive message:", " " + intent.toString());
+//            System.out.println("in push message receive---+++++->chatfragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
+                Log.e("message text: ", " " + messageText);
                 mMessageOutputTextView.append(sender + ":" + messageText);
                 mMessageOutputTextView.append(System.lineSeparator());
                 mMessageOutputTextView.append(System.lineSeparator());
 
-                if (type.equals("inv")) {
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setAutoCancel(true)
-                            .setSmallIcon(R.drawable.ic_person_black_24dp)
-                            .setContentTitle("New Contact Request from : " + sender)
-                            .setContentText(messageText)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-                    // Automatically configure a Notification Channel for devices running Android O+
-                    Pushy.setNotificationChannel(builder, context);
-
-                    // Get an instance of the NotificationManager service
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-
-                    // Build the notification and display it
-                    notificationManager.notify(1, builder.build());
-
-
-                }
+//                if (type.equals("inv")) {
+//                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+//                            .setAutoCancel(true)
+//                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+//                            .setContentTitle("New Contact Request from : " + sender)
+//                            .setContentText(messageText)
+//                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//
+//                    // Automatically configure a Notification Channel for devices running Android O+
+//                    Pushy.setNotificationChannel(builder, context);
+//
+//                    // Get an instance of the NotificationManager service
+//                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+//
+//                    // Build the notification and display it
+//                    notificationManager.notify(1, builder.build());
+//                }
             }
         }
     }
