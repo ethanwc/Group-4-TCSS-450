@@ -11,11 +11,10 @@ public class ChatModel {
     public String text;
     public Bitmap bitmap;
 
-    public ChatModel(int type, String text, int data, Bitmap img)
+    public ChatModel(int type, String text, int data)
     {
         this.type = type;
         this.data = data;
         this.text = text;
-        this.bitmap = img;
     }
 }

@@ -54,6 +54,7 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -83,6 +84,7 @@ public class ChatFragment2 extends Fragment {
     private static final int REQUEST_TAKE_PHOTO = 1111;
     private static final int TAKEN_PHOTO_UPLOAD = 444;
     private static final int REQUEST_VIDEO_CAPTURE = 555;
+    private Map<String, Bitmap> mImages;
     private PushMessageReceiver mPushMessageReciever;
     private EditText mMessageInputEditText;
     private String currentPhotoPath;
@@ -230,6 +232,7 @@ public class ChatFragment2 extends Fragment {
         File f = new File(currentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
         Log.e("PHOTOURI", contentUri.toString());
+        //add photo to list
         uploadPhoto(contentUri);
         mediaScanIntent.setData(contentUri);
         getActivity().sendBroadcast(mediaScanIntent);
@@ -243,6 +246,12 @@ public class ChatFragment2 extends Fragment {
                     @Override
                     public void onStart(String requestId) {
                         Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
+                        Bitmap bitmap = null;
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
@@ -256,6 +265,7 @@ public class ChatFragment2 extends Fragment {
                         String imageUrl = resultData.get("url").toString();
                         //add new message, that is actually an image.
                         addPhotoToConversation(imageUrl);
+                        list.add(new ChatModel(ChatModel.IMAGE_TYPE, imageUrl, 0));
 
                     }
 
@@ -370,6 +380,7 @@ public class ChatFragment2 extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mImages = new HashMap<>();
 
         if (getArguments() != null) {
             mEmail = getArguments().getString("email_token_123");
@@ -378,7 +389,6 @@ public class ChatFragment2 extends Fragment {
         }
         list = new ArrayList();
 
-        setChatHistory();
 
     }
 
@@ -386,6 +396,7 @@ public class ChatFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setChatHistory();
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_chat_fragment2, container, false);
@@ -409,6 +420,7 @@ public class ChatFragment2 extends Fragment {
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
+//        setChatHistory();
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
@@ -528,43 +540,32 @@ public class ChatFragment2 extends Fragment {
 
     //output the chat history result
     private void getAllHistory(final String result) {
+        int imageCount = 0;
+        int loadedImages = 0;
+        list.clear();
         try {
             //This is the result from the web service
             JSONObject res = new JSONObject(result);
             if(res.has("messages")) {
                 JSONArray chatHistoryArray = res.getJSONArray("messages");
                 //Log.e("history: ", "  " + res.get("messages"));
-                for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
+                for (int i = chatHistoryArray.length() -1; i >= 0 ; i--)
+                    if (chatHistoryArray.getJSONObject(i).getString("type").equals("1"))
+                        imageCount++;
+
+                    for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
 //                    Log.e("MESSAGEIS" ," " + chatHistoryArray.getString(i));
                     String type = chatHistoryArray.getJSONObject(i).getString("type");
                     int data = chatHistoryArray.getJSONObject(i).getString("email").equals(mEmail) ? 1 : 0;
                     String msg = chatHistoryArray.getJSONObject(i).getString("messages");
 
                     //txt
-                    if (type.equals("0")) list.add(new ChatModel(ChatModel.TEXT_TYPE, msg, data, null));
+                    if (type.equals("0")) list.add(new ChatModel(ChatModel.TEXT_TYPE, msg, data));
                     //img
-                    else if (type.equals("1")) {
-                        Picasso.get().load(msg).into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                list.add(new ChatModel(ChatModel.IMAGE_TYPE, "", 0, bitmap));
+                    else if (type.equals("1")) list.add(new ChatModel(ChatModel.IMAGE_TYPE, msg, 0));
 
-                            }
 
-                            @Override
-                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
 
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                Log.e("LOADMESSAGE", "Getting ready to get the image");
-                                //Here you should place a loading gif in the ImageView
-                                //while image is being obtained.
-                            }
-                        });
-
-                    }
 
                 }
                 finalizeChat();
@@ -657,7 +658,7 @@ public class ChatFragment2 extends Fragment {
                 }
                 if(type != null && type.equals("0")) {
                     Log.e("MESSAGETYPE", "message is text");
-                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1, null));
+                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1));
 
 //                    changeColorOnMsg();
 //                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -678,11 +679,12 @@ public class ChatFragment2 extends Fragment {
                 }
                 if(type != null && type.equals("1")) {
                     Log.e("MESSAGETYPE", "adding an imagee");
-                    try {
-                        list.add(new ChatModel(ChatModel.IMAGE_TYPE, "", 0, Picasso.get().load(messageText).get()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    list.add(new ChatModel(ChatModel.IMAGE_TYPE, messageText, 0));
+
+
+//                        if (!mImages.cont)
+                        //todo...load correctly
+
 
 
                 }
