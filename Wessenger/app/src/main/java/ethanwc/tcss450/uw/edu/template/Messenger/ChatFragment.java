@@ -7,20 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,11 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
@@ -76,7 +71,6 @@ public class ChatFragment extends Fragment {
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
-        setChatHistory();
     }
 
     /**
@@ -232,19 +226,30 @@ public class ChatFragment extends Fragment {
             //This is the result from the web service
             JSONObject res = new JSONObject(result);
             if(res.has("messages")) {
-
                 JSONArray chatHistoryArray = res.getJSONArray("messages");
-                //JSONObject eachLine = new JSONObject();
-
-                Log.e("email: ", " " + mEmail);
                 String chatHistoryText = "";
-
+                //Log.e("history: ", "  " + res.get("messages"));
                 for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
+                    String message = chatHistoryArray.getJSONObject(i).getString("messages");
+                    String username = chatHistoryArray.getJSONObject(i).getString("username");
+                    chatHistoryText += username+ ": " + message + "\n";
+                }
+                mMessageOutputTextView.setText(chatHistoryText);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void changeColorOnMsg(){
+
+        Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
+        text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
 
 
         NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
         if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
 
             MenuItem item = menu.findItem(R.id.nav_global_chat);
             SpannableString s = new SpannableString(item.getTitle());
@@ -286,7 +291,6 @@ public class ChatFragment extends Fragment {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                Log.e("message text: ", " " + messageText);
                 mMessageOutputTextView.append(sender + ":" + messageText);
                 mMessageOutputTextView.append(System.lineSeparator());
                 mMessageOutputTextView.append(System.lineSeparator());
