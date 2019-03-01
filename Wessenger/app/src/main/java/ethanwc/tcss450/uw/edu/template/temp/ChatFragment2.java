@@ -634,8 +634,8 @@ public class ChatFragment2 extends Fragment {
 //                mMessageOutputTextView.append(sender + ":" + messageText);
 //                mMessageOutputTextView.append(System.lineSeparator());
 //                mMessageOutputTextView.append(System.lineSeparator());
-
-                if (type.equals("inv")) {
+                Log.e("TYPEERROR", "");
+                if (type != null && type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                             .setAutoCancel(true)
@@ -655,7 +655,7 @@ public class ChatFragment2 extends Fragment {
 
 
                 }
-                if(type.equals("0")) {
+                if(type != null && type.equals("0")) {
                     Log.e("MESSAGETYPE", "message is text");
                     list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1, null));
 
@@ -676,7 +676,7 @@ public class ChatFragment2 extends Fragment {
 //                    // Build the notification and display it
 //                    notificationManager.notify(1, builder.build());
                 }
-                if(type.equals("1")) {
+                if(type != null && type.equals("1")) {
                     Log.e("MESSAGETYPE", "adding an imagee");
                     try {
                         list.add(new ChatModel(ChatModel.IMAGE_TYPE, "", 0, Picasso.get().load(messageText).get()));
