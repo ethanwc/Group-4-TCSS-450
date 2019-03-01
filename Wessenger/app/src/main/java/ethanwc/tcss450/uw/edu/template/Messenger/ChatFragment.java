@@ -6,18 +6,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
-import android.text.Layout;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
-import android.text.style.AlignmentSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -28,8 +34,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -59,6 +65,11 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        MenuItem menuItem = (MenuItem) navigationView.findViewById(R.id.nav_global_chat);
+//        menuItem.setTitle()
+
         System.out.println("chat fragment ---->On Resume");
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
@@ -115,6 +126,21 @@ public class ChatFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
+        text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.messageText)), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
+
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_global_chat);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.messageText)), 0, s.length(), 0);
+            item.setTitle(s);
+
+        }
         //Store arguments in variables.
         if (getArguments() != null) {
             mEmail = getArguments().getString("email_token_123");
@@ -214,36 +240,47 @@ public class ChatFragment extends Fragment {
                 String chatHistoryText = "";
 
                 for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
-                    String username = chatHistoryArray.getJSONObject(i).getString("username");
-                    String message = chatHistoryArray.getJSONObject(i).getString("messages");
-                    final SpannableString spannableString = new SpannableString(message);
-                    if (chatHistoryArray.getJSONObject(i).getString("email").equals(mEmail)) {
-                        spannableString.setSpan(new AlignmentSpan.Standard(Layout.Alignment.ALIGN_OPPOSITE)
-                                , 0
-                                , message.length()
-                                , Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-                        mMessageOutputTextView.append(username + ":" + spannableString + "\n");
-                        mMessageOutputTextView.setGravity(Gravity.RIGHT);
-                    } else {
-                        mMessageOutputTextView.append(username + ":" + message + "\n");
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
+
+
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+
+            MenuItem item = menu.findItem(R.id.nav_global_chat);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+            item.setTitle(s);
+
         }
+
+    }
+    public void changeColorOnInv(){
+
+        Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
+        text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
+
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_chat_view_connections);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+            item.setTitle(s);
+
+        }
+
     }
 
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
-    private class PushMessageReceiver extends BroadcastReceiver {
+    private class PushMessageReceiver extends BroadcastReceiver  {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            Log.e("recive message:", " " + intent.toString());
-//            System.out.println("in push message receive---+++++->chatfragment"+intent.toString());
+            System.out.println("in push message receive---+++++->chat fragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
@@ -254,11 +291,31 @@ public class ChatFragment extends Fragment {
                 mMessageOutputTextView.append(System.lineSeparator());
                 mMessageOutputTextView.append(System.lineSeparator());
 
-//                if (type.equals("inv")) {
+                if (type.equals("inv")) {
+                    changeColorOnInv();
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("New Contact Request from : " + sender)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
+
+
+                }else if(type.equals("msg")) {
+//                    changeColorOnMsg();
 //                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
 //                            .setAutoCancel(true)
-//                            .setSmallIcon(R.drawable.ic_person_black_24dp)
-//                            .setContentTitle("New Contact Request from : " + sender)
+//                            .setSmallIcon(R.drawable.ic_message_black_24dp)
+//                            .setContentTitle("Message from: " + sender)
 //                            .setContentText(messageText)
 //                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 //
@@ -270,7 +327,7 @@ public class ChatFragment extends Fragment {
 //
 //                    // Build the notification and display it
 //                    notificationManager.notify(1, builder.build());
-//                }
+                }
             }
         }
     }
