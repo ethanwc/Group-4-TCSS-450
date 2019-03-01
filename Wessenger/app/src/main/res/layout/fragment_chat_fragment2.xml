@@ -85,7 +85,7 @@
 
 
         <EditText
-            android:id="@+id/edittext_chatbox"
+            android:id="@+id/messaging_input"
             android:hint="Enter message"
             android:background="@android:color/transparent"
             android:layout_gravity="center"
