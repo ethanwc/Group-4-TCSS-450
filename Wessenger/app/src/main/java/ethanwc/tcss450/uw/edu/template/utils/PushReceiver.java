@@ -39,7 +39,8 @@ public class PushReceiver extends BroadcastReceiver {
         //perform so logic/routing based on the "type"
         //feel free to change the key or type of values. You could use numbers like HTTP: 404 etc
         String typeOfMessage = intent.getStringExtra("type");
-        System.out.println("type of msg =========>  "+typeOfMessage);
+//        Log.e("MESSAGETYPE", typeOfMessage + " alalala");
+//        System.out.println("type of msg =========>  "+typeOfMessage);
         MessagingHomeActivity ho = new MessagingHomeActivity();
 //System.out.println("----------<>"+context.getString(R.string.new_user_first_name));
 //        System.out.println("-----"+ho.getEmail());

@@ -105,7 +105,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
                     break;
                 case ChatModel.IMAGE_TYPE:
                     ((ImageTypeViewHolder) holder).txtType.setText(object.text);
-                    ((ImageTypeViewHolder) holder).image.setImageResource(object.data);
+                    ((ImageTypeViewHolder) holder).image.setImageBitmap(object.bitmap);
                     break;
             }
         }

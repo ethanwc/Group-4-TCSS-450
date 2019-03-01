@@ -5,7 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -40,6 +42,7 @@ import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -249,16 +252,10 @@ public class ChatFragment2 extends Fragment {
 
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
-
                         Toast.makeText(getActivity(), "Uploaded Succesfully", Toast.LENGTH_SHORT).show();
-
-
-                        String publicId = resultData.get("public_id").toString();
-
-                        String firstImgUrl = MediaManager.get().url().transformation(new Transformation().startOffset("12")
-                                .border("5px_solid_black").border("5px_solid_black")).resourceType("video")
-                                .generate(publicId + ".jpg");
-//                        Picasso.get().load(firstImgUrl).into(img1);
+                        String imageUrl = resultData.get("url").toString();
+                        //add new message, that is actually an image.
+                        addPhotoToConversation(imageUrl);
 
                     }
 
@@ -424,6 +421,44 @@ public class ChatFragment2 extends Fragment {
         }
     }
 
+    /**
+     * Method to add a photo to a chat after upload.
+     */
+
+    private void addPhotoToConversation(String url) {
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("email", mEmail);
+            messageJson.put("message", url);
+            messageJson.put("chatId", mChatID);
+            messageJson.put("type", ChatModel.IMAGE_TYPE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Send message to web service.
+        new SendPostAsyncTask.Builder(mSendUrl, messageJson)
+                .onPostExecute(this::endOfSendImage)
+                .onCancelled(error -> Log.e("ERROR", error))
+                .addHeaderField("authorization", mJwToken)
+                .build().execute();
+    }
+
+    /**
+     * Helper method used to clear the input field.
+     * @param result JSON object returned from the web service.
+     */
+    private void endOfSendImage(final String result) {
+//        try {
+            //This is the result from the web service
+//            JSONObject res = new JSONObject(result);
+//            if(res.has("success") && res.getBoolean("success")) {
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+    }
+
     /**NOTE: ONLY FOR TEXT MESSAGE, NOT MEDIA
      * Helper method used to handle sending a message.
      * @param theButton Button that was clicked to send message.
@@ -500,9 +535,37 @@ public class ChatFragment2 extends Fragment {
                 JSONArray chatHistoryArray = res.getJSONArray("messages");
                 //Log.e("history: ", "  " + res.get("messages"));
                 for (int i = chatHistoryArray.length() -1; i >= 0 ; i--) {
-                    Log.e("MESSAGEIS" ," " + chatHistoryArray.getString(i));
+//                    Log.e("MESSAGEIS" ," " + chatHistoryArray.getString(i));
+                    String type = chatHistoryArray.getJSONObject(i).getString("type");
                     int data = chatHistoryArray.getJSONObject(i).getString("email").equals(mEmail) ? 1 : 0;
-                    list.add(new ChatModel(ChatModel.TEXT_TYPE, chatHistoryArray.getJSONObject(i).getString("messages"), data));
+                    String msg = chatHistoryArray.getJSONObject(i).getString("messages");
+
+                    //txt
+                    if (type.equals("0")) list.add(new ChatModel(ChatModel.TEXT_TYPE, msg, data, null));
+                    //img
+                    else if (type.equals("1")) {
+                        Picasso.get().load(msg).into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                list.add(new ChatModel(ChatModel.IMAGE_TYPE, "", 0, bitmap));
+
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                Log.e("LOADMESSAGE", "Getting ready to get the image");
+                                //Here you should place a loading gif in the ImageView
+                                //while image is being obtained.
+                            }
+                        });
+
+                    }
+
                 }
                 finalizeChat();
 
@@ -564,7 +627,8 @@ public class ChatFragment2 extends Fragment {
                 String messageText = intent.getStringExtra("MESSAGE");
                 //for received messages? always go to the left '1'
 
-                list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1));
+                Log.e("MESSAGETYPE", "TYPE IS: " + type);
+
 
 //                list.add(new ChatModel())
 //                mMessageOutputTextView.append(sender + ":" + messageText);
@@ -590,7 +654,11 @@ public class ChatFragment2 extends Fragment {
                     notificationManager.notify(1, builder.build());
 
 
-                }else if(type.equals("msg")) {
+                }
+                if(type.equals("0")) {
+                    Log.e("MESSAGETYPE", "message is text");
+                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1, null));
+
 //                    changeColorOnMsg();
 //                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
 //                            .setAutoCancel(true)
@@ -607,6 +675,16 @@ public class ChatFragment2 extends Fragment {
 //
 //                    // Build the notification and display it
 //                    notificationManager.notify(1, builder.build());
+                }
+                if(type.equals("1")) {
+                    Log.e("MESSAGETYPE", "adding an imagee");
+                    try {
+                        list.add(new ChatModel(ChatModel.IMAGE_TYPE, "", 0, Picasso.get().load(messageText).get()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
             }
         }
