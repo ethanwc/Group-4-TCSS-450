@@ -2,12 +2,12 @@ package ethanwc.tcss450.uw.edu.template.temp;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,7 +33,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -41,8 +40,6 @@ import com.cloudinary.Transformation;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,12 +53,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
-import ethanwc.tcss450.uw.edu.template.Messenger.ChatFragment;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.utils.ChatModel;
+import ethanwc.tcss450.uw.edu.template.utils.MultiViewTypeAdapter;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
@@ -160,8 +156,11 @@ public class ChatFragment2 extends Fragment {
         } else if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK) {
 
             Uri media = data.getData();
+            ContentResolver cr = getActivity().getContentResolver();
+            cr.getType(media);
 
-            if (isImageFile(Objects.requireNonNull(media).getPath())) uploadPhoto(media);
+
+            if (cr.getType(media).contains("image")) uploadPhoto(media);
             else uploadVideo(media);
         }
 
@@ -172,7 +171,7 @@ public class ChatFragment2 extends Fragment {
             uploadVideo(videoUri);
 
         }
-        else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
+//        else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
     }
 
     private File createImageFile() throws IOException {
@@ -242,16 +241,12 @@ public class ChatFragment2 extends Fragment {
         MediaManager.get()
                 .upload(uri)
                 .unsigned("u48dpnqx")
+                .option("resource_type", "image")
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
                         Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
-                        Bitmap bitmap = null;
-                        try {
-                            bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
                     }
 
                     @Override
@@ -266,7 +261,7 @@ public class ChatFragment2 extends Fragment {
                         //add new message, that is actually an image.
                         addPhotoToConversation(imageUrl);
                         list.add(new ChatModel(ChatModel.IMAGE_TYPE, imageUrl, 0));
-
+                        finalizeChat();
                     }
 
                     @Override
@@ -319,7 +314,7 @@ public class ChatFragment2 extends Fragment {
                     public void onError(String requestId, ErrorInfo error) {
 
                         Toast.makeText(getActivity(), "Upload Error", Toast.LENGTH_SHORT).show();
-                        Log.v("ERROR!!", " IMAGE: " + error.getDescription());
+                        Log.v("ERROR!!", " VIDEO: " + error.getDescription());
                     }
 
                     @Override
@@ -375,6 +370,7 @@ public class ChatFragment2 extends Fragment {
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.scrollToPosition(list.size()-1);
     }
 
     @Override
@@ -528,7 +524,9 @@ public class ChatFragment2 extends Fragment {
             JSONObject res = new JSONObject(result);
             if(res.has("success") && res.getBoolean("success")) {
                 //The web service got our message. Time to clear out the input EditText
+                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1));
                 mMessageInputEditText.setText("");
+                finalizeChat();
                 //its up to you to decide if you want to send the message to the output here
                 //or wait for the message to come back from the web service.
             }
@@ -620,22 +618,12 @@ public class ChatFragment2 extends Fragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---+++++->chat fragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                //for received messages? always go to the left '1'
 
-                Log.e("MESSAGETYPE", "TYPE IS: " + type);
-
-
-//                list.add(new ChatModel())
-//                mMessageOutputTextView.append(sender + ":" + messageText);
-//                mMessageOutputTextView.append(System.lineSeparator());
-//                mMessageOutputTextView.append(System.lineSeparator());
-                Log.e("TYPEERROR", "");
                 if (type != null && type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -659,6 +647,7 @@ public class ChatFragment2 extends Fragment {
                 if(type != null && type.equals("0")) {
                     Log.e("MESSAGETYPE", "message is text");
                     list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1));
+                    finalizeChat();
 
 //                    changeColorOnMsg();
 //                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -680,12 +669,7 @@ public class ChatFragment2 extends Fragment {
                 if(type != null && type.equals("1")) {
                     Log.e("MESSAGETYPE", "adding an imagee");
                     list.add(new ChatModel(ChatModel.IMAGE_TYPE, messageText, 0));
-
-
-//                        if (!mImages.cont)
-                        //todo...load correctly
-
-
+                    finalizeChat();
 
                 }
             }
