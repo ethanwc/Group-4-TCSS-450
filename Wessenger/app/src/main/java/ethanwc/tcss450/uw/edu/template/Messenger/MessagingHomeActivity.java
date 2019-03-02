@@ -183,7 +183,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         Fragment fragment;
         if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_msg), false)) {
-            fragment = new ChatFragment();
+            fragment = new ChatFragment2();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_messaging_container, fragment)
                     .commit();
@@ -422,7 +422,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             args.putString("jwt_token", jwt);
             args.putString("email_token_123", email);
             args.putString("chat_id", "1");
-            Fragment chatFrag = new ChatFragment();
+            Fragment chatFrag = new ChatFragment2();
             chatFrag.setArguments(args);
             getSupportActionBar().setTitle("Global chat");
 

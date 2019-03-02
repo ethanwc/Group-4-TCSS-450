@@ -1,4 +1,4 @@
-package ethanwc.tcss450.uw.edu.template.temp;
+package ethanwc.tcss450.uw.edu.template.utils;
 
 import android.graphics.Bitmap;
 public class ChatModel {

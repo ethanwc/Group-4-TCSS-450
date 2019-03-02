@@ -1,22 +1,17 @@
-package ethanwc.tcss450.uw.edu.template.temp;
+package ethanwc.tcss450.uw.edu.template.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
@@ -104,9 +99,8 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
                 case ChatModel.TEXT_TYPE:
                    ((TextTypeViewHolder) holder).txtType.setText(object.text);
 
-
                     if (object.data == 1)  ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.RIGHT);
-                    else  ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.LEFT);
+//                    else  ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.LEFT);
 
                     break;
                 case ChatModel.IMAGE_TYPE:

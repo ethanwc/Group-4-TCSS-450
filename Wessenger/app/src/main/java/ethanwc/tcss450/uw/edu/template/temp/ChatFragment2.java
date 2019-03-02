@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,7 +33,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -42,8 +40,6 @@ import com.cloudinary.Transformation;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,12 +53,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
-import ethanwc.tcss450.uw.edu.template.Messenger.ChatFragment;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.utils.ChatModel;
+import ethanwc.tcss450.uw.edu.template.utils.MultiViewTypeAdapter;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
@@ -375,6 +370,7 @@ public class ChatFragment2 extends Fragment {
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.scrollToPosition(list.size()-1);
     }
 
     @Override
@@ -622,22 +618,12 @@ public class ChatFragment2 extends Fragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-            System.out.println("in push message receive---+++++->chat fragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                //for received messages? always go to the left '1'
 
-                Log.e("MESSAGETYPE", "TYPE IS: " + type);
-
-
-//                list.add(new ChatModel())
-//                mMessageOutputTextView.append(sender + ":" + messageText);
-//                mMessageOutputTextView.append(System.lineSeparator());
-//                mMessageOutputTextView.append(System.lineSeparator());
-                Log.e("TYPEERROR", "");
                 if (type != null && type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -661,6 +647,7 @@ public class ChatFragment2 extends Fragment {
                 if(type != null && type.equals("0")) {
                     Log.e("MESSAGETYPE", "message is text");
                     list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1));
+                    finalizeChat();
 
 //                    changeColorOnMsg();
 //                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -682,12 +669,7 @@ public class ChatFragment2 extends Fragment {
                 if(type != null && type.equals("1")) {
                     Log.e("MESSAGETYPE", "adding an imagee");
                     list.add(new ChatModel(ChatModel.IMAGE_TYPE, messageText, 0));
-
-
-//                        if (!mImages.cont)
-                        //todo...load correctly
-
-
+                    finalizeChat();
 
                 }
             }
