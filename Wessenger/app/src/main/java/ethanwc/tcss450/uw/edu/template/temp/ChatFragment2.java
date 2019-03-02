@@ -2,6 +2,7 @@ package ethanwc.tcss450.uw.edu.template.temp;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -160,8 +161,11 @@ public class ChatFragment2 extends Fragment {
         } else if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK) {
 
             Uri media = data.getData();
+            ContentResolver cr = getActivity().getContentResolver();
+            cr.getType(media);
 
-            if (isImageFile(Objects.requireNonNull(media).getPath())) uploadPhoto(media);
+
+            if (cr.getType(media).contains("image")) uploadPhoto(media);
             else uploadVideo(media);
         }
 
@@ -172,7 +176,7 @@ public class ChatFragment2 extends Fragment {
             uploadVideo(videoUri);
 
         }
-        else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
+//        else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
     }
 
     private File createImageFile() throws IOException {
@@ -242,16 +246,12 @@ public class ChatFragment2 extends Fragment {
         MediaManager.get()
                 .upload(uri)
                 .unsigned("u48dpnqx")
+                .option("resource_type", "image")
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {
                         Toast.makeText(getActivity(), "Upload Started...", Toast.LENGTH_SHORT).show();
-                        Bitmap bitmap = null;
-                        try {
-                            bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
                     }
 
                     @Override
@@ -266,7 +266,7 @@ public class ChatFragment2 extends Fragment {
                         //add new message, that is actually an image.
                         addPhotoToConversation(imageUrl);
                         list.add(new ChatModel(ChatModel.IMAGE_TYPE, imageUrl, 0));
-
+                        finalizeChat();
                     }
 
                     @Override
@@ -319,7 +319,7 @@ public class ChatFragment2 extends Fragment {
                     public void onError(String requestId, ErrorInfo error) {
 
                         Toast.makeText(getActivity(), "Upload Error", Toast.LENGTH_SHORT).show();
-                        Log.v("ERROR!!", " IMAGE: " + error.getDescription());
+                        Log.v("ERROR!!", " VIDEO: " + error.getDescription());
                     }
 
                     @Override
@@ -528,7 +528,9 @@ public class ChatFragment2 extends Fragment {
             JSONObject res = new JSONObject(result);
             if(res.has("success") && res.getBoolean("success")) {
                 //The web service got our message. Time to clear out the input EditText
+                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1));
                 mMessageInputEditText.setText("");
+                finalizeChat();
                 //its up to you to decide if you want to send the message to the output here
                 //or wait for the message to come back from the web service.
             }
