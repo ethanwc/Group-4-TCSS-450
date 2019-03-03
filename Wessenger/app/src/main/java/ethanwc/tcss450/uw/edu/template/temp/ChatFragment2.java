@@ -222,7 +222,7 @@ public class ChatFragment2 extends Fragment {
 
     private void pickFromGallery(View view) {
         Intent GalleryIntent = new Intent();
-        GalleryIntent.setType("image/* video/*");
+        GalleryIntent.setType("image/*");
         GalleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(GalleryIntent, "select media"), SELECT_IMAGE);
     }
