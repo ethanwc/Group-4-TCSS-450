@@ -776,6 +776,49 @@ public class MessagingHomeActivity extends AppCompatActivity
         loadFragment(chatFrag);
     }
 
+    @Override
+    public void onMessageListRemoveFragmentInteraction(Message item) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_removeChat))
+                .build();
+
+        String chatId = item.getChatid();
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("chatid", chatId);
+
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+        new SendPostAsyncTask.Builder(uri.toString(), json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleChatRemoveOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    private void handleChatRemoveOnPostExecute(String s) {
+
+        getSupportActionBar().setTitle("Chat");
+        mFab.setEnabled(true);
+        mFab.show();
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new AddChatFragment());
+                mFab.hide();
+                mFab.setEnabled(false);
+            }
+
+        });
+        loadChats();
+        //Connections has been chosen
+        onWaitFragmentInteractionHide();
+    }
+
 
     /**
      * Method listening for change password button to be clicked.
