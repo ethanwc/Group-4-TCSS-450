@@ -75,7 +75,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         SavedLocationFragment.OnListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
-        ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction, RemoveFromChatFragment.OnRemoveFromChatFragmentAction {
+        ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
+        RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction {
 
 
     private Bundle mArgs;
@@ -909,6 +910,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
+
+        //onWaitFragmentInteractionHide();
     }
 
 
@@ -1419,6 +1422,52 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleAddToChatOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
+
+    }
+
+    @Override
+    public void addChat(String chatName) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_addChat))
+                .build();
+        JSONObject messageJson = new JSONObject();
+
+        String email = getIntent().getExtras().getString(("email"));
+
+        //Build message for web service.
+        try {
+            messageJson.put("chatname", chatName);
+            messageJson.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleAddChatOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    private void handleAddChatOnPostExecute(String s) {
+        loadChats();
+        getSupportActionBar().setTitle("Chat");
+        mFab.setEnabled(true);
+        mFab.show();
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new AddChatFragment());
+                mFab.hide();
+                mFab.setEnabled(false);
+            }
+
+        });
+
+        onWaitFragmentInteractionHide();
+
+        //Connections has been chosen
 
     }
 
