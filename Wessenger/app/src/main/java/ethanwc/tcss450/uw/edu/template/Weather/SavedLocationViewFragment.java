@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
@@ -94,34 +93,6 @@ public class SavedLocationViewFragment extends Fragment {
         return fragment;
     }
 
-    /**
-     * OnStart used to populate the textview fields with the information in the arguments.
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(getArguments() != null) {
-
-            String nickname = getArguments().getString("nickname");
-            String latitude = getArguments().getString("latitude");
-            String longitude = getArguments().getString("longitude");
-            String zip = getArguments().getString("zip");
-            System.out.println("--onstart---"+ nickname);
-            TextView tView = getActivity().findViewById(R.id.txtview_locationview_nickname);
-            tView.setText(nickname);
-
-            tView = getActivity().findViewById(R.id.txtview_locationview_latitude);
-            tView.setText("Latitude : "+latitude);
-
-            tView = getActivity().findViewById(R.id.txtview_locationview_longitude);
-            tView.setText("longitude : "+longitude);
-
-            tView = getActivity().findViewById(R.id.txtview_locationview_zip);
-            tView.setText("zip : "+zip);
-
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,16 +116,16 @@ public class SavedLocationViewFragment extends Fragment {
         }
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public void onDetach() {

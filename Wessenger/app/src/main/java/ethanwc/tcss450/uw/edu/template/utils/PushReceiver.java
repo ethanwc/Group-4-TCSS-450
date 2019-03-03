@@ -27,8 +27,8 @@ public class PushReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        System.out.println("");
 
-System.out.println("###################");
 
         //the following variables are used to store the information sent from Pushy
         //In the WS, you define what gets sent. You can change it there to suit your needs
@@ -40,7 +40,7 @@ System.out.println("###################");
         //feel free to change the key or type of values. You could use numbers like HTTP: 404 etc
         String typeOfMessage = intent.getStringExtra("type");
 //        Log.e("MESSAGETYPE", typeOfMessage + " alalala");
-        System.out.println("type of msg =========>  "+typeOfMessage);
+//        System.out.println("type of msg =========>  "+typeOfMessage);
         MessagingHomeActivity ho = new MessagingHomeActivity();
 //System.out.println("----------<>"+context.getString(R.string.new_user_first_name));
 //        System.out.println("-----"+ho.getEmail());
@@ -54,7 +54,7 @@ System.out.println("###################");
 
         ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
         ActivityManager.getMyMemoryState(appProcessInfo);
-        System.out.println("Notification receive-----------------=======-------------  "+ typeOfMessage);
+
         if (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE) {
             //app is in the foreground so send the message to the active Activities
             Log.d("Wessenger", "Message received in foreground:"+messageText);
@@ -106,9 +106,9 @@ System.out.println("###################");
 
                 // Build the notification and display it
                 notificationManager.notify(1, builder.build());
-            } else if(typeOfMessage.equals("inv")){
-//                Log.d("Wessenger", "Message received in background: " + messageText);
-                System.out.println("Invitation------->");
+            } else {
+                Log.d("Wessenger", "Message received in background: " + messageText);
+                System.out.println("Background------->");
                 Intent i = new Intent(context, MainActivity.class);
                 i.putExtras(intent.getExtras());
 
@@ -134,34 +134,6 @@ System.out.println("###################");
 
                 // Build the notification and display it
                 notificationManager.notify(1, builder.build());
-            }else if(typeOfMessage.equals("acpt")){
-                System.out.println("Accepted request------->");
-                Intent i = new Intent(context, MainActivity.class);
-                i.putExtras(intent.getExtras());
-
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-                        i, PendingIntent.FLAG_UPDATE_CURRENT);
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setAutoCancel(true)
-                        .setSmallIcon(R.drawable.ic_message_black_24dp)
-                        .setContentTitle("Invitation Accepted: " + sender)
-                        .setContentText(messageText)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(pendingIntent);
-
-                //research more on notifications the how to display them
-                //https://developer.android.com/guide/topics/ui/notifiers/notifications
-
-
-                // Automatically configure a Notification Channel for devices running Android O+
-                Pushy.setNotificationChannel(builder, context);
-
-                // Get an instance of the NotificationManager service
-                NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-
-                // Build the notification and display it
-                notificationManager.notify(1, builder.build());
-
             }
 
         }

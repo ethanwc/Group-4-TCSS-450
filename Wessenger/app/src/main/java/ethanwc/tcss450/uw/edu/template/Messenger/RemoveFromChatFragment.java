@@ -17,13 +17,13 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddToChatFragment extends Fragment {
+public class RemoveFromChatFragment extends Fragment {
 
-    private OnAddToChatFragmentAction mListener;
+    private OnRemoveFromChatFragmentAction mListener;
     private EditText mEmail;
 
 
-    public AddToChatFragment() {
+    public RemoveFromChatFragment() {
         // Required empty public constructor
     }
 
@@ -42,16 +42,16 @@ public class AddToChatFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof AddToChatFragment.OnAddToChatFragmentAction) {
-            mListener = (AddToChatFragment.OnAddToChatFragmentAction) context;
+        if (context instanceof RemoveFromChatFragment.OnRemoveFromChatFragmentAction) {
+            mListener = (RemoveFromChatFragment.OnRemoveFromChatFragmentAction) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
 
-    public interface OnAddToChatFragmentAction extends WaitFragment.OnFragmentInteractionListener{
-        void addToChat(Credentials credentials);
+    public interface OnRemoveFromChatFragmentAction extends WaitFragment.OnFragmentInteractionListener{
+        void removeFromChat(Credentials credentials);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class AddToChatFragment extends Fragment {
                     mEmail.setError("Please enter a valid email.");
                 } else {
                     String chatId = getArguments().getString("chatid");
-                    mListener.addToChat(new Credentials.Builder(mEmail.getText().toString()).addChatId(chatId).build());
+                    mListener.removeFromChat(new Credentials.Builder(mEmail.getText().toString()).addChatId(chatId).build());
 
                 }
             }
