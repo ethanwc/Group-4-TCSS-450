@@ -461,7 +461,8 @@ public class MessagingHomeActivity extends AppCompatActivity
             Fragment chatFrag = new ChatFragment2();
             chatFrag.setArguments(args);
             getSupportActionBar().setTitle("Global chat");
-
+            mFab.hide();
+            mFab.setEnabled(false);
 
             loadFragment(chatFrag);
         }
