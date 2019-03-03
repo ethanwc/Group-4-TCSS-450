@@ -358,13 +358,17 @@ public class ChatFragment2 extends Fragment {
     }
 
     /**
-     * Helper method called when user clicks on
-     * @param view
+     * Helper method called when user clicks on remove from chat icon.
+     * @param view View.
      */
     private void removeFromChat(View view) {
-
+        mListener.removeFromChatButton(new Credentials.Builder(mEmail).addChatId(mChatID).build());
     }
 
+    /**
+     * Helper method called when user clicks on add to chat icon.
+     * @param view View.
+     */
     private void addToChat(View view) {
 
         mListener.addToChatButton(new Credentials.Builder(mEmail).addChatId(mChatID).build());

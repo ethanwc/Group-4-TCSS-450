@@ -75,7 +75,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         SavedLocationFragment.OnListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
-        ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction {
+        ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction, RemoveFromChatFragment.OnRemoveFromChatFragmentAction {
 
 
     private Bundle mArgs;
@@ -1325,6 +1325,13 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void removeFromChatButton(Credentials credentials) {
+        Bundle args = new Bundle();
+
+        args.putString("chatid", credentials.getChatId());
+
+        Fragment addToChat = new RemoveFromChatFragment();
+        addToChat.setArguments(args);
+        loadFragment(addToChat);
 
     }
 
@@ -1344,7 +1351,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        getSupportActionBar().setTitle("Invitations");
         new SendPostAsyncTask.Builder(uri.toString(),messageJson)
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleAddToChatOnPostExecute)
@@ -1390,6 +1396,29 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
         }
 
+
+    }
+
+    @Override
+    public void removeFromChat(Credentials credentials) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_removeFromChat))
+                .build();
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("email", credentials.getEmail());
+            messageJson.put("chatid", credentials.getChatId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleAddToChatOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
 
     }
 
