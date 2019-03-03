@@ -39,7 +39,7 @@ public class location  implements Serializable, Comparable{
             return this;
         }
 
-//        /**
+        //        /**
 //         * Helper method used to add a last name to a connection.
 //         * @param val String used to represent the last name of the connection.
 //         * @return Builder.
@@ -49,7 +49,7 @@ public class location  implements Serializable, Comparable{
             return this;
         }
 
-//        /**
+        //        /**
 //         * Helper method used to add a username to a connection.
 //         * @param val String used to represent the username of the connection.
 //         * @return Builder.
@@ -91,14 +91,14 @@ public class location  implements Serializable, Comparable{
         return mNickname;
     }
 
-//    /**
+    //    /**
 //     * Helper method to return the last name of the connection.
 //     * @return String used to represent the last name of the connection.
 //     */
     public String getLongitude() {
         return mLongitude;
     }
-//
+    //
 //    /**
 //     * Helper method to return the username of the connection.
 //     * @return String used to represent the username of the connection.
@@ -106,7 +106,7 @@ public class location  implements Serializable, Comparable{
     public String getLatitude() {
         return mLatitude;
     }
-//
+    //
 //    /**
 //     * Helper method to return the email of the connection.
 //     * @return String used to represent the email of the connection.

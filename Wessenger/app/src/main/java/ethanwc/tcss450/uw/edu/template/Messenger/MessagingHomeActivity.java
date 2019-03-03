@@ -6,19 +6,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.text.emoji.EmojiCompat;
-import android.support.text.emoji.FontRequestEmojiCompatConfig;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.provider.FontRequest;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -56,11 +54,13 @@ import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContact
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationViewFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
+
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.Message;
+import ethanwc.tcss450.uw.edu.template.model.location;
 import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
 import me.pushy.sdk.Pushy;
 
@@ -75,8 +75,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         SavedLocationFragment.OnListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
-        ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
-        RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction {
+        ChatFragment2.OnChatFragmentInteraction {
 
 
     private Bundle mArgs;
@@ -87,12 +86,12 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<String> mLasts;
     private ArrayList<String> mUNames;
     private ArrayList<String> mChats;
+    private ArrayList<location> mLocation;
     private Map<String, String> mPeople;
     Multimap<String, String> mChatMembers;
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
-    private String mChatId = "";
 
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
@@ -137,7 +136,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         //init cloudinary stuffs
         MediaManager.init(this);
-        setupEmojis();
 
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
@@ -204,37 +202,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         } else {
             loadChats();
         }
-    }
-
-    /**
-     * Initializes the download of emojis.
-     */
-    public void setupEmojis() {
-        final EmojiCompat.Config config;
-
-            // Use a downloadable font for EmojiCompat
-            final FontRequest fontRequest = new FontRequest(
-                    "com.google.android.gms.fonts",
-                    "com.google.android.gms",
-                    "Noto Color Emoji Compat",
-                    R.array.com_google_android_gms_fonts_certs);
-            config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
-
-
-        config.setReplaceAll(true)
-                .registerInitCallback(new EmojiCompat.InitCallback() {
-                    @Override
-                    public void onInitialized() {
-                        Log.i("EMOJISTUFF", "EmojiCompat initialized");
-                    }
-
-                    @Override
-                    public void onFailed(@Nullable Throwable throwable) {
-                        Log.e("EMOJISTUFF", "EmojiCompat initialization failed", throwable);
-                    }
-                });
-
-        EmojiCompat.init(config);
     }
 
     /**
@@ -484,10 +451,27 @@ public class MessagingHomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_View_Saved_Location) {
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
+            mLocation = new ArrayList<>();
+
+            //Build ASNC task to grab connections from web service.
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getLocation))
+                    .build();
+            //handleConnectionGetInfoOnPostExecute
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+//            getSupportActionBar().setTitle("Connections");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleLocationGetOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
+
             mFab.hide();
             mFab.setEnabled(false);
-
-            loadFragment(locationFragment);
             //Messenger home has been chosen
         } else if (id == R.id.nav_chat_home) {
             getSupportActionBar().setTitle("Chat");
@@ -554,6 +538,78 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         return true;
+    }
+
+
+    /**
+     * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
+     *
+     * @param result String which represents the JSON result.
+     */
+    private void handleLocationGetOnPostExecute(final String result) {
+        //parse JSON
+        try {
+            System.out.println("-------on location click-------");
+            onWaitFragmentInteractionHide();
+            System.out.println("2------_>");
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+
+
+
+            if (success) {
+
+                mLocation = new ArrayList<>();
+                JSONArray locationArray = resultJSON.getJSONArray( "nickname" );
+                JSONArray latitudeArray = resultJSON.getJSONArray( "latitude" );
+                JSONArray longitudeArray = resultJSON.getJSONArray( "longitude" );
+                JSONArray zipArray = resultJSON.getJSONArray( "zip" );
+
+//
+//                System.out.println("EMAILS!!!" + emails.get(0).toString());
+                for (int i = 0; i < locationArray.length(); i++) {
+                    location loc = new location.Builder(locationArray.get(i).toString())
+                            .addNickname( locationArray.get(i).toString())
+                            .addLatitude( latitudeArray.get(i).toString() )
+                            .addLongitude( longitudeArray.get(i).toString() )
+                            .addzip( zipArray.get(i).toString() )
+                            .build();
+//                    System.out.println("===Latitude!!!" + latitudeArray.get(i).toString());
+//                    System.out.println("===Longitude!!!" + longitudeArray.get(i).toString());
+                    mLocation.add(loc);
+
+                }
+                SavedLocationFragment savedLocationFragment = new SavedLocationFragment();
+//                //Bundle list of connections as arguments and load connection fragment
+//                Connection[] connectionsAsArray = new Connection[mConnections.size()];
+//                connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                location[] locationAsArray = new location[mLocation.size()];
+
+                locationAsArray = mLocation.toArray(locationAsArray);
+//                //Bundle connections and send as arguments
+                Bundle args = new Bundle();
+                args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
+//
+                Fragment frag = new SavedLocationFragment();
+                frag.setArguments( args );
+                onWaitFragmentInteractionHide();
+                loadFragment(frag);
+
+
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
     }
 
     /**
@@ -765,7 +821,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        mJwToken = getArguments().getString("jwt_token");
 //        mChatID = getArguments().getString("chat_id");
         Log.e("CHATID", "it is: " + item.getChatid());
-        mChatId = item.getChatid();
+
         args.putString("chat_id", item.getChatid());
         args.putString("email_token_123", getIntent().getExtras().getString("email"));
         args.putString("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
@@ -774,49 +830,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         chatFrag.setArguments(args);
         loadFragment(chatFrag);
-    }
-
-    @Override
-    public void onMessageListRemoveFragmentInteraction(Message item) {
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_removeChat))
-                .build();
-
-        String chatId = item.getChatid();
-        JSONObject json = new JSONObject();
-        try {
-
-            json.put("chatid", chatId);
-
-        } catch (JSONException e) {
-            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
-        }
-        new SendPostAsyncTask.Builder(uri.toString(), json)
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleChatRemoveOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-    }
-
-    private void handleChatRemoveOnPostExecute(String s) {
-
-        getSupportActionBar().setTitle("Chat");
-        mFab.setEnabled(true);
-        mFab.show();
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadFragment(new AddChatFragment());
-                mFab.hide();
-                mFab.setEnabled(false);
-            }
-
-        });
-        loadChats();
-        //Connections has been chosen
-        onWaitFragmentInteractionHide();
     }
 
 
@@ -953,8 +966,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-
-        //onWaitFragmentInteractionHide();
     }
 
 
@@ -1332,6 +1343,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .onPostExecute(this::handleInvitationGetOnPostExecute)
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
+                Log.e("super duper!!!!!", "yup");
 
 
             }
@@ -1351,167 +1363,29 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+
+
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onChatFragmentInteraction(Uri uri) {
 
     }
 
-
     @Override
-    public void addToChatButton(Credentials credentials) {
+    public void onListFragmentInteraction(location item) {
+        SavedLocationViewFragment savedLocationViewFragment = new SavedLocationViewFragment();
 
         Bundle args = new Bundle();
-
-        args.putString("chatid", credentials.getChatId());
-
-        Fragment addToChat = new AddToChatFragment();
-        addToChat.setArguments(args);
-        loadFragment(addToChat);
-    }
-
-    @Override
-    public void removeFromChatButton(Credentials credentials) {
-        Bundle args = new Bundle();
-
-        args.putString("chatid", credentials.getChatId());
-
-        Fragment addToChat = new RemoveFromChatFragment();
-        addToChat.setArguments(args);
-        loadFragment(addToChat);
-
-    }
-
-    @Override
-    public void addToChat(Credentials credentials) {
-
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_addToChat))
-                .build();
-        JSONObject messageJson = new JSONObject();
-        //Build message for web service.
-        try {
-            messageJson.put("email", credentials.getEmail());
-            messageJson.put("chatid", credentials.getChatId());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleAddToChatOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-
-
-    }
-
-    private void handleAddToChatOnPostExecute(String result) {
-
-        JSONObject resultJSON = null;
-        try {
-            resultJSON = new JSONObject(result);
-            boolean success = resultJSON.getBoolean("success");
-
-            if (success) {
-                Fragment chatFrag;
-                chatFrag = new ChatFragment2();
-
-                Bundle args = new Bundle();
-
-//              mEmail = getArguments().getString("email_token_123");
-//              mJwToken = getArguments().getString("jwt_token");
-//              mChatID = getArguments().getString("chat_id");
-
-                args.putString("chat_id", mChatId);
-                args.putString("email_token_123", getIntent().getExtras().getString("email"));
-                args.putString("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
-                mFab.setEnabled(false);
-                mFab.hide();
-
-                chatFrag.setArguments(args);
-                loadFragment(chatFrag);
-                onWaitFragmentInteractionHide();
-            } else {
-                onWaitFragmentInteractionHide();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("SUPER!!", e.getMessage());
-            //notify user
-            onWaitFragmentInteractionHide();
-        }
-
-
-    }
-
-    @Override
-    public void removeFromChat(Credentials credentials) {
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_removeFromChat))
-                .build();
-        JSONObject messageJson = new JSONObject();
-        //Build message for web service.
-        try {
-            messageJson.put("email", credentials.getEmail());
-            messageJson.put("chatid", credentials.getChatId());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleAddToChatOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-
-    }
-
-    @Override
-    public void addChat(String chatName) {
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_addChat))
-                .build();
-        JSONObject messageJson = new JSONObject();
-
-        String email = getIntent().getExtras().getString(("email"));
-
-        //Build message for web service.
-        try {
-            messageJson.put("chatname", chatName);
-            messageJson.put("email", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleAddChatOnPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build().execute();
-    }
-
-    private void handleAddChatOnPostExecute(String s) {
-        loadChats();
-        getSupportActionBar().setTitle("Chat");
-        mFab.setEnabled(true);
-        mFab.show();
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadFragment(new AddChatFragment());
-                mFab.hide();
-                mFab.setEnabled(false);
-            }
-
-        });
-
-        onWaitFragmentInteractionHide();
-
-        //Connections has been chosen
-
+        mFab.setEnabled(false);
+        mFab.hide();
+        args.putSerializable("nickname", item.getNickname());
+        args.putSerializable("latitude", item.getLatitude());
+        args.putSerializable("longitude", item.getLongitude());
+        args.putSerializable("zip", item.getZip());
+        savedLocationViewFragment.setArguments(args);
+        loadFragment(savedLocationViewFragment);
+        System.out.println("----"+item.getNickname());
+        System.out.println("----"+item.getLongitude());
+        System.out.println("----"+item.getLatitude());
     }
 
     // Deleting the Pushy device token must be done asynchronously. Good thing

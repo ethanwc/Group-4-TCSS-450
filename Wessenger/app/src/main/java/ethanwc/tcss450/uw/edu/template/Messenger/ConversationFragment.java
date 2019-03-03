@@ -162,7 +162,6 @@ public class ConversationFragment extends Fragment {
      */
     public interface OnMessageListFragmentInteractionListener {
         void onMessageListFragmentInteraction(Message item);
-        void onMessageListRemoveFragmentInteraction(Message item);
     }
     public void changeColorOnMsg(){
 

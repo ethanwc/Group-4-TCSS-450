@@ -6,7 +6,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -68,19 +67,6 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
                 }
             }
         });
-
-        holder.mRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onMessageListRemoveFragmentInteraction(holder.mItem);
-                }
-            }
-        });
-
-
     }
 
     /**
@@ -96,13 +82,11 @@ public class MyConversationRecyclerViewAdapter extends RecyclerView.Adapter<MyCo
         final View mView;
         final TextView mUsers;
         Message mItem;
-        final ImageButton mRemove;
         final TextView mMessage;
 
         ViewHolder(View view) {
             super(view);
             mView = view;
-            mRemove = view.findViewById(R.id.button_conversations_remove);
 //            mIdView = (TextView) view.findViewById(R.id.item_number);
             mUsers = view.findViewById(R.id.textview_conversation_users);
             mMessage = view.findViewById(R.id.textview_conversation_message);
