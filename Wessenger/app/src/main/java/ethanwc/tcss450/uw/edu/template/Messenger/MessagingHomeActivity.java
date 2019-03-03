@@ -5,16 +5,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.text.emoji.EmojiCompat;
+import android.support.text.emoji.FontRequestEmojiCompatConfig;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.provider.FontRequest;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -71,7 +74,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         SavedLocationFragment.OnListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
-        ChatFragment2.OnChatFragmentInteraction {
+        ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
+        RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction {
 
 
     private Bundle mArgs;
@@ -87,6 +91,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
+    private String mChatId = "";
 
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
@@ -131,6 +136,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         //init cloudinary stuffs
         MediaManager.init(this);
+        setupEmojis();
 
         setContentView(R.layout.activity_messaging_home);
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
@@ -198,6 +204,38 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadChats();
 
         }
+    }
+
+    /**
+     * Initializes the download of emojis.
+     */
+    public void setupEmojis() {
+        EmojiCompat
+        final EmojiCompat.Config config;
+
+            // Use a downloadable font for EmojiCompat
+            final FontRequest fontRequest = new FontRequest(
+                    "com.google.android.gms.fonts",
+                    "com.google.android.gms",
+                    "Noto Color Emoji Compat",
+                    R.array.com_google_android_gms_fonts_certs);
+            config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
+
+
+        config.setReplaceAll(true)
+                .registerInitCallback(new EmojiCompat.InitCallback() {
+                    @Override
+                    public void onInitialized() {
+                        Log.i("EMOJISTUFF", "EmojiCompat initialized");
+                    }
+
+                    @Override
+                    public void onFailed(@Nullable Throwable throwable) {
+                        Log.e("EMOJISTUFF", "EmojiCompat initialization failed", throwable);
+                    }
+                });
+
+        EmojiCompat.init(config);
     }
 
     /**
@@ -728,7 +766,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        mJwToken = getArguments().getString("jwt_token");
 //        mChatID = getArguments().getString("chat_id");
         Log.e("CHATID", "it is: " + item.getChatid());
-
+        mChatId = item.getChatid();
         args.putString("chat_id", item.getChatid());
         args.putString("email_token_123", getIntent().getExtras().getString("email"));
         args.putString("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
@@ -873,6 +911,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
+
+        //onWaitFragmentInteractionHide();
     }
 
 
@@ -1250,7 +1290,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .onPostExecute(this::handleInvitationGetOnPostExecute)
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
-                Log.e("super duper!!!!!", "yup");
 
 
             }
@@ -1275,8 +1314,161 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+
     @Override
-    public void onChatFragmentInteraction(Uri uri) {
+    public void addToChatButton(Credentials credentials) {
+
+        Bundle args = new Bundle();
+
+        args.putString("chatid", credentials.getChatId());
+
+        Fragment addToChat = new AddToChatFragment();
+        addToChat.setArguments(args);
+        loadFragment(addToChat);
+    }
+
+    @Override
+    public void removeFromChatButton(Credentials credentials) {
+        Bundle args = new Bundle();
+
+        args.putString("chatid", credentials.getChatId());
+
+        Fragment addToChat = new RemoveFromChatFragment();
+        addToChat.setArguments(args);
+        loadFragment(addToChat);
+
+    }
+
+    @Override
+    public void addToChat(Credentials credentials) {
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_addToChat))
+                .build();
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("email", credentials.getEmail());
+            messageJson.put("chatid", credentials.getChatId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleAddToChatOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+
+    }
+
+    private void handleAddToChatOnPostExecute(String result) {
+
+        JSONObject resultJSON = null;
+        try {
+            resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            if (success) {
+                Fragment chatFrag;
+                chatFrag = new ChatFragment2();
+
+                Bundle args = new Bundle();
+
+//              mEmail = getArguments().getString("email_token_123");
+//              mJwToken = getArguments().getString("jwt_token");
+//              mChatID = getArguments().getString("chat_id");
+
+                args.putString("chat_id", mChatId);
+                args.putString("email_token_123", getIntent().getExtras().getString("email"));
+                args.putString("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
+                mFab.setEnabled(false);
+                mFab.hide();
+
+                chatFrag.setArguments(args);
+                loadFragment(chatFrag);
+                onWaitFragmentInteractionHide();
+            } else {
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+
+    }
+
+    @Override
+    public void removeFromChat(Credentials credentials) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_removeFromChat))
+                .build();
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("email", credentials.getEmail());
+            messageJson.put("chatid", credentials.getChatId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleAddToChatOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+    }
+
+    @Override
+    public void addChat(String chatName) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_addChat))
+                .build();
+        JSONObject messageJson = new JSONObject();
+
+        String email = getIntent().getExtras().getString(("email"));
+
+        //Build message for web service.
+        try {
+            messageJson.put("chatname", chatName);
+            messageJson.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleAddChatOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    private void handleAddChatOnPostExecute(String s) {
+        loadChats();
+        getSupportActionBar().setTitle("Chat");
+        mFab.setEnabled(true);
+        mFab.show();
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new AddChatFragment());
+                mFab.hide();
+                mFab.setEnabled(false);
+            }
+
+        });
+
+        onWaitFragmentInteractionHide();
+
+        //Connections has been chosen
 
     }
 
