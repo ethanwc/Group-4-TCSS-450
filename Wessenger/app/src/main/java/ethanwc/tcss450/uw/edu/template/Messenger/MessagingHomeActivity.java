@@ -62,6 +62,7 @@ import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.Message;
 import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
 import me.pushy.sdk.Pushy;
+import me.pushy.sdk.lib.jackson.core.io.JsonEOFException;
 
 /**
  * Acivity class which manages functionality beyond login/registration.
@@ -142,20 +143,17 @@ public class MessagingHomeActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
 
-
         //loadChats();
         //Hide the FAB upon main activity loading.
         mFab = findViewById(R.id.fab_messaging_fab);
         mFab.setEnabled(true);
         mFab.show();
 
-
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
             //System.out.println("+=======from pushy");
             mEmailList = new ArrayList<String>();
             mEmailList = getIntent().getStringArrayListExtra("a");
-
         }
 
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -164,15 +162,12 @@ public class MessagingHomeActivity extends AppCompatActivity
                 mFab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                         loadFragment(new AddChatFragment());
                         mFab.hide();
                         mFab.setEnabled(false);
                     }
-
                 });
             }
-
         });
 
         //Setup the navigation
@@ -198,8 +193,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_messaging_container, invitation)
                     .commit();
-
-
         } else {
             loadChats();
 
@@ -210,31 +203,27 @@ public class MessagingHomeActivity extends AppCompatActivity
      * Initializes the download of emojis.
      */
     public void setupEmojis() {
-        EmojiCompat
         final EmojiCompat.Config config;
 
-            // Use a downloadable font for EmojiCompat
-            final FontRequest fontRequest = new FontRequest(
-                    "com.google.android.gms.fonts",
-                    "com.google.android.gms",
-                    "Noto Color Emoji Compat",
-                    R.array.com_google_android_gms_fonts_certs);
-            config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
+        // Use a downloadable font for EmojiCompat
+        final FontRequest fontRequest = new FontRequest(
+                "com.google.android.gms.fonts",
+                "com.google.android.gms",
+                "Noto Color Emoji Compat",
+                R.array.com_google_android_gms_fonts_certs);
+                config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
+                config.setReplaceAll(true)
+            .registerInitCallback(new EmojiCompat.InitCallback() {
+                @Override
+                public void onInitialized() {
+                    Log.i("EMOJISTUFF", "EmojiCompat initialized");
+                }
 
-
-        config.setReplaceAll(true)
-                .registerInitCallback(new EmojiCompat.InitCallback() {
-                    @Override
-                    public void onInitialized() {
-                        Log.i("EMOJISTUFF", "EmojiCompat initialized");
-                    }
-
-                    @Override
-                    public void onFailed(@Nullable Throwable throwable) {
-                        Log.e("EMOJISTUFF", "EmojiCompat initialization failed", throwable);
-                    }
-                });
-
+                @Override
+                public void onFailed(@Nullable Throwable throwable) {
+                    Log.e("EMOJISTUFF", "EmojiCompat initialization failed", throwable);
+                }
+            });
         EmojiCompat.init(config);
     }
 
@@ -252,7 +241,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
-
         } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null || addChatFrag != null || chatFrag != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
@@ -264,7 +252,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(false);
             super.onBackPressed();
         }
-
     }
 
     /**
@@ -306,8 +293,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
                 String queryString = (String) adapterView.getItemAtPosition(itemIndex);
                 searchAutoComplete.setText("" + queryString);
-                //
-
                 Uri uri = new Uri.Builder()
                         .scheme("https")
                         .appendPath(getString(R.string.ep_base_url))
@@ -322,7 +307,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .onPostExecute(this::handleConnectionGetDetailOnPostExecute)
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
-
             }
             public void onWaitFragmentInteractionShow() {
 //                System.out.println("======>onwaitshow");
@@ -350,8 +334,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     mConnections = new ArrayList<>();
                     JSONObject resultJSON = new JSONObject(result);
                     boolean success = resultJSON.getBoolean("success");
-
-
                     onWaitFragmentInteractionHide();
                     if (success) {
 
@@ -374,9 +356,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                         getSupportActionBar().setTitle("User Detail");
                         connectionViewFrag.setArguments(args);
                         loadFragment(connectionViewFrag);
-
-
-
                     }
                     onWaitFragmentInteractionHide();
                 } catch (JSONException e) {
@@ -1016,9 +995,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             boolean success = resultJSON.getBoolean("success");
 
             if (success) {
-
-
-
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
             } else {
@@ -1158,7 +1134,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_acceptinvitation))
+                .appendPath(getString(R.string.ep_acceptcontact))
                 .build();
         String msg = getIntent().getExtras().getString("email");
         String email2 = item.getEmail();
@@ -1176,6 +1152,21 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleInvitationAcceptOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+        uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_accept_invitation))
+                .build();
+        json = new JSONObject();
+        try {
+            json.put("email", msg);
+            json.put("email2", email2);
+            json.put("accept","true");
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+        new SendPostAsyncTask.Builder(uri.toString(), json)
                 .build().execute();
     }
 
@@ -1248,8 +1239,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onInvitationDeclineFragmentInteraction(Connection item) {
-
-
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -1262,6 +1251,22 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleInvitationDeclineOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+        uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_accept_invitation))
+                .build();
+        JSONObject json = new JSONObject();
+        try {
+            json.put("email", msg);
+            json.put("email2", item.getEmail());
+            json.put("accept","false");
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+        new SendPostAsyncTask.Builder(uri.toString(), json)
                 .build().execute();
     }
 

@@ -28,8 +28,7 @@
     <string name="ep_addToChat">addtochat</string>
     <string name="ep_removeFromChat">removefromchat</string>
     <string name="ep_addChat">createchat</string>
-
-
-    <string name="ep_acceptinvitation">acceptcontact</string>
+    <string name="ep_acceptcontact">acceptcontact</string>
     <string name="ep_declineinvitation">declinecontact</string>
+    <string name="ep_accept_invitation">acceptinvitation</string>
 </resources>
