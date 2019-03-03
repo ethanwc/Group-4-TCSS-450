@@ -30,7 +30,7 @@
     <string name="ep_addChat">createchat</string>
     <string name="ep_removeChat">deletechat</string>
 
-
+    <string name="ep_getLocation">getlocation</string>
     <string name="ep_acceptinvitation">acceptcontact</string>
     <string name="ep_declineinvitation">declinecontact</string>
 </resources>

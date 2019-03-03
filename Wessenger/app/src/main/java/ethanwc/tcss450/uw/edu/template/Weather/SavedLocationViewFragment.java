@@ -1,4 +1,5 @@
-package ethanwc.tcss450.uw.edu.template.Weather;
+
+        package ethanwc.tcss450.uw.edu.template.Weather;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
@@ -93,6 +95,34 @@ public class SavedLocationViewFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * OnStart used to populate the textview fields with the information in the arguments.
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(getArguments() != null) {
+
+            String nickname = getArguments().getString("nickname");
+            String latitude = getArguments().getString("latitude");
+            String longitude = getArguments().getString("longitude");
+            String zip = getArguments().getString("zip");
+            System.out.println("--onstart---"+ nickname);
+            TextView tView = getActivity().findViewById(R.id.txtview_locationview_nickname);
+            tView.setText(nickname);
+
+            tView = getActivity().findViewById(R.id.txtview_locationview_latitude);
+            tView.setText("Latitude : "+latitude);
+
+            tView = getActivity().findViewById(R.id.txtview_locationview_longitude);
+            tView.setText("longitude : "+longitude);
+
+            tView = getActivity().findViewById(R.id.txtview_locationview_zip);
+            tView.setText("zip : "+zip);
+
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,16 +146,16 @@ public class SavedLocationViewFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
 
     @Override
     public void onDetach() {
@@ -199,7 +229,7 @@ public class SavedLocationViewFragment extends Fragment {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-                String msgtype = intent.getStringExtra( "MsgType" );
+
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -220,24 +250,44 @@ public class SavedLocationViewFragment extends Fragment {
 
 
                 }else if(type.equals("msg")) {
+                    String msgtype = intent.getStringExtra( "MsgType" );
                     changeColorOnMsg();
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setAutoCancel(true)
-                            .setSmallIcon(R.drawable.ic_message_black_24dp)
-                            .setContentTitle("Message from: " + sender)
-                            .setContentText(messageText)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    if(msgtype.equals( "0" )){
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                                .setAutoCancel(true)
+                                .setSmallIcon(R.drawable.ic_message_black_24dp)
+                                .setContentTitle("Message from: " + sender)
+                                .setContentText(messageText)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-                    // Automatically configure a Notification Channel for devices running Android O+
-                    Pushy.setNotificationChannel(builder, context);
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel(builder, context);
 
-                    // Get an instance of the NotificationManager service
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
-                    // Build the notification and display it
-                    notificationManager.notify(1, builder.build());
+                        // Build the notification and display it
+                        notificationManager.notify(1, builder.build());
+                    }else {
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder( context, CHANNEL_ID )
+                                .setAutoCancel( true )
+                                .setSmallIcon( R.drawable.ic_message_black_24dp )
+                                .setContentTitle( "Message from: " + sender )
+                                .setContentText("Picture Message : " +messageText )
+                                .setPriority( NotificationCompat.PRIORITY_DEFAULT );
+
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel( builder, context );
+
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService( context.NOTIFICATION_SERVICE );
+
+                        // Build the notification and display it
+                        notificationManager.notify( 1, builder.build() );
+                    }
                 }
             }
         }
     }
 }
+

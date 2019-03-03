@@ -50,6 +50,7 @@ public class PushReceiver extends BroadcastReceiver {
 
         String messageText = intent.getStringExtra("message");
         String receiver = intent.getStringExtra("receiver");
+        String msgtype = intent.getStringExtra( "msgtype" );
         System.out.println("The email receiver---->"+receiver);
 
         ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
@@ -66,7 +67,7 @@ public class PushReceiver extends BroadcastReceiver {
             i.putExtra("MESSAGE", messageText);
             i.putExtra("TYPE", typeOfMessage);
             i.putExtra("Receiver",receiver);
-
+            i.putExtra("MsgType",msgtype);
             i.putExtras(intent.getExtras());
 
             context.sendBroadcast(i);
