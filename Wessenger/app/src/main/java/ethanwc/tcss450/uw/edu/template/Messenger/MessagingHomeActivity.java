@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -73,7 +71,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         SavedLocationFragment.OnListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
-        ChatFragment2.OnChatFragmentInteraction {
+        ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction {
 
 
     private Bundle mArgs;
@@ -89,6 +87,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
+    private String mChatId = "";
 
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
@@ -729,7 +728,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        mJwToken = getArguments().getString("jwt_token");
 //        mChatID = getArguments().getString("chat_id");
         Log.e("CHATID", "it is: " + item.getChatid());
-
+        mChatId = item.getChatid();
         args.putString("chat_id", item.getChatid());
         args.putString("email_token_123", getIntent().getExtras().getString("email"));
         args.putString("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
@@ -1251,7 +1250,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .onPostExecute(this::handleInvitationGetOnPostExecute)
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
-                Log.e("super duper!!!!!", "yup");
 
 
             }
@@ -1276,8 +1274,86 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+
     @Override
-    public void onChatFragmentInteraction(Uri uri) {
+    public void addToChatButton(Credentials credentials) {
+
+        Bundle args = new Bundle();
+
+        args.putString("chatid", credentials.getChatId());
+
+        Fragment addToChat = new AddToChatFragment();
+        addToChat.setArguments(args);
+        loadFragment(addToChat);
+    }
+
+    @Override
+    public void removeFromChatButton(Credentials credentials) {
+
+    }
+
+    @Override
+    public void addToChat(Credentials credentials) {
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_addToChat))
+                .build();
+        JSONObject messageJson = new JSONObject();
+        //Build message for web service.
+        try {
+            messageJson.put("email", credentials.getEmail());
+            messageJson.put("chatid", credentials.getChatId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        getSupportActionBar().setTitle("Invitations");
+        new SendPostAsyncTask.Builder(uri.toString(),messageJson)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleAddToChatOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+
+    }
+
+    private void handleAddToChatOnPostExecute(String result) {
+
+        JSONObject resultJSON = null;
+        try {
+            resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+            if (success) {
+                Fragment chatFrag;
+                chatFrag = new ChatFragment2();
+
+                Bundle args = new Bundle();
+
+//              mEmail = getArguments().getString("email_token_123");
+//              mJwToken = getArguments().getString("jwt_token");
+//              mChatID = getArguments().getString("chat_id");
+
+                args.putString("chat_id", mChatId);
+                args.putString("email_token_123", getIntent().getExtras().getString("email"));
+                args.putString("jwt_token", getIntent().getExtras().getString(getString(R.string.keys_intent_jwt)));
+                mFab.setEnabled(false);
+                mFab.hide();
+
+                chatFrag.setArguments(args);
+                loadFragment(chatFrag);
+                onWaitFragmentInteractionHide();
+            } else {
+                onWaitFragmentInteractionHide();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
 
     }
 

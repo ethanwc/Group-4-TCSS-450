@@ -18,13 +18,9 @@
         android:background="@color/backgroundDark"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:layout_width="0dp"
@@ -50,12 +46,6 @@
             android:layout_weight="1"
             android:background="@drawable/ic_menu_camera" />
 
-        <ImageButton
-            android:id="@+id/button_chat_takeVideo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:background="@drawable/ic_videocam_black_24dp" />
 
         <ImageButton
             android:id="@+id/button_chat_uploadMedia"
@@ -63,6 +53,24 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/ic_insert_photo_black_24dp" />
+
+
+        <ImageButton
+            android:id="@+id/button_chat_addMember"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/ic_person_add_black_24dp" />
+
+
+        <ImageButton
+            android:id="@+id/button_chat_removeMember"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/ic_remove_person" />
+
+
 
     </LinearLayout>
     <LinearLayout
