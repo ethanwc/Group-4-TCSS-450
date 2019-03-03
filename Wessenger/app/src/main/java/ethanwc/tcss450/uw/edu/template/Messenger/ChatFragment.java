@@ -291,6 +291,9 @@ public class ChatFragment extends Fragment {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
+                String msgtype = intent.getStringExtra( "MsgType" );
+
+                System.out.println("%%%%%%%%%%%%%%%%"+msgtype);
                 mMessageOutputTextView.append(sender + ":" + messageText);
                 mMessageOutputTextView.append(System.lineSeparator());
                 mMessageOutputTextView.append(System.lineSeparator());

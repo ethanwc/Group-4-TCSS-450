@@ -199,7 +199,7 @@ public class SavedLocationViewFragment extends Fragment {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-
+                String msgtype = intent.getStringExtra( "MsgType" );
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
