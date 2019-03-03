@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/activity_horizontal_margin"
     card_view:cardElevation="10dp">
-
-    <android.support.text.emoji.widget.EmojiTextView
+    <TextView
         android:id="@+id/type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

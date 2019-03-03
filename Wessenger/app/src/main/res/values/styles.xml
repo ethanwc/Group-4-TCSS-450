@@ -13,6 +13,8 @@
         <item name="editTextStyle">@style/App_EditTextStyle</item>
 
 
+
+
     </style>
 
     <style name="App_EditTextStyle" parent="@android:style/Widget.EditText">
@@ -24,24 +26,24 @@
 
     <style name="WeatherTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <!--<item name="android:background">@color/backgroundDark</item>-->
-        <!--<item name="android:textColorHint">@color/weatherText</item>-->
-        <!--<item name="android:textColor">@color/weatherText</item>-->
-        <!--<item name="android:textColorPrimary">@color/weatherText</item>-->
-        <!--<item name="android:textColorSecondary">@color/weatherText</item>-->
-        <!--<item name="android:actionMenuTextColor">@color/weatherText</item>-->
-        <!--<item name="windowActionBar">false</item>-->
+        <item name="android:background">@color/backgroundDark</item>
+        <item name="android:textColorHint">@color/weatherText</item>
+        <item name="android:textColor">@color/weatherText</item>
+        <item name="android:textColorPrimary">@color/weatherText</item>
+        <item name="android:textColorSecondary">@color/weatherText</item>
+        <item name="android:actionMenuTextColor">@color/weatherText</item>
+        <item name="windowActionBar">false</item>
 
     </style>
 
     <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <!--<item name="android:background">@color/backgroundDark</item>-->
-        <!--<item name="android:textColorHint">@color/colorAccent</item>-->
-        <!--<item name="android:textColor">@color/colorAccent</item>-->
+        <item name="android:background">@color/backgroundDark</item>
+        <item name="android:textColorHint">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorAccent</item>
 
-        <!--<item name="windowActionBar">false</item>-->
-        <!--<item name="editTextStyle">@style/App_EditTextStyle</item>-->
+        <item name="windowActionBar">false</item>
+        <item name="editTextStyle">@style/App_EditTextStyle</item>
 
 
 
@@ -49,8 +51,8 @@
 
 
     <style name="AppTheme.NoActionBar">
-        <!--<item name="windowActionBar">false</item>-->
-        <!--<item name="windowNoTitle">true</item>-->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

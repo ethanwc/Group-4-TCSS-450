@@ -24,10 +24,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+import ethanwc.tcss450.uw.edu.template.model.location;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
@@ -38,9 +40,10 @@ import me.pushy.sdk.Pushy;
  * interface.
  */
 public class SavedLocationFragment extends Fragment {
-
+    public static final String ARG_LOCATION_LIST = "Location list";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private List<location> mLocationList;
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
@@ -92,7 +95,10 @@ public class SavedLocationFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            System.out.println("From Saved Location Fragment ");
+            mLocationList = new ArrayList<location>( Arrays.asList((location[]) getArguments().getSerializable(ARG_LOCATION_LIST)));
+
+
         }
     }
 
@@ -110,7 +116,7 @@ public class SavedLocationFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.Weather.MySavedLocationRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.Weather.MySavedLocationRecyclerViewAdapter(mLocationList, mListener));
         }
         return view;
     }
@@ -145,7 +151,7 @@ public class SavedLocationFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update what method does upon list interaction.
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(location item);
     }
     public void changeColorOnMsg(){
 
