@@ -55,9 +55,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.utils.ChatModel;
 import ethanwc.tcss450.uw.edu.template.utils.MultiViewTypeAdapter;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
@@ -69,7 +67,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ChatFragment2.OnChatFragmentButtonAction} interface
+ * {@link ChatFragment2.OnChatFragmentInteraction} interface
  * to handle interaction events.
  * Use the {@link ChatFragment2#} factory method to
  * create an instance of this fragment.
@@ -91,7 +89,7 @@ public class ChatFragment2 extends Fragment {
     private String mSendUrl;
     private String mChatID;
     ArrayList<ChatModel> list;
-    private OnChatFragmentButtonAction mListener;
+    private OnChatFragmentInteraction mListener;
     LinearLayout mediaBar;
 
     public ChatFragment2() {
@@ -222,7 +220,7 @@ public class ChatFragment2 extends Fragment {
 
     private void pickFromGallery(View view) {
         Intent GalleryIntent = new Intent();
-        GalleryIntent.setType("image/*");
+        GalleryIntent.setType("image/* video/*");
         GalleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(GalleryIntent, "select media"), SELECT_IMAGE);
     }
@@ -347,31 +345,11 @@ public class ChatFragment2 extends Fragment {
         getView().findViewById(R.id.button_chatbox_send).setOnClickListener(this::handleSendClick);
         getView().findViewById(R.id.button_chatbox_plus).setOnClickListener(this::toggleMediaMenu);
         getView().findViewById(R.id.button_chat_takeImage).setOnClickListener(this::dispatchTakePictureIntent);
+        getView().findViewById(R.id.button_chat_takeVideo).setOnClickListener(this::dispatchTakeVideoIntent);
         getView().findViewById(R.id.button_chat_uploadMedia).setOnClickListener(this::pickFromGallery);
-        getView().findViewById(R.id.button_chat_addMember).setOnClickListener(this::addToChat);
-        getView().findViewById(R.id.button_chat_removeMember).setOnClickListener(this::removeFromChat);
 
         //Store arguments in variables.
 
-
-
-    }
-
-    /**
-     * Helper method called when user clicks on remove from chat icon.
-     * @param view View.
-     */
-    private void removeFromChat(View view) {
-        mListener.removeFromChatButton(new Credentials.Builder(mEmail).addChatId(mChatID).build());
-    }
-
-    /**
-     * Helper method called when user clicks on add to chat icon.
-     * @param view View.
-     */
-    private void addToChat(View view) {
-
-        mListener.addToChatButton(new Credentials.Builder(mEmail).addChatId(mChatID).build());
 
 
     }
@@ -393,21 +371,6 @@ public class ChatFragment2 extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.scrollToPosition(list.size()-1);
-    }
-
-    /**
-     * OnAttach used to check whether the correct listeners have been implemented.
-     * @param context Context of the current ui situation.
-     */
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof AddContactFragment.OnNewContactFragmentButtonAction) {
-            mListener = (ChatFragment2.OnChatFragmentButtonAction) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -458,6 +421,13 @@ public class ChatFragment2 extends Fragment {
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
 
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onChatFragmentInteraction(uri);
+            //if image...open it?
+        }
+    }
 
     /**
      * Method to add a photo to a chat after upload.
@@ -604,6 +574,16 @@ public class ChatFragment2 extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnChatFragmentInteraction) {
+            mListener = (OnChatFragmentInteraction) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public void onDetach() {
@@ -617,7 +597,20 @@ public class ChatFragment2 extends Fragment {
     }
 
 
-
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnChatFragmentInteraction {
+        // TODO: Update argument type and name
+        void onChatFragmentInteraction(Uri uri);
+    }
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
@@ -699,11 +692,5 @@ public class ChatFragment2 extends Fragment {
             }
 
         }
-    }
-
-    public interface OnChatFragmentButtonAction {
-
-        void addToChatButton(Credentials credentials);
-        void removeFromChatButton(Credentials credentials);
     }
 }
