@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -209,12 +210,15 @@ public class ConversationFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->Conversation Fragment"+intent.toString());
-            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+            System.out.println("in push message receive---+++++->Conversation Fragment");
+            if(intent.hasExtra("sender") && intent.hasExtra("messager")) {
 
-                String type = intent.getStringExtra("TYPE");
-                String sender = intent.getStringExtra("SENDER");
-                String messageText = intent.getStringExtra("MESSAGE");
+                String type = intent.getStringExtra("type");
+                String sender = intent.getStringExtra("sender");
+                String messageText = intent.getStringExtra("message");
+                Log.e("GOD!!!!", type);
+
+
 
                 if (type.equals("inv")) {
                     changeColorOnInv();
