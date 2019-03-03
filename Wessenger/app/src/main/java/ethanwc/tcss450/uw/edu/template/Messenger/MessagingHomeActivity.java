@@ -853,7 +853,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray usernames = resultJSON.getJSONArray("usernames");
                 JSONArray emails = resultJSON.getJSONArray("emails");
 
-                System.out.println("EMAILS!!!" + emails.get(0).toString());
+
                 for (int i = 0; i < firstnames.length(); i++) {
                     Connection conn = new Connection.Builder(emails.get(i).toString())
                             .addFirst(firstnames.get(i).toString()).addLast(lastnames.get(i).toString())
