@@ -291,6 +291,9 @@ public class ChatFragment extends Fragment {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
+                String msgtype = intent.getStringExtra( "MsgType" );
+
+                System.out.println("%%%%%%%%%%%%%%%%"+msgtype);
                 mMessageOutputTextView.append(sender + ":" + messageText);
                 mMessageOutputTextView.append(System.lineSeparator());
                 mMessageOutputTextView.append(System.lineSeparator());
@@ -331,25 +334,6 @@ public class ChatFragment extends Fragment {
 //
 //                    // Build the notification and display it
 //                    notificationManager.notify(1, builder.build());
-                }else if (type.equals("inv")) {
-                    changeColorOnInv();
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setAutoCancel(true)
-                            .setSmallIcon(R.drawable.ic_person_black_24dp)
-                            .setContentTitle("New Contact Request from : " + sender)
-                            .setContentText(messageText)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-                    // Automatically configure a Notification Channel for devices running Android O+
-                    Pushy.setNotificationChannel(builder, context);
-
-                    // Get an instance of the NotificationManager service
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-
-                    // Build the notification and display it
-                    notificationManager.notify(1, builder.build());
-
-
                 }
             }
         }

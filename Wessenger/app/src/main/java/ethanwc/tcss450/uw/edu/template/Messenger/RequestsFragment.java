@@ -220,7 +220,7 @@ public class RequestsFragment extends Fragment {
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-
+                String msgtype = intent.getStringExtra( "MsgType" );
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -242,21 +242,39 @@ public class RequestsFragment extends Fragment {
 
                 }else if(type.equals("msg")) {
                     changeColorOnMsg();
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                            .setAutoCancel(true)
-                            .setSmallIcon(R.drawable.ic_message_black_24dp)
-                            .setContentTitle("Message from: " + sender)
-                            .setContentText(messageText)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    if(msgtype.equals( "0" )){
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                                .setAutoCancel(true)
+                                .setSmallIcon(R.drawable.ic_message_black_24dp)
+                                .setContentTitle("Message from: " + sender)
+                                .setContentText(messageText)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-                    // Automatically configure a Notification Channel for devices running Android O+
-                    Pushy.setNotificationChannel(builder, context);
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel(builder, context);
 
-                    // Get an instance of the NotificationManager service
-                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
-                    // Build the notification and display it
-                    notificationManager.notify(1, builder.build());
+                        // Build the notification and display it
+                        notificationManager.notify(1, builder.build());
+                    }else {
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder( context, CHANNEL_ID )
+                                .setAutoCancel( true )
+                                .setSmallIcon( R.drawable.ic_message_black_24dp )
+                                .setContentTitle( "Message from: " + sender )
+                                .setContentText("Picture Message : " +messageText )
+                                .setPriority( NotificationCompat.PRIORITY_DEFAULT );
+
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel( builder, context );
+
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService( context.NOTIFICATION_SERVICE );
+
+                        // Build the notification and display it
+                        notificationManager.notify( 1, builder.build() );
+                    }
                 }
             }
         }

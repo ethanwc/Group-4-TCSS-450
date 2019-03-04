@@ -27,6 +27,10 @@
     <string name="ep_userdetail">getdetailfromemail</string>
     <string name="ep_getLocation">getlocation</string>
     <string name="ep_acceptcontact">acceptcontact</string>
+    <string name="ep_addToChat">addtochat</string>
+    <string name="ep_removeFromChat">removefromchat</string>
+    <string name="ep_addChat">createchat</string>
+    <string name="ep_removeChat">deletechat</string>
     <string name="ep_declineinvitation">declinecontact</string>
     <string name="ep_accept_invitation">acceptinvitation</string>
 </resources>

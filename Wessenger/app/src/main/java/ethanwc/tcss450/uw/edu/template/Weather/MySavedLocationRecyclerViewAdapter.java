@@ -1,3 +1,4 @@
+
 package ethanwc.tcss450.uw.edu.template.Weather;
 
 import android.support.annotation.NonNull;
