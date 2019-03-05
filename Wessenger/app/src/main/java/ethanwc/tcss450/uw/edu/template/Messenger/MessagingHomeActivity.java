@@ -79,7 +79,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         WeatherHome.OnFragmentInteractionListener,
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
         RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction,
-        HomeFragment.OnHomeFragmentInteractionListener {
+        HomeFragment.OnHomeFragmentInteractionListener,
+        HomeFragment.CurrentWeather.OnCurrentWeatherUpdateListener {
 
 
     private Bundle mArgs;

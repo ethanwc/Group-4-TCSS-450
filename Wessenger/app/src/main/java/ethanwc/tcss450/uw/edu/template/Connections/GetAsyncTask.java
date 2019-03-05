@@ -210,4 +210,3 @@ public class GetAsyncTask extends AsyncTask<Void, String, String> {
         mOnPost.accept(result);
     }
 }
-

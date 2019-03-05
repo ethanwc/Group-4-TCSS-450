@@ -2,6 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:background="@color/weatherDark"
     android:orientation="vertical">
 
 
@@ -9,8 +10,7 @@
         android:id="@+id/My_Container_1_ID"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/weatherDark">
+        android:layout_weight="1">
 
     </FrameLayout>
 
@@ -26,8 +26,7 @@
         android:id="@+id/My_Container_3_ID"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#111111">>
+        android:layout_weight="1">
     </FrameLayout>
 
 </LinearLayout>
