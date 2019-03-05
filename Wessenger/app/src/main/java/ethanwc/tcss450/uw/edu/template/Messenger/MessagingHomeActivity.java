@@ -56,6 +56,7 @@ import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContactFragmentButtonAction;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.CurrentWeather;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationViewFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
@@ -80,7 +81,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
         RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction,
         HomeFragment.OnHomeFragmentInteractionListener,
-        HomeFragment.CurrentWeather.OnCurrentWeatherUpdateListener {
+        CurrentWeather.OnCurrentWeatherUpdateListener {
 
 
     private Bundle mArgs;

@@ -7,7 +7,7 @@
 
 
     <FrameLayout
-        android:id="@+id/My_Container_1_ID"
+        android:id="@+id/messaging_home_container_1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -15,7 +15,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/My_Container_2_ID"
+        android:id="@+id/messaging_home_container_2"
         android:layout_width="match_parent"
         android:layout_weight="1"
 
@@ -23,7 +23,7 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/My_Container_3_ID"
+        android:id="@+id/messaging_home_container_3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
