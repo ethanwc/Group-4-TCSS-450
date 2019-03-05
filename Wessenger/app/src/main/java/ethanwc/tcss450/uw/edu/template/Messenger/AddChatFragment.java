@@ -45,7 +45,7 @@ public class AddChatFragment extends Fragment {
             mListener = (AddChatFragment.OnAddChatFragmentAction) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 

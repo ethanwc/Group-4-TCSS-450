@@ -1,11 +1,28 @@
 package ethanwc.tcss450.uw.edu.template.Main;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.TextView;
+
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.CredentialPickerConfig;
+import com.google.android.gms.auth.api.credentials.CredentialRequest;
+import com.google.android.gms.auth.api.credentials.CredentialsApi;
+import com.google.android.gms.auth.api.credentials.CredentialsClient;
+import com.google.android.gms.auth.api.credentials.CredentialsOptions;
+import com.google.android.gms.auth.api.credentials.HintRequest;
+import com.google.android.gms.auth.api.credentials.IdentityProviders;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,6 +43,15 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     public static final String EXTRA_MESSAGE = "email";
     private boolean mLoadFromChatNotification = false;
 
+    private CredentialsClient mCredentialsClient;
+    private Credential mCurrentCredential;
+    private boolean mIsResolving = false;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String KEY_IS_RESOLVING = "is_resolving";
+    private static final int RC_SAVE = 1;
+    private static final int RC_HINT = 2;
+    private static final int RC_READ = 3;
+
     /**
      * OnCreate used to setup the fragment.
      * @param savedInstanceState bundle.
@@ -34,8 +60,12 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Pushy.listen(this);
+        CredentialsOptions options = new CredentialsOptions.Builder()
+                .forceEnableSaveDialog()
+                .build();
+        mCredentialsClient = com.google.android.gms.auth.api.credentials.Credentials.getClient(this, options);
 
+        Pushy.listen(this);
         setContentView(R.layout.activity_main);
 
         if (getIntent().getExtras() != null) {
@@ -50,8 +80,34 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
                     .replace(R.id.activity_main_container, new LoginFragment())
                     .commit();
         }
-
     }
+
+    /**
+     * Called when the Load Hints button is clicked. Requests a Credential "hint" which will
+     * be the basic profile information and an ID token for an account on the device. This is useful
+     * to auto-fill sign-up forms with an email address, picture, and name or to do password-free
+     * authentication with a server by providing an ID Token.
+     */
+    public void loadHintClicked() {
+        HintRequest hintRequest = new HintRequest.Builder()
+                .setHintPickerConfig(new CredentialPickerConfig.Builder()
+                        .setShowCancelButton(true)
+                        .build())
+                .setEmailAddressIdentifierSupported(true)
+                .setAccountTypes(IdentityProviders.GOOGLE)
+                .build();
+
+
+        PendingIntent intent = mCredentialsClient.getHintPickerIntent(hintRequest);
+        try {
+            startIntentSenderForResult(intent.getIntentSender(), RC_HINT, null, 0, 0, 0);
+            mIsResolving = true;
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "Could not start hint picker Intent", e);
+            mIsResolving = false;
+        }
+    }
+
 
 
 
@@ -115,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         }
 
 
+
         //Bundle user information from input into intent and send to messaging home activity.
         Intent intent = new Intent(MainActivity.this, MessagingHomeActivity.class);
         intent.putExtra(getString(R.string.email_registerToLogin), credentials);
@@ -126,6 +183,42 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         System.out.println("GOD MODE!!!" + credentials.getUsername());
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
+        onWaitFragmentInteractionHide();
+
+        switch (requestCode) {
+            case RC_HINT:
+                // Drop into handling for RC_READ
+            case RC_READ:
+                if (resultCode == RESULT_OK) {
+                    boolean isHint = (requestCode == RC_HINT);
+                    Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
+                    android.app.Fragment frag = getFragmentManager().findFragmentById(R.id.fragment_main_login);
+//                  processRetrievedCredential(credential, isHint);
+                } else {
+                    Log.e(TAG, "Credential Read: NOT OK");
+//                    showToast("Credential Read Failed");
+                }
+
+                mIsResolving = false;
+                break;
+            case RC_SAVE:
+                if (resultCode == RESULT_OK) {
+                    Log.d(TAG, "Credential Save: OK");
+//                    showToast("Credential Save Success");
+                } else {
+                    Log.e(TAG, "Credential Save: NOT OK");
+//                    showToast("Credential Save Failed");
+                }
+
+                mIsResolving = false;
+                break;
+        }
     }
 
     /**
@@ -157,6 +250,53 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
                 .beginTransaction()
                 .remove(Objects.requireNonNull(getSupportFragmentManager().findFragmentByTag("WAIT")))
                 .commit();
+    }
+
+    /**
+     * Called when the save button is clicked.  Reads the entries in the email and password
+     * fields and attempts to save a new Credential to the Credentials API.
+     */
+    @Override
+    public void saveCredentialsClicked(Credentials c) {
+        String email = c.getEmail();
+        String password = c.getPassword();
+
+        // Create a Credential with the user's email as the ID and storing the password.  We
+        // could also add 'Name' and 'ProfilePictureURL' but that is outside the scope of this
+        // minimal sample.
+        Log.d(TAG, "Saving Credential:" + email + ":" + password);
+        final Credential credential = new Credential.Builder(email)
+                .setPassword(password)
+                .build();
+
+
+        // NOTE: this method unconditionally saves the Credential built, even if all the fields
+        // are blank or it is invalid in some other way.  In a real application you should contact
+        // your app's back end and determine that the credential is valid before saving it to the
+        // Credentials backend.
+        onWaitFragmentInteractionShow();
+
+        mCredentialsClient.save(credential).addOnCompleteListener(
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            onWaitFragmentInteractionHide();
+                            return;
+                        }
+
+                        Exception e = task.getException();
+                        if (e instanceof ResolvableApiException) {
+                            // The first time a credential is saved, the user is shown UI
+                            // to confirm the action. This requires resolution.
+                            ResolvableApiException rae = (ResolvableApiException) e;
+                        } else {
+                            // Save failure cannot be resolved.
+                            Log.w(TAG, "Save failed.", e);
+                            onWaitFragmentInteractionHide();
+                        }
+                    }
+                });
     }
 
     /**

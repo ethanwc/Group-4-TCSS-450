@@ -406,7 +406,7 @@ public class ChatFragment2 extends Fragment {
             mListener = (ChatFragment2.OnChatFragmentButtonAction) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 

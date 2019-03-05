@@ -90,7 +90,7 @@ private String mMyEmail;
             mListener = (AddContactFragment.OnNewContactFragmentButtonAction) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 

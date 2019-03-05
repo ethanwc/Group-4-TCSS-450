@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.common.SignInButton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,6 +127,9 @@ public class LoginFragment extends WaitFragment {
         mEditEmail = mView.findViewById(R.id.edittext_login_email);
         mEditPass = mView.findViewById(R.id.edittext_login_password);
 
+        SignInButton signInButton = mView.findViewById(R.id.sign_in_button);
+        signInButton.setOnClickListener(this::showHint);
+
 
         return mView;
 
@@ -141,7 +146,7 @@ public class LoginFragment extends WaitFragment {
             mListener = (OnLoginFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 
@@ -179,6 +184,14 @@ public class LoginFragment extends WaitFragment {
                 mListener.onForgotPasswordClicked();
             }
         }
+    }
+
+    /**
+     * Middle man method for calling account hint selector in Main Activity.
+     * @param view
+     */
+    public void showHint(View view) {
+        mListener.loadHintClicked();
     }
 
 
@@ -339,6 +352,8 @@ public class LoginFragment extends WaitFragment {
         void onLoginSuccess(Credentials credentials, String jwt, String[] mArrayEmail);
         void onRegisterClicked();
         void onForgotPasswordClicked();
+        void loadHintClicked();
+        void saveCredentialsClicked(Credentials credentials);
 
     }
     private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String>
