@@ -38,6 +38,13 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * Set the view to be of the current weather, the 10 day forecast, and recent conversations.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -95,7 +102,9 @@ public class HomeFragment extends Fragment {
     }
 
 
-
+    /**
+     * Get's the 10-day forecast
+     */
     public static class ForecastWeather extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,6 +116,9 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /**
+     * Shows recent messages, within the last week.
+     */
     public static class RecentMessages extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
