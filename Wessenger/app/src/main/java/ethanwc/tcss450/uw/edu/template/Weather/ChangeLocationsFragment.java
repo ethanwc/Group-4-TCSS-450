@@ -82,7 +82,8 @@ private PushMessageReceiver mPushMessageReciever;
 //        getActivity().setTitle("test");
 //        getActivity().getActionBar().setTitle("testing");
 //        getSupportActionBar().setTitle("Weather Home");
-        System.out.println("from test");
+
+
         return view;
     }
 

@@ -1,11 +1,14 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +16,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.text.emoji.EmojiCompat;
 import android.support.text.emoji.FontRequestEmojiCompatConfig;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -38,6 +43,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.cloudinary.android.MediaManager;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -101,6 +112,20 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<location> mLocation;
 
     private PushMessageReceiver mPushMessageReciever;
+    private static final String TAG = "MessagingHomeActivity";
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10;
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    private static final int MY_PERMISSIONS_LOCATIONS = 8414;
+    private LocationRequest mLocationRequest;
+    private Location mCurrentLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
 //    private MenuItem mMenuItem;
 
     private static final String[] COUNTRIES = new String[]{"Belgium",
@@ -108,12 +133,14 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+
+        startLocationUpdates();
         System.out.println("=>>>><<<<<-====");
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
 
-        System.out.println("ole");
+
 //        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
 //        getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
@@ -123,8 +150,10 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onPause() {
 //        System.out.println("in push message receive---->On Pause");
+        super.onResume();
+        startLocationUpdates();
         super.onPause();
-        System.out.println("ole");
+
         if (mPushMessageReciever != null){
 //            getActivity().unregisterReceiver(mPushMessageReciever);
         }
@@ -142,6 +171,36 @@ public class MessagingHomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //init cloudinary stuffs
+
+        //for location
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
+                            , Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_LOCATIONS);
+        } else {
+//The user has already allowed the use of Locations. Get the current location.
+ requestLocation();
+        }
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+// Update UI with location data
+// ...
+                    setLocation(location);
+//                    Log.d("LOCATION UPDATE!", location.toString());
+                } };
+        };
+        createLocationRequest();
+
+        //
         MediaManager.init(this);
         setupEmojis();
 
@@ -155,6 +214,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab = findViewById(R.id.fab_messaging_fab);
         mFab.setEnabled(true);
         mFab.show();
+        mFab.setImageResource(android.R.drawable.ic_input_add);
 
 
         if (getIntent().getExtras() != null) {
@@ -210,7 +270,96 @@ public class MessagingHomeActivity extends AppCompatActivity
         } else {
             loadChats();
         }
+
     }
+    private void setLocation(final Location location) {
+        mCurrentLocation = location;
+
+    }
+
+    /**
+     * Requests location updates from the FusedLocationApi. */
+    protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null /* Looper */); }
+    }
+
+    /**
+     * Removes location updates from the FusedLocationApi. */
+    protected void stopLocationUpdates() {
+// It is a good practice to remove location requests when the activity is in a paused or
+// stopped state. Doing so helps battery performance and is especially
+// recommended in applications that request frequent location updates.
+ mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_LOCATIONS: {
+// If request is cancelled, the result arrays are empty.
+ if (grantResults.length > 0
+&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+// permission was granted, yay! Do the // locations-related task you need to do.
+ requestLocation();
+            } else {
+// permission denied, boo! Disable the
+// functionality that depends on this permission.
+ Log.d("PERMISSION DENIED", "Nothing to see or do here.");
+ System.out.println("-----Permission Denied");
+//Shut down the app. In production release, you would let the user
+// know why the app is shutting down...maybe ask for permission again?
+ finishAndRemoveTask();
+            } return;
+        }
+// other 'case' lines to check for other
+// permissions this app might request
+ }
+    }
+
+    private void requestLocation() {
+        System.out.println("request location----------");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("request location denied----------");
+            Log.d("REQUEST LOCATION", "User did NOT allow permission to request location!");
+        } else {
+            System.out.println("request location success----------");
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            System.out.println(" onsuccess----------");
+// Got last known location. In some rare situations this can be null.
+ if (location != null) {
+                            Log.d("LOCATION", location.toString());
+                        } }
+        }); }
+}
+
+    /**
+     * Create and configure a Location Request used when retrieving location updates */
+    protected void createLocationRequest() {
+        mLocationRequest = LocationRequest.create();
+// Sets the desired interval for active location updates. This interval is
+// inexact. You may not receive updates at all if no location sources are available, or
+// you may receive them slower than requested. You may also receive updates faster than
+// requested if other applications are requesting location at a faster interval.
+ mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+// Sets the fastest rate for active location updates. This interval is exact, and your
+// application will never receive updates faster than this value.
+ mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+
 
     /**
      * Initializes the download of emojis.
@@ -253,14 +402,16 @@ public class MessagingHomeActivity extends AppCompatActivity
         View conversationViewFrag = findViewById(R.id.fragment_messagelist_conversation);
         View chatFrag = findViewById(R.id.fragment_chat);
         View addChatFrag = findViewById(R.id.fragment_messenger_addchat);
+        View changelocation = findViewById( R.id.fragment_weather_changelocation );
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
 
-        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null || addChatFrag != null || chatFrag != null) {
+        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null || addChatFrag != null || chatFrag != null|| changelocation != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
+            mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setEnabled(true);
             super.onBackPressed();
         } else {
@@ -484,10 +635,35 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadFragment(weatherHome);
             //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
+            mFab.setEnabled(true);
+            mFab.show();
+            mFab.setImageResource(android.R.drawable.ic_dialog_map);
+
+            //Set on click listener for FAB
+            mFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+System.out.println("fab clicked----");
+                    if (mCurrentLocation == null) {
+                        System.out.println("---------------");
+                        System.out.println("before google map enters "+mCurrentLocation.toString());
+                        Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show(); } else {
+                        Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
+                        //pass the current location on to the MapActivity when it is loaded
+                         i.putExtra("LOCATION", mCurrentLocation);
+                        startActivity(i);
+                    }
+//                    loadFragment(new AddContactFragment());
+//                    mFab.hide();
+//                    mFab.setEnabled(false);
+                }
+
+            });
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
-            mFab.hide();
-            mFab.setEnabled(false);
+//            mFab.hide();
+//            mFab.setEnabled(false);
             loadFragment(changeLocationsFragment);
             //Saved locations has been chosen
         }
@@ -529,6 +705,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Chat");
             mFab.setEnabled(true);
             mFab.show();
+            mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -570,7 +747,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             mFab.setEnabled(true);
             mFab.show();
-
+            mFab.setImageResource(android.R.drawable.ic_input_add);
             //Set on click listener for FAB
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -799,6 +976,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
+        mFab.setImageResource(android.R.drawable.ic_input_add);
 
 
         uri = new Uri.Builder()
@@ -856,6 +1034,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
+        mFab.setImageResource(android.R.drawable.ic_input_add);
 
     }
 
@@ -911,6 +1090,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
+        mFab.setImageResource(android.R.drawable.ic_input_add);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1368,6 +1548,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 mFab.setEnabled(true);
                 mFab.show();
+                mFab.setImageResource(android.R.drawable.ic_input_add);
+                mFab.setImageResource(android.R.drawable.ic_input_add);
 
                 //Set on click listener for FAB
                 mFab.setOnClickListener(new View.OnClickListener() {
@@ -1617,6 +1799,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
+        mFab.setImageResource(android.R.drawable.ic_input_add);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
