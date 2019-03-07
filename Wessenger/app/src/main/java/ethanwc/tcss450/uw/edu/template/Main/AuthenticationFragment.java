@@ -239,7 +239,7 @@ public class AuthenticationFragment extends WaitFragment {
             mListener = (OnAuthenticationFragmentButtonAction) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 

@@ -15,6 +15,7 @@ import android.support.design.widget.NavigationView;
 import android.support.text.emoji.EmojiCompat;
 import android.support.text.emoji.FontRequestEmojiCompatConfig;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.provider.FontRequest;
@@ -55,6 +56,7 @@ import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContactFragmentButtonAction;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.CurrentWeather;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationViewFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
@@ -78,7 +80,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
-        RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction {
+        RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction,
+        HomeFragment.OnHomeFragmentInteractionListener,
+        CurrentWeather.OnCurrentWeatherUpdateListener {
 
 
     private Bundle mArgs;
@@ -412,6 +416,8 @@ public class MessagingHomeActivity extends AppCompatActivity
             logout();
             return true;
         }
+
+
         return super.onOptionsItemSelected(item);
     }
     public void messageIn(){
@@ -468,7 +474,14 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(false);
             loadFragment(changeLocationsFragment);
             //Saved locations has been chosen
-        } else if (id == R.id.nav_View_Saved_Location) {
+        }
+
+        else if (id == R.id.nav_homepage) {
+
+            loadFragment(new HomeFragment());
+        }
+
+        else if (id == R.id.nav_View_Saved_Location) {
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             mLocation = new ArrayList<>();
@@ -1627,6 +1640,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         onWaitFragmentInteractionHide();
 
         //Connections has been chosen
+
+    }
+
+    @Override
+    public void onHomeFragmentInteraction(Uri uri) {
 
     }
 

@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
 
+import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment;
+import ethanwc.tcss450.uw.edu.template.Messenger.HomeFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
@@ -35,19 +39,10 @@ import me.pushy.sdk.Pushy;
  * Activities that contain this fragment must implement the
  * {@link WeatherHome.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link WeatherHome#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class WeatherHome extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
@@ -88,30 +83,11 @@ public class WeatherHome extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment WeatherHome.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static WeatherHome newInstance(String param1, String param2) {
-        WeatherHome fragment = new WeatherHome();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -121,8 +97,20 @@ public class WeatherHome extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_weather_home, container, false);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar_messenging_toolbar);
-//        System.out.println("=> "+toolbar.getTitle());
-        System.out.println("////");
+
+        FragmentManager manager= getChildFragmentManager();//create an instance of fragment manager
+
+
+        FragmentTransaction transaction= manager.beginTransaction();//create an instance of Fragment-transaction
+
+        transaction.add(R.id.weather_home_container_1, new CurrentWeather(), "Frag_Top_tag");
+
+        //TODO STEVEN INFLATE FRAGMENTS HERE
+//        transaction.add(R.id.weather_home_container_2, new HomeFragment.ForecastWeather(), "Frag_Middle_tag");
+//        transaction.add(R.id.weather_home_container_3, new ConversationFragment(), "Frag_Bottom_tag");
+
+
+        transaction.commit();
 
         return view;
 
@@ -142,7 +130,7 @@ public class WeatherHome extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 

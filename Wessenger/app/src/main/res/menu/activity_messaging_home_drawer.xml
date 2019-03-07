@@ -7,6 +7,9 @@
     <item android:title="@string/menu_chat">
         <menu>
             <item
+                android:id="@+id/nav_homepage"
+                android:title="@string/Chat_Home" />
+            <item
                 android:id="@+id/nav_chat_home"
                 android:icon="@drawable/ic_home"
                 android:title="@string/Chat_Home" />

@@ -149,11 +149,11 @@ public class SavedLocationViewFragment extends Fragment {
 //    @Override
 //    public void onAttach(Context context) {
 //        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
+//        if (context instanceof OnHomeFragmentInteractionListener) {
+//            mListener = (OnHomeFragmentInteractionListener) context;
 //        } else {
 //            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
+//                    + " must implement OnHomeFragmentInteractionListener");
 //        }
 //    }
 

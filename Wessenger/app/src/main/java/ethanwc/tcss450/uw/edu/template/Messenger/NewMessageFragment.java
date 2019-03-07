@@ -75,7 +75,7 @@ public class NewMessageFragment extends Fragment {
             mListener = (OnSendBtnNewMessage) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 

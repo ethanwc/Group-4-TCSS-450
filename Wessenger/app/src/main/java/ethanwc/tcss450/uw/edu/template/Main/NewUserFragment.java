@@ -168,7 +168,7 @@ public class NewUserFragment extends WaitFragment {
             mListener = (OnNewUserFragmentButtonAction) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnHomeFragmentInteractionListener");
         }
     }
 
