@@ -232,13 +232,15 @@ private PushMessageReceiver mPushMessageReciever;
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->ChangeLocationsFragment"+intent.toString());
+            System.out.println("in push message receive---+++++->SavedLocationFragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 String msgtype = intent.getStringExtra( "MsgType" );
+                String receiver = intent.getStringExtra( "Receiver" );
+
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -259,6 +261,7 @@ private PushMessageReceiver mPushMessageReciever;
 
 
                 }else if(type.equals("msg")) {
+//                    String msgtype = intent.getStringExtra( "MsgType" );
                     changeColorOnMsg();
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -293,6 +296,23 @@ private PushMessageReceiver mPushMessageReciever;
                         // Build the notification and display it
                         notificationManager.notify( 1, builder.build() );
                     }
+                }else if(type.equals("acpt")){
+                    changeColorOnInv();
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("Connection Request Accepted : " + receiver)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
                 }
             }
         }

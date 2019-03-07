@@ -153,7 +153,8 @@ public class InvitationsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        System.out.println("in push message receive---->On Resume");
+
+        System.out.println("in push message receive---->On Resume");
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
@@ -213,6 +214,19 @@ public class InvitationsFragment extends Fragment {
 
     }
 
+    public void refreshFragment(){
+        System.out.println("#############");
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_chat_view_connections);
+            ((MessagingHomeActivity)getActivity()).onNavigationItemSelected(item);
+
+
+        }
+    }
+
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
@@ -221,13 +235,14 @@ public class InvitationsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->InvitationsFragment"+intent.toString());
+            System.out.println("in push message receive---+++++->ConnectionsFragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 String msgtype = intent.getStringExtra( "MsgType" );
+                System.out.println("---------------------------------------------------"+type);
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -248,7 +263,6 @@ public class InvitationsFragment extends Fragment {
 
 
                 }else if(type.equals("msg")) {
-//                    changeColorOnMsg();
                     changeColorOnMsg();
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -283,6 +297,8 @@ public class InvitationsFragment extends Fragment {
                         // Build the notification and display it
                         notificationManager.notify( 1, builder.build() );
                     }
+                }else if(type.equals( "acpt" )){
+                    refreshFragment();
                 }
             }
         }

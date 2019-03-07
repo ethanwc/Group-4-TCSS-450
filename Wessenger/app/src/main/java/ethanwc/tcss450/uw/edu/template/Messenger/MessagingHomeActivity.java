@@ -718,6 +718,7 @@ System.out.println("fab clicked----");
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
+            mFab.setImageResource(android.R.drawable.ic_input_add);
             System.out.println("===========");
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
@@ -1329,6 +1330,7 @@ System.out.println("fab clicked----");
 //        //Show FAB
 //        mFab.setEnabled(true);
 //        mFab.show();
+        mFab.setImageResource(android.R.drawable.ic_input_add);
     }
 
 
@@ -1549,7 +1551,7 @@ System.out.println("fab clicked----");
                 mFab.setEnabled(true);
                 mFab.show();
                 mFab.setImageResource(android.R.drawable.ic_input_add);
-                mFab.setImageResource(android.R.drawable.ic_input_add);
+
 
                 //Set on click listener for FAB
                 mFab.setOnClickListener(new View.OnClickListener() {
