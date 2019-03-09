@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Icon;
 import android.location.Location;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -215,8 +217,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab = findViewById(R.id.fab_messaging_fab);
         mFab.setEnabled(true);
         mFab.show();
-        mFab.setImageResource(android.R.drawable.ic_input_add);
-
 
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
@@ -415,12 +415,12 @@ public class MessagingHomeActivity extends AppCompatActivity
                 || addChatFrag != null || chatFrag != null|| changelocation != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
-            mFab.setImageResource(android.R.drawable.ic_input_add);
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setEnabled(true);
 
         } else if (currentWeather != null) {
             mFab.show();
-            mFab.setImageResource(android.R.drawable.ic_menu_save);
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
 
         }else {
@@ -644,7 +644,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
             mFab.show();
-            mFab.setImageResource(android.R.drawable.ic_menu_save);
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
 
             loadFragment(weatherHome);
@@ -652,7 +652,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_Change_Locations) {
             mFab.setEnabled(true);
             mFab.show();
-            mFab.setImageResource(android.R.drawable.ic_dialog_map);
+//            mFab.setImageResource(android.R.drawable.ic_dialog_map);
 
             //Set on click listener for FAB
             mFab.setOnClickListener(new View.OnClickListener() {
@@ -668,9 +668,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                          i.putExtra("LOCATION", mCurrentLocation);
                         startActivity(i);
                     }
-//                    loadFragment(new AddContactFragment());
-//                    mFab.hide();
-//                    mFab.setEnabled(false);
+
                 }
 
             });
@@ -718,7 +716,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Chat");
             mFab.setEnabled(true);
             mFab.show();
-            mFab.setImageResource(android.R.drawable.ic_input_add);
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -731,7 +729,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
-            mFab.setImageResource(android.R.drawable.ic_input_add);
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             System.out.println("===========");
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
@@ -761,7 +759,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             mFab.setEnabled(true);
             mFab.show();
-            mFab.setImageResource(android.R.drawable.ic_input_add);
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             //Set on click listener for FAB
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1010,7 +1008,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
-        mFab.setImageResource(android.R.drawable.ic_input_add);
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
 
 
         uri = new Uri.Builder()
@@ -1068,7 +1066,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
-        mFab.setImageResource(android.R.drawable.ic_input_add);
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
 
     }
 
@@ -1124,7 +1122,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
-        mFab.setImageResource(android.R.drawable.ic_input_add);
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1583,7 +1581,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 mFab.setEnabled(true);
                 mFab.show();
-                mFab.setImageResource(android.R.drawable.ic_input_add);
+//                mFab.setImageResource(android.R.drawable.ic_input_add);
 
 
                 //Set on click listener for FAB
@@ -1888,7 +1886,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
-        mFab.setImageResource(android.R.drawable.ic_input_add);
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1920,7 +1918,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         weatherHome.setArguments(args);
         getSupportActionBar().setTitle("Weather Home");
         mFab.show();
-        mFab.setImageResource(android.R.drawable.ic_menu_save);
+        //mFab.setImageResource(android.R.drawable.ic_menu_save);
         mFab.setEnabled(true);
 
         loadFragment(weatherHome);

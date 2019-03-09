@@ -139,7 +139,7 @@ private EditText mZip;
             onWaitFragmentInteractionHide();
 
             mListener.onChangeLocationSubmit(Integer.parseInt(mZip.getText().toString()));
-            System.out.println("DuuuUPER!!!!");
+
         }
 
     }
