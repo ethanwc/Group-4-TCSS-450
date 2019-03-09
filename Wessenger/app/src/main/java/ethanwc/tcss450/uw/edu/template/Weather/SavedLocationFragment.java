@@ -113,7 +113,8 @@ public class SavedLocationFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.Weather.MySavedLocationRecyclerViewAdapter(mLocationList, mListener));
+            boolean change = getArguments().getBoolean("change");
+            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.Weather.MySavedLocationRecyclerViewAdapter(mLocationList, mListener, change));
         }
         return view;
     }

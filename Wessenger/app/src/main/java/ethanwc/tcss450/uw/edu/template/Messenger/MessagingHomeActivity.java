@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.media.Image;
@@ -42,6 +43,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cloudinary.android.MediaManager;
@@ -113,7 +115,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private int mZip = 98404;
     private String mChatId = "";
     private ArrayList<location> mLocation;
-
+    private boolean mWeather = true;
     private PushMessageReceiver mPushMessageReciever;
     private static final String TAG = "MessagingHomeActivity";
     /**
@@ -398,6 +400,9 @@ public class MessagingHomeActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
+        mWeather = true;
+
+
         super.onBackPressed();
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
         View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
@@ -423,7 +428,15 @@ public class MessagingHomeActivity extends AppCompatActivity
 //            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
 
+        } else if (changelocation != null) {
+            View removeLocation = findViewById(R.id.button_location_remove);
+            removeLocation.setVisibility(View.GONE);
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
+            mFab.setEnabled(true);
+            mWeather = false;
         }else {
+
             //Hide the FAB on correct windows when back is pressed
             mFab.hide();
             mFab.setEnabled(false);
@@ -653,6 +666,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(true);
             mFab.show();
 //            mFab.setImageResource(android.R.drawable.ic_dialog_map);
+            mWeather = false;
 
             //Set on click listener for FAB
             mFab.setOnClickListener(new View.OnClickListener() {
@@ -700,6 +714,8 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(false);
 
             loadFragment(changeLocationsFragment);
+
+
             //Saved locations has been chosen
         }
 
@@ -709,6 +725,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
         else if (id == R.id.nav_View_Saved_Location) {
+            mWeather = true;
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             mLocation = new ArrayList<>();
@@ -872,7 +889,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                //Bundle connections and send as arguments
                 Bundle args = new Bundle();
                 args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
-//
+                args.putSerializable("change", false);
                 Fragment frag = new SavedLocationFragment();
                 frag.setArguments( args );
                 onWaitFragmentInteractionHide();
@@ -942,7 +959,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                //Bundle connections and send as arguments
                 Bundle args = new Bundle();
                 args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
-//
+                args.putSerializable("change", true);
                 Fragment frag = new SavedLocationFragment();
                 frag.setArguments( args );
                 onWaitFragmentInteractionHide();
@@ -1769,16 +1786,32 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onLocationListFragmentInteraction(location item) {
-        WeatherHome weatherHome = new WeatherHome();
-        Bundle args = new Bundle();
-        args.putSerializable("zip", Integer.parseInt(item.getZip()));
-        weatherHome.setArguments(args);
-        getSupportActionBar().setTitle("Weather");
-        mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
-        mFab.setEnabled(true);
 
-        loadFragment(weatherHome);
+        if (mWeather) {
+            WeatherHome weatherHome = new WeatherHome();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", Integer.parseInt(item.getZip()));
+            weatherHome.setArguments(args);
+            getSupportActionBar().setTitle("Weather");
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+
+            loadFragment(weatherHome);
+
+        } else {
+            mZip = Integer.parseInt(item.getZip());
+            WeatherHome weatherHome = new WeatherHome();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
+            weatherHome.setArguments(args);
+            getSupportActionBar().setTitle("Weather Home");
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+
+            loadFragment(weatherHome);
+        }
 
 
     }

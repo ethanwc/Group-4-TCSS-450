@@ -25,10 +25,12 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
 
     private final List<location> mValues;
     private final OnLocationListFragmentInteractionListener mListener;
+    private final boolean mChange;
 
-    public MySavedLocationRecyclerViewAdapter(List<location> items, OnLocationListFragmentInteractionListener listener) {
+    public MySavedLocationRecyclerViewAdapter(List<location> items, OnLocationListFragmentInteractionListener listener, boolean change) {
         mValues = items;
         mListener = listener;
+        mChange = change;
     }
 
     @Override
@@ -70,6 +72,10 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
                 }
             }
         });
+
+        if (mChange) {
+            holder.mRemove.setVisibility(View.GONE);
+        }
 
 
     }
