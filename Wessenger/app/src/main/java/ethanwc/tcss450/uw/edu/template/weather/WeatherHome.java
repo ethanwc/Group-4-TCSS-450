@@ -110,8 +110,12 @@ public class WeatherHome extends Fragment {
 
 
         FragmentTransaction transaction= manager.beginTransaction();//create an instance of Fragment-transaction
+        Fragment currentWeather = new CurrentWeather();
+        Bundle args = new Bundle();
+        args.putSerializable("zip", getArguments().getInt("zip"));
 
-        transaction.add(R.id.weather_home_container_1, new CurrentWeather(), "Frag_Top_tag");
+        currentWeather.setArguments(args);
+        transaction.add(R.id.weather_home_container_1, currentWeather, "Frag_Top_tag");
 
         //TODO STEVEN INFLATE FRAGMENTS HERE
 //        transaction.add(R.id.weather_home_container_2, new HomeFragment.ForecastWeather(), "Frag_Middle_tag");

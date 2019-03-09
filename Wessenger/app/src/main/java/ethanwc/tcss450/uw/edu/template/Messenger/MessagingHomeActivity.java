@@ -92,7 +92,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
         RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction,
         HomeFragment.OnHomeFragmentInteractionListener,
-        CurrentWeather.OnCurrentWeatherUpdateListener {
+        CurrentWeather.OnCurrentWeatherUpdateListener, ChangeLocationsFragment.onChangeLocationFragmentInteractionListener {
 
 
     private Bundle mArgs;
@@ -108,6 +108,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
+    private int mZip = 98404;
     private String mChatId = "";
     private ArrayList<location> mLocation;
 
@@ -638,6 +639,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (id == R.id.nav_weather_home) {
 
             WeatherHome weatherHome = new WeatherHome();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
+            weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
             mFab.show();
             mFab.setImageResource(android.R.drawable.ic_menu_save);
@@ -672,8 +676,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             });
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
-//            mFab.hide();
-//            mFab.setEnabled(false);
+
             loadFragment(changeLocationsFragment);
             //Saved locations has been chosen
         }
@@ -1904,6 +1907,23 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onHomeFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onChangeLocationSubmit(int zip) {
+        mZip = zip;
+
+        WeatherHome weatherHome = new WeatherHome();
+        Bundle args = new Bundle();
+        args.putSerializable("zip", mZip);
+        weatherHome.setArguments(args);
+        getSupportActionBar().setTitle("Weather Home");
+        mFab.show();
+        mFab.setImageResource(android.R.drawable.ic_menu_save);
+        mFab.setEnabled(true);
+
+        loadFragment(weatherHome);
 
     }
 

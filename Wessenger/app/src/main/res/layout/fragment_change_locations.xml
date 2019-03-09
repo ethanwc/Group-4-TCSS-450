@@ -5,7 +5,7 @@
     android:id="@+id/fragment_weather_changelocation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".weather.ChangeLocationsFragment"
+    tools:context="Weather.ChangeLocationsFragment"
     android:theme="@style/WeatherTheme">
 
 
@@ -29,7 +29,7 @@
         android:layout_marginTop="28dp"
         android:ems="10"
         android:hint="@string/change_location_zip_code"
-        android:inputType="textPersonName"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.248"
         app:layout_constraintStart_toStartOf="parent"

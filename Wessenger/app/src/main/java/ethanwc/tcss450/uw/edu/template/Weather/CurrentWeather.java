@@ -73,20 +73,23 @@ public class CurrentWeather extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        // TODO: update zip with set home zip instead of hard coding
+        mZip = getArguments().getInt("zip");
 
         FloatingActionButton fab = getActivity().findViewById(R.id.fab_messaging_fab);
         fab.setOnClickListener( new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                mZip =98332;
+
+
                 Uri uri = new Uri.Builder()
                         .scheme("https")
                         .appendPath(getString(R.string.ep_getCityState))
                         .appendPath(Integer.toString(mZip))
                         .build();
 
-                // TODO: update zip with set home zip instead of hard coding
+
 
 
                 new GetAsyncTask.Builder(uri.toString())
@@ -191,11 +194,11 @@ public class CurrentWeather extends Fragment {
 
         Uri uri = new Uri.Builder()
                 .scheme("https")
-                .appendPath("api.openweathermap.org/data/2.5/weather?zip=98332,us&appid=49e6beaf0af9b35f66b67a9c09e696aa")
+                .appendPath("api.openweathermap.org/data/2.5/weather?zip=" + mZip + ",us&appid=49e6beaf0af9b35f66b67a9c09e696aa")
 //                .appendPath(getString(R.string.ep_userdetail))
                 .build();
 
-        new GetAsyncTask.Builder("http://api.openweathermap.org/data/2.5/weather?zip=98332,us&appid=49e6beaf0af9b35f66b67a9c09e696aa")
+        new GetAsyncTask.Builder("http://api.openweathermap.org/data/2.5/weather?zip=" + mZip + ",us&appid=49e6beaf0af9b35f66b67a9c09e696aa")
                 .onPreExecute(this::handleLoginOnPre)
                 .onPostExecute(this::handleSetWeather)
                 .build()
