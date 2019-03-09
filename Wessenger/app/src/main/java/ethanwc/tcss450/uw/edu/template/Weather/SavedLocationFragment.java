@@ -149,6 +149,7 @@ public class SavedLocationFragment extends Fragment {
     public interface OnLocationListFragmentInteractionListener {
 
         void onLocationListFragmentInteraction(location item);
+        void onLocationListRemoveFragmentInteraction(location item);
     }
     public void changeColorOnMsg(){
 

@@ -397,6 +397,7 @@ public class MessagingHomeActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
         View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
         View conversationViewFrag = findViewById(R.id.fragment_messagelist_conversation);
@@ -415,17 +416,17 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.show();
             mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setEnabled(true);
-            super.onBackPressed();
+
         } else if (currentWeather != null) {
             mFab.show();
             mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
-            super.onBackPressed();
+
         }else {
             //Hide the FAB on correct windows when back is pressed
             mFab.hide();
             mFab.setEnabled(false);
-            super.onBackPressed();
+
         }
 
     }
@@ -1687,6 +1688,59 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         Log.e("City!!!!", item.getZip());
+    }
+
+    @Override
+    public void onLocationListRemoveFragmentInteraction(location item) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_removeLocation))
+                .build();
+
+        String zip = item.getZip();
+        String email = getIntent().getExtras().getString("email");
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("email", email);
+            json.put("zip", zip);
+
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+        new SendPostAsyncTask.Builder(uri.toString(), json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleLocationRemoveOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    private void handleLocationRemoveOnPostExecute(String s) {
+        getSupportActionBar().setTitle("Saved Locations");
+        SavedLocationFragment locationFragment = new SavedLocationFragment();
+        mLocation = new ArrayList<>();
+
+        //Build ASNC task to grab connections from web service.
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getLocation))
+                .build();
+        //handleConnectionGetInfoOnPostExecute
+        String msg = getIntent().getExtras().getString("email");
+        Credentials creds = new Credentials.Builder(msg).build();
+//            getSupportActionBar().setTitle("Connections");
+        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleLocationGetOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+
+        mFab.hide();
+        mFab.setEnabled(false);
+        onWaitFragmentInteractionHide();
     }
 
 

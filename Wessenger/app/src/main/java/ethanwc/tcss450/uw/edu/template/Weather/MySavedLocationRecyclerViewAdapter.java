@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
@@ -59,6 +60,17 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
             }
         });
 
+        holder.mRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onLocationListRemoveFragmentInteraction(holder.mItem);
+                }
+            }
+        });
+
 
     }
 
@@ -72,8 +84,8 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
         final View mView;
         //public final TextView mIdView;
         public final TextView mCity;
-        public final TextView mState;
         public final TextView mZip;
+        public ImageButton mRemove;
         location mItem;
 
         ViewHolder(View view) {
@@ -81,8 +93,9 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
             mView = view;
             //mIdView = (TextView) view.findViewById(R.id.item_number);
             mCity = view.findViewById(R.id.textview_locations_city);
-            mState = view.findViewById(R.id.textview_locations_state);
+
             mZip = view.findViewById(R.id.textview_locations_zip);
+            mRemove = view.findViewById(R.id.button_location_remove);
 
         }
 

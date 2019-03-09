@@ -34,4 +34,5 @@
     <string name="ep_acceptinvitation">acceptcontact</string>
     <string name="ep_declineinvitation">declinecontact</string>
     <string name="ep_getCityState">ziptasticapi.com</string>
+    <string name="ep_removeLocation">deletelocation</string>
 </resources>
