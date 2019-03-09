@@ -36,20 +36,19 @@ import me.pushy.sdk.Pushy;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnLocationListFragmentInteractionListener}
  * interface.
  */
 public class SavedLocationFragment extends Fragment {
     public static final String ARG_LOCATION_LIST = "Location list";
-    // TODO: Customize parameter argument names
+
     private static final String ARG_COLUMN_COUNT = "column-count";
     private List<location> mLocationList;
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
-    private PushMessageReceiver mPushMessageReciever;
-//    private MenuItem mMenuItem;
 
+    private int mColumnCount = 1;
+    private OnLocationListFragmentInteractionListener mListener;
+    private PushMessageReceiver mPushMessageReciever;
+    private String mMyEmail;
 
     @Override
     public void onResume() {
@@ -80,8 +79,6 @@ public class SavedLocationFragment extends Fragment {
     public SavedLocationFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static SavedLocationFragment newInstance(int columnCount) {
         SavedLocationFragment fragment = new SavedLocationFragment();
         Bundle args = new Bundle();
@@ -95,8 +92,8 @@ public class SavedLocationFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            System.out.println("From Saved Location Fragment ");
             mLocationList = new ArrayList<location>( Arrays.asList((location[]) getArguments().getSerializable(ARG_LOCATION_LIST)));
+            mMyEmail = getArguments().getString("passEmail");
 
 
         }
@@ -125,8 +122,8 @@ public class SavedLocationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnLocationListFragmentInteractionListener) {
+            mListener = (OnLocationListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -149,9 +146,9 @@ public class SavedLocationFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update what method does upon list interaction.
-        void onListFragmentInteraction(location item);
+    public interface OnLocationListFragmentInteractionListener {
+
+        void onLocationListFragmentInteraction(location item);
     }
     public void changeColorOnMsg(){
 

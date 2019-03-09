@@ -9,25 +9,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment.OnListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment.OnLocationListFragmentInteractionListener;
 //import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 import ethanwc.tcss450.uw.edu.template.model.location;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link location} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+ * specified {@link OnLocationListFragmentInteractionListener}.
  */
 public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MySavedLocationRecyclerViewAdapter.ViewHolder> {
 
     private final List<location> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnLocationListFragmentInteractionListener mListener;
 
-    public MySavedLocationRecyclerViewAdapter(List<location> items, OnListFragmentInteractionListener listener) {
+    public MySavedLocationRecyclerViewAdapter(List<location> items, OnLocationListFragmentInteractionListener listener) {
         mValues = items;
-        System.out.println("from my saved location recyclerview---" + items.size());
         mListener = listener;
     }
 
@@ -41,22 +40,26 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+
+        Collections.sort(mValues);
         holder.mItem = (location) mValues.get(position);
-        holder.mSavedLocation.setText( mValues.get(position).getNickname() );
-//        holder.mIdView.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).content);
+        holder.mCity.setText( mValues.get(position).getCity() );
+        holder.mState.setText( mValues.get(position).getState() );
+        holder.mZip.setText( mValues.get(position).getZip() );
+
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    System.out.println("view clicked");
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+
+                    mListener.onLocationListFragmentInteraction(holder.mItem);
                 }
             }
         });
+
+
     }
 
     @Override
@@ -68,20 +71,25 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         //public final TextView mIdView;
-        public final TextView mSavedLocation;
+        public final TextView mCity;
+        public final TextView mState;
+        public final TextView mZip;
         location mItem;
 
         ViewHolder(View view) {
             super(view);
             mView = view;
             //mIdView = (TextView) view.findViewById(R.id.item_number);
-            mSavedLocation = view.findViewById(R.id.textview_savedlocation_prompt);
+            mCity = view.findViewById(R.id.textview_locations_city);
+            mState = view.findViewById(R.id.textview_locations_state);
+            mZip = view.findViewById(R.id.textview_locations_zip);
+
         }
 
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mSavedLocation.getText() + "'";
+            return super.toString() + " '" + mZip.getText() + "'";
         }
     }
 }

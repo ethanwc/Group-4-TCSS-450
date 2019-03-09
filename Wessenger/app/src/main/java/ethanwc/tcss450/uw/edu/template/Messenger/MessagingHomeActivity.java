@@ -86,7 +86,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         ConversationFragment.OnMessageListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnInvitationListFragmentInteractionListener,
         ChangePasswordFragment.OnChangePasswordFragmentInteractionListener,
-        SavedLocationFragment.OnListFragmentInteractionListener,
+        SavedLocationFragment.OnLocationListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
@@ -806,9 +806,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     private void handleLocationGetOnPostExecute(final String result) {
         //parse JSON
         try {
-            System.out.println("-------on location click-------");
+
             onWaitFragmentInteractionHide();
-            System.out.println("2------_>");
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
@@ -823,17 +822,18 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray longitudeArray = resultJSON.getJSONArray( "longitude" );
                 JSONArray zipArray = resultJSON.getJSONArray( "zip" );
 
+                Log.e("LATITUDE!!!!", longitudeArray.toString());
 //
 //                System.out.println("EMAILS!!!" + emails.get(0).toString());
                 for (int i = 0; i < locationArray.length(); i++) {
                     location loc = new location.Builder(locationArray.get(i).toString())
                             .addNickname( locationArray.get(i).toString())
-                            .addLatitude( latitudeArray.get(i).toString() )
-                            .addLongitude( longitudeArray.get(i).toString() )
+                            .addCity( latitudeArray.get(i).toString() )
+                            .addState( longitudeArray.get(i).toString() )
                             .addzip( zipArray.get(i).toString() )
                             .build();
-//                    System.out.println("===Latitude!!!" + latitudeArray.get(i).toString());
-//                    System.out.println("===Longitude!!!" + longitudeArray.get(i).toString());
+                    System.out.println("===Latitude!!!" + latitudeArray.get(i).toString());
+                    System.out.println("===Longitude!!!" + longitudeArray.get(i).toString());
                     mLocation.add(loc);
 
                 }
@@ -1671,21 +1671,22 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(location item) {
+    public void onLocationListFragmentInteraction(location item) {
         SavedLocationViewFragment savedLocationViewFragment = new SavedLocationViewFragment();
 
         Bundle args = new Bundle();
         mFab.setEnabled(false);
         mFab.hide();
+        args.putSerializable("passEmail", getIntent().getExtras().getString("email"));
         args.putSerializable("nickname", item.getNickname());
-        args.putSerializable("latitude", item.getLatitude());
-        args.putSerializable("longitude", item.getLongitude());
+        args.putSerializable("city", item.getCity());
+        args.putSerializable("state", item.getState());
         args.putSerializable("zip", item.getZip());
         savedLocationViewFragment.setArguments(args);
         loadFragment(savedLocationViewFragment);
-        System.out.println("----"+item.getNickname());
-        System.out.println("----"+item.getLongitude());
-        System.out.println("----"+item.getLatitude());
+
+
+        Log.e("City!!!!", item.getZip());
     }
 
 
@@ -1851,6 +1852,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     public void onHomeFragmentInteraction(Uri uri) {
 
     }
+
 
     // Deleting the Pushy device token must be done asynchronously. Good thing
     // we have something that allows us to do that.
