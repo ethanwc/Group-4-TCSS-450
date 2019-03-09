@@ -215,10 +215,6 @@ public class CurrentWeather extends Fragment {
         try {
             JSONObject result = new JSONObject(response);
 
-//                Log.e("WEATHERSTUFF", "res: " + result.getJSONArray("weather").get(0));
-
-
-
 
 
             if (result.has("weather")) {
@@ -230,21 +226,19 @@ public class CurrentWeather extends Fragment {
 
                 String iconcode = weather.get("icon").toString();
                 String main = weather.get("main").toString();
-                String windspeed = wind.get("speed").toString();
                 String temperature = maininfo.get("temp").toString();
-                String pressure = maininfo.get("pressure").toString();
+                String min = maininfo.get("temp_min").toString();
+                String max = maininfo.get("temp_max").toString();
+
+
 
                 ((TextView)getView().findViewById(R.id.fragment_weather_current_main)).setText(main);
-
-                ((TextView)getView().findViewById(R.id.fragment_weather_current_temperature)).setText(temperature);
-                ((TextView)getView().findViewById(R.id.fragment_weather_current_pressure)).setText(pressure);
-                ((TextView)getView().findViewById(R.id.fragment_weather_current_wind_speed)).setText(windspeed);
+                ((TextView)getView().findViewById(R.id.fragment_weather_current_temperature)).setText(kelvinToFar(temperature) + "\u2109");
+                ((TextView)getView().findViewById(R.id.fragment_weather_current_high_low)).setText(kelvinToFar(max) + "\u00b0" + "/" + kelvinToFar(min) + "\u00b0");
 
 
                 String icon = "http://openweathermap.org/img/w/" +iconcode + ".png";
-
                 Picasso.get().load(icon).into((ImageView) getView().findViewById(R.id.fragment_weather_current_image));
-
 
 
             }
@@ -260,5 +254,9 @@ public class CurrentWeather extends Fragment {
 
     }
 
+    private int kelvinToFar(String kelvin) {
+        return (int) ((9/5) * (Double.parseDouble(kelvin) - 273) + 32);
+
+    }
 
 }
