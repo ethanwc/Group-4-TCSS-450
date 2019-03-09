@@ -43,8 +43,8 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
 
         Collections.sort(mValues);
         holder.mItem = (location) mValues.get(position);
-        holder.mCity.setText( mValues.get(position).getCity() );
-        holder.mState.setText( mValues.get(position).getState() );
+        holder.mCity.setText( mValues.get(position).getNickname() );
+//        holder.mState.setText( mValues.get(position).getState() );
         holder.mZip.setText( mValues.get(position).getZip() );
 
 

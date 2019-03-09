@@ -27,8 +27,9 @@ import ethanwc.tcss450.uw.edu.template.R;
 public class CurrentWeather extends Fragment {
 
     private OnCurrentWeatherUpdateListener mListener;
-
-
+    private String mCity;
+    private String mState;
+    private int mZip;
     private ImageView mWeatherImage;
     private Map<String, String> idCodes;
 
@@ -78,13 +79,15 @@ public class CurrentWeather extends Fragment {
 
             @Override
             public void onClick(View v) {
-
+                mZip =98332;
                 Uri uri = new Uri.Builder()
-                        .scheme("http")
+                        .scheme("https")
                         .appendPath(getString(R.string.ep_getCityState))
-                        //TODO: Update zipcode with set home zip instead of hardcoding
-                        .appendPath("98332")
+                        .appendPath(Integer.toString(mZip))
                         .build();
+
+                // TODO: update zip with set home zip instead of hard coding
+
 
                 new GetAsyncTask.Builder(uri.toString())
                         .onPreExecute(this::onWaitFragmentInteractionShow)
@@ -145,32 +148,29 @@ public class CurrentWeather extends Fragment {
             private void handleGetCityStateOnPostExecute(String s) {
                 try {
                     JSONObject json = new JSONObject(s);
-                    String city = json.getString("city");
-                    String state = json.getString("state");
+                    mCity = json.getString("city");
+                    mState = json.getString("state");
 
-                    Log.e("", city + " " + state);
 
+                    String msg = getActivity().getIntent().getExtras().getString("email");
                     Uri uri = new Uri.Builder()
                             .scheme("https")
                             .appendPath(getString(R.string.ep_base_url))
                             .appendPath(getString(R.string.ep_addLocation))
                             .build();
-                    String msg = getActivity().getIntent().getExtras().getString("email");
-                    String nick ="location";
-                    // TODO: update zip with set home zip instead of hard coding
-                    String zip ="98332";
+
 
 
                     json = new JSONObject();
                     try {
 
                         json.put("email", msg);
-                        json.put("longitude", city);
-                        json.put("latitude", state);
-                        json.put("nickname", nick);
-                        json.put("zip", zip);
+                        json.put("longitude", "0");
+                        json.put("latitude", "0");
+                        json.put("nickname", mCity);
+                        json.put("zip", mZip);
 
-
+                    Log.e("CITY!!!!", mCity);
                     } catch (JSONException e) {
                         Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
                     }
@@ -180,6 +180,7 @@ public class CurrentWeather extends Fragment {
                             .onPostExecute(this::handleAddLocationOnPostExecute)
                             .onCancelled(this::handleErrorsInTask)
                             .build().execute();
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -214,11 +215,6 @@ public class CurrentWeather extends Fragment {
 
         try {
             JSONObject result = new JSONObject(response);
-
-//                Log.e("WEATHERSTUFF", "res: " + result.getJSONArray("weather").get(0));
-
-
-
 
 
             if (result.has("weather")) {
