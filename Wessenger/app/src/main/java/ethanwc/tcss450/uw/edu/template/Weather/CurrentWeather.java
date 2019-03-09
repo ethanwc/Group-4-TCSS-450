@@ -3,7 +3,9 @@ package ethanwc.tcss450.uw.edu.template.Weather;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import org.json.JSONObject;
 import java.util.Map;
 
 import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
+import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
+import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.R;
 
 public class CurrentWeather extends Fragment {
@@ -68,6 +72,121 @@ public class CurrentWeather extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_messaging_fab);
+        fab.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Uri uri = new Uri.Builder()
+                        .scheme("http")
+                        .appendPath(getString(R.string.ep_getCityState))
+                        //TODO: Update zipcode with set home zip instead of hardcoding
+                        .appendPath("98332")
+                        .build();
+
+                new GetAsyncTask.Builder(uri.toString())
+                        .onPreExecute(this::onWaitFragmentInteractionShow)
+                        .onPostExecute(this::handleGetCityStateOnPostExecute)
+                        .onCancelled(this::handleErrorsInTask)
+                        .build().execute();
+
+
+
+            }
+            /**
+             * Handle errors that may occur during the AsyncTask.
+             *
+             * @param result the error message provide from the AsyncTask
+             */
+            private void handleErrorsInTask(String result) {
+                Log.e("ASYNC_TASK_ERROR", result);
+            }
+
+            private void onWaitFragmentInteractionShow() {
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.activity_messaging_container, new WaitFragment(), "WAIT")
+                        .addToBackStack(null)
+                        .commit();
+            }
+
+            /**
+             * Helper method used to hide the wait fragment.
+             */
+            public void onWaitFragmentInteractionHide() {
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .remove(getActivity().getSupportFragmentManager().findFragmentByTag("WAIT"))
+                        .commit();
+            }
+
+            private void handleAddLocationOnPostExecute(String s) {
+
+                try {
+                    JSONObject json = new JSONObject(s);
+                    boolean success = json.getBoolean("success");
+                    if (success) {
+                        Log.e("LOCATION", "ADDED!");
+
+                    } else {
+                        Log.e("LOCATION", "NOT ADDED!");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e("LOCATION", "NOT ADDED!");
+                }
+                onWaitFragmentInteractionHide();
+
+
+            }
+
+            private void handleGetCityStateOnPostExecute(String s) {
+                try {
+                    JSONObject json = new JSONObject(s);
+                    String city = json.getString("city");
+                    String state = json.getString("state");
+
+                    Log.e("", city + " " + state);
+
+                    Uri uri = new Uri.Builder()
+                            .scheme("https")
+                            .appendPath(getString(R.string.ep_base_url))
+                            .appendPath(getString(R.string.ep_addLocation))
+                            .build();
+                    String msg = getActivity().getIntent().getExtras().getString("email");
+                    String nick ="location";
+                    // TODO: update zip with set home zip instead of hard coding
+                    String zip ="98332";
+
+
+                    json = new JSONObject();
+                    try {
+
+                        json.put("email", msg);
+                        json.put("longitude", city);
+                        json.put("latitude", state);
+                        json.put("nickname", nick);
+                        json.put("zip", zip);
+
+
+                    } catch (JSONException e) {
+                        Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+                    }
+
+                    new SendPostAsyncTask.Builder(uri.toString(), json)
+                            .onPreExecute(this::onWaitFragmentInteractionShow)
+                            .onPostExecute(this::handleAddLocationOnPostExecute)
+                            .onCancelled(this::handleErrorsInTask)
+                            .build().execute();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                onWaitFragmentInteractionHide();
+            }
+        });
 
         Uri uri = new Uri.Builder()
                 .scheme("https")

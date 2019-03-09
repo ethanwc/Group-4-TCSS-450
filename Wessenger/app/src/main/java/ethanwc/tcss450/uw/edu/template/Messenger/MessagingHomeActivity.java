@@ -403,18 +403,25 @@ public class MessagingHomeActivity extends AppCompatActivity
         View chatFrag = findViewById(R.id.fragment_chat);
         View addChatFrag = findViewById(R.id.fragment_messenger_addchat);
         View changelocation = findViewById( R.id.fragment_weather_changelocation );
+        View currentWeather = findViewById(R.id.fragment_weather_current_main);
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
 
-        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null || addChatFrag != null || chatFrag != null|| changelocation != null) {
+        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null
+                || addChatFrag != null || chatFrag != null|| changelocation != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
             mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setEnabled(true);
             super.onBackPressed();
-        } else {
+        } else if (currentWeather != null) {
+            mFab.show();
+            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+            super.onBackPressed();
+        }else {
             //Hide the FAB on correct windows when back is pressed
             mFab.hide();
             mFab.setEnabled(false);
@@ -541,7 +548,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     //notify user
                     onWaitFragmentInteractionHide();
                 }
-                //testing commit
+
 
             }
             /**
@@ -631,8 +638,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             WeatherHome weatherHome = new WeatherHome();
             getSupportActionBar().setTitle("Weather Home");
-            mFab.hide();
-            mFab.setEnabled(false);
+            mFab.show();
+            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+
             loadFragment(weatherHome);
             //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
@@ -644,10 +653,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-System.out.println("fab clicked----");
+
                     if (mCurrentLocation == null) {
-                        System.out.println("---------------");
-                        System.out.println("before google map enters "+mCurrentLocation.toString());
+
                         Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show(); } else {
                         Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
@@ -770,6 +778,26 @@ System.out.println("fab clicked----");
 
         return true;
     }
+
+    private void handleAddLocationOnPostExecute(String s) {
+        JSONObject resultJSON = null;
+        try {
+            resultJSON = new JSONObject(s);
+            boolean success = resultJSON.getBoolean("success");
+            if (success) {
+                onWaitFragmentInteractionHide();
+            } else {
+                Log.e("WEB SERVICE","Web Service returned false.");
+                onWaitFragmentInteractionHide();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
      *
@@ -1331,7 +1359,7 @@ System.out.println("fab clicked----");
 //        //Show FAB
 //        mFab.setEnabled(true);
 //        mFab.show();
-        mFab.setImageResource(android.R.drawable.ic_input_add);
+        //mFab.setImageResource(android.R.drawable.ic_input_add);
     }
 
 
