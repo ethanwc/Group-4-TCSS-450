@@ -155,6 +155,7 @@ public class CurrentWeather extends Fragment {
                     mState = json.getString("state");
 
 
+
                     String msg = getActivity().getIntent().getExtras().getString("email");
                     Uri uri = new Uri.Builder()
                             .scheme("https")

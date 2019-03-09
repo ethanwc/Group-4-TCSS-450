@@ -26,6 +26,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.cloudinary.json.JSONException;
+import org.cloudinary.json.JSONObject;
+
+import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
+import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
@@ -38,6 +43,7 @@ import me.pushy.sdk.Pushy;
 public class ChangeLocationsFragment extends Fragment {
 private PushMessageReceiver mPushMessageReciever;
 private onChangeLocationFragmentInteractionListener mListener;
+private EditText mZip;
     public ChangeLocationsFragment() {
         // Required empty public constructor
     }
@@ -97,13 +103,72 @@ private onChangeLocationFragmentInteractionListener mListener;
     }
 
     private void changeLocation(View v) {
-        EditText zip = getActivity().findViewById(R.id.edittext_changelocation_zip);
-        if (zip.getText().toString().length() != 5) {
-            zip.setError("Please enter a 5 digit zip-code.");
+        mZip = getActivity().findViewById(R.id.edittext_changelocation_zip);
+        if (mZip.getText().toString().length() != 5) {
+            mZip.setError("Please enter a 5 digit zip-code.");
         } else {
 
-            mListener.onChangeLocationSubmit(Integer.parseInt(zip.getText().toString()));
+
+
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_getCityState))
+                    .appendPath(mZip.getText().toString())
+                    .build();
+
+
+
+
+            new GetAsyncTask.Builder(uri.toString())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleGetCityStateOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
+
         }
+    }
+
+    private void handleGetCityStateOnPostExecute(String s) {
+        JSONObject json = new JSONObject(s);
+        try {
+            String error = json.getString("error");
+            onWaitFragmentInteractionHide();
+            mZip.setError("Zip code is not recognized");
+        } catch (JSONException e) {
+            onWaitFragmentInteractionHide();
+
+            mListener.onChangeLocationSubmit(Integer.parseInt(mZip.getText().toString()));
+            System.out.println("DuuuUPER!!!!");
+        }
+
+    }
+
+    /**
+     * Handle errors that may occur during the AsyncTask.
+     *
+     * @param result the error message provide from the AsyncTask
+     */
+    private void handleErrorsInTask(String result) {
+        Log.e("ASYNC_TASK_ERROR", result);
+    }
+
+    private void onWaitFragmentInteractionShow() {
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.activity_messaging_container, new WaitFragment(), "WAIT")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Helper method used to hide the wait fragment.
+     */
+    public void onWaitFragmentInteractionHide() {
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .remove(getActivity().getSupportFragmentManager().findFragmentByTag("WAIT"))
+                .commit();
     }
 
     public interface onChangeLocationFragmentInteractionListener  {
