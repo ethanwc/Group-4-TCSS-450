@@ -1674,21 +1674,18 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onLocationListFragmentInteraction(location item) {
-        SavedLocationViewFragment savedLocationViewFragment = new SavedLocationViewFragment();
-
+        WeatherHome weatherHome = new WeatherHome();
         Bundle args = new Bundle();
-        mFab.setEnabled(false);
-        mFab.hide();
-        args.putSerializable("passEmail", getIntent().getExtras().getString("email"));
-        args.putSerializable("nickname", item.getNickname());
-        args.putSerializable("city", item.getCity());
-        args.putSerializable("state", item.getState());
-        args.putSerializable("zip", item.getZip());
-        savedLocationViewFragment.setArguments(args);
-        loadFragment(savedLocationViewFragment);
+        args.putSerializable("zip", Integer.parseInt(item.getZip()));
+        weatherHome.setArguments(args);
+        getSupportActionBar().setTitle("Weather");
+        mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+        mFab.setEnabled(true);
+
+        loadFragment(weatherHome);
 
 
-        Log.e("City!!!!", item.getZip());
     }
 
     @Override
