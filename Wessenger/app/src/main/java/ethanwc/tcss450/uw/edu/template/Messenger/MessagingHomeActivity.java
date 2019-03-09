@@ -675,6 +675,30 @@ public class MessagingHomeActivity extends AppCompatActivity
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
 
+
+
+            mLocation = new ArrayList<>();
+
+            //Build ASNC task to grab connections from web service.
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getLocation))
+                    .build();
+            //handleConnectionGetInfoOnPostExecute
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+//            getSupportActionBar().setTitle("Connections");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleLocationGetPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
+
+            mFab.hide();
+            mFab.setEnabled(false);
+
             loadFragment(changeLocationsFragment);
             //Saved locations has been chosen
         }
@@ -834,8 +858,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                             .addState( longitudeArray.get(i).toString() )
                             .addzip( zipArray.get(i).toString() )
                             .build();
-                    System.out.println("===Latitude!!!" + latitudeArray.get(i).toString());
-                    System.out.println("===Longitude!!!" + longitudeArray.get(i).toString());
+
                     mLocation.add(loc);
 
                 }
@@ -854,6 +877,78 @@ public class MessagingHomeActivity extends AppCompatActivity
                 frag.setArguments( args );
                 onWaitFragmentInteractionHide();
                 loadFragment(frag);
+
+
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
+
+    /**
+     * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
+     *
+     * @param result String which represents the JSON result.
+     */
+    private void handleLocationGetPostExecute(final String result) {
+        //parse JSON
+        try {
+
+            onWaitFragmentInteractionHide();
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+
+
+
+            if (success) {
+
+                mLocation = new ArrayList<>();
+                JSONArray locationArray = resultJSON.getJSONArray( "nickname" );
+                JSONArray latitudeArray = resultJSON.getJSONArray( "latitude" );
+                JSONArray longitudeArray = resultJSON.getJSONArray( "longitude" );
+                JSONArray zipArray = resultJSON.getJSONArray( "zip" );
+
+                Log.e("LATITUDE!!!!", longitudeArray.toString());
+//
+//                System.out.println("EMAILS!!!" + emails.get(0).toString());
+                for (int i = 0; i < locationArray.length(); i++) {
+                    location loc = new location.Builder(locationArray.get(i).toString())
+                            .addNickname( locationArray.get(i).toString())
+                            .addCity( latitudeArray.get(i).toString() )
+                            .addState( longitudeArray.get(i).toString() )
+                            .addzip( zipArray.get(i).toString() )
+                            .build();
+
+                    mLocation.add(loc);
+
+                }
+                SavedLocationFragment savedLocationFragment = new SavedLocationFragment();
+//                //Bundle list of connections as arguments and load connection fragment
+//                Connection[] connectionsAsArray = new Connection[mConnections.size()];
+//                connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                location[] locationAsArray = new location[mLocation.size()];
+
+                locationAsArray = mLocation.toArray(locationAsArray);
+//                //Bundle connections and send as arguments
+                Bundle args = new Bundle();
+                args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
+//
+                Fragment frag = new SavedLocationFragment();
+                frag.setArguments( args );
+                onWaitFragmentInteractionHide();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.changeLocation_container, frag);
+                transaction.commit();
 
 
             } else {
