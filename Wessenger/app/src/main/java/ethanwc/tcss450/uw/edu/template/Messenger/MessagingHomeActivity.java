@@ -3,8 +3,10 @@ package ethanwc.tcss450.uw.edu.template.Messenger;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -122,12 +124,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
-    private int mZip = 98404;
+    private int mZip = 0;
     private String mChatId = "";
     private ArrayList<location> mLocation;
     private List<DailyWeather> mDailyWeather;
-
+    private BroadcastReceiver _refreshReceiver;
     private boolean mWeather = true;
+    private boolean fromMaps = false;
     private PushMessageReceiver mPushMessageReciever;
     private static final String TAG = "MessagingHomeActivity";
     /**
@@ -163,7 +166,14 @@ public class MessagingHomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messaging_home);
         //init cloudinary stuffs
+        _refreshReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mZip = intent.getExtras().getInt("zip");
+                fromMaps = true;
 
+            }
+        };
         //for location
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -261,6 +271,33 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
     }
+
+    private void loadWeather() {
+        WeatherHome weatherHome = new WeatherHome();
+        Bundle args = new Bundle();
+        args.putSerializable("zip", mZip);
+        weatherHome.setArguments(args);
+        getSupportActionBar().setTitle("Weather Home");
+        mFab.hide();
+        mFab.setEnabled(false);
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath("api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
+                .build();
+
+        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleWeatherPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build()
+                .execute();
+
+
+        mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+        mFab.setEnabled(true);
+    }
     private void setLocation(final Location location) {
         mCurrentLocation = location;
 
@@ -268,6 +305,14 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        IntentFilter filter = new IntentFilter("zipCodeSent");
+        this.registerReceiver(_refreshReceiver, filter);
+        if (mZip != 0 && fromMaps) {
+            fromMaps = false;
+            loadWeather();
+
+        }
         startLocationUpdates(); }
     @Override
     protected void onPause() {
@@ -1055,6 +1100,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                             Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
                             //pass the current location on to the MapActivity when it is loaded
                             i.putExtra("LOCATION", mCurrentLocation);
+
                             startActivity(i);
                         }
 

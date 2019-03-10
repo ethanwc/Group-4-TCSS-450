@@ -1,6 +1,7 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -31,8 +32,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.location;
+
+import static ethanwc.tcss450.uw.edu.template.Main.MainActivity.EXTRA_MESSAGE;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMapClickListener,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMyLocationButtonClickListener,
@@ -181,6 +186,12 @@ public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
             if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
                 mZipcode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
                 System.out.println( "-------ZIPPP----" + mZipcode );
+
+                Intent intent = new Intent("zipCodeSent");
+                intent.putExtra("zip", mZipcode);
+                sendBroadcast(intent);
+                finish();
+
             }else{
                 System.out.println("cannot get zip code");
             }

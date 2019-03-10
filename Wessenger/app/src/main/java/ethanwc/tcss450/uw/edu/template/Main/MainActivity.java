@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements NewUserFragment.O
         intent.putExtra(getString(R.string.keys_intent_jwt), jwt);
         intent.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
         intent.putExtra(EXTRA_MESSAGE, credentials.getEmail());
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putStringArrayListExtra("a", emailList);
         System.out.println("GOD MODE!!!" + credentials.getUsername());
         startActivity(intent);
