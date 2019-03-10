@@ -124,7 +124,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
-    private int mZip = 0;
+    private int mZip = 98404;
     private String mChatId = "";
     private ArrayList<location> mLocation;
     private List<DailyWeather> mDailyWeather;
