@@ -38,8 +38,7 @@ import me.pushy.sdk.Pushy;
 
 
 /**
- * A simple {@link Fragment} subclass.
- */
+ * A simple {@link Fragment} subclass. */
 public class ChangeLocationsFragment extends Fragment {
 private PushMessageReceiver mPushMessageReciever;
 private onChangeLocationFragmentInteractionListener mListener;

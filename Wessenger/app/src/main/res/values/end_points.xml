@@ -25,16 +25,15 @@
     <string name="ep_getchatmembers">getchatmembers</string>
     <string name="ep_getchats">getchats</string>
     <string name="ep_userdetail">getdetailfromemail</string>
-    <string name="ep_acceptcontact">acceptcontact</string>
-    <string name="ep_addToChat">addtochat</string>
     <string name="ep_addLocation">addlocation</string>
     <string name="ep_removeFromChat">removefromchat</string>
     <string name="ep_addChat">createchat</string>
     <string name="ep_removeChat">deletechat</string>
-    <string name="ep_accept_invitation">acceptinvitation</string>
     <string name="ep_getLocation">getlocation</string>
-    <string name="ep_acceptinvitation">acceptcontact</string>
-    <string name="ep_declineinvitation">declinecontact</string>
     <string name="ep_getCityState">ziptasticapi.com</string>
     <string name="ep_removeLocation">deletelocation</string>
+    <string name="ep_acceptcontact">acceptcontact</string>
+    <string name="ep_addToChat">addtochat</string>
+    <string name="ep_declineinvitation">declinecontact</string>
+    <string name="ep_accept_invitation">acceptinvitation</string>
 </resources>
