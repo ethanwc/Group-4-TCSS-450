@@ -969,12 +969,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             for (int i = 0; i < data.length(); i ++) {
                 JSONObject jsonWeather = data.getJSONObject(i).getJSONObject("weather");
-                String temp = data.getJSONObject(i).getString("temp");
+                double temp =convertCtoF( data.getJSONObject(i).getDouble("temp"));
                 Log.e(" temp", " " + temp);
                 hourlyWeathers.add(new HourlyWeather.Builder(
                         jsonWeather.getString("description"))
                         .setTemp(temp).build());
-
             }
             DailyWeather[] dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
             dailyWeathersArray = mDailyWeather.toArray(dailyWeathersArray);
@@ -992,6 +991,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         } catch (JSONException e){
             e.printStackTrace();
         }
+    }
+
+    private double convertCtoF(double c) {
+        return c*1.8+32;
     }
 
 

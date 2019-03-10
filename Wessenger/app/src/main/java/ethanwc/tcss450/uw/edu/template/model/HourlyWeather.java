@@ -6,7 +6,7 @@ public class HourlyWeather implements Serializable {
 
     private final String mLocation;
     private final String mWeather;
-    private final String mTemp;
+    private final double mTemp;
 
 
 
@@ -16,7 +16,7 @@ public class HourlyWeather implements Serializable {
     public static class Builder {
         private final String mWeather;
         private String mLocation;
-        private String mTemp;
+        private double mTemp;
 
         /**
          * Constructs a new builder.
@@ -30,7 +30,7 @@ public class HourlyWeather implements Serializable {
             mLocation = location;
             return this;
         }
-        public HourlyWeather.Builder setTemp(String temp) {
+        public HourlyWeather.Builder setTemp(double temp) {
             mTemp = temp;
             return this;
         }
@@ -75,7 +75,7 @@ public class HourlyWeather implements Serializable {
      * Helper method to return the chat id of the message.
      * @return String used to represent the chat id of the message.
      */
-    public String getTemp() {
+    public double getTemp() {
         return mTemp;
     }
 }

@@ -38,7 +38,7 @@ public class MyHourlyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyH
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 //        holder.mItem = mValues.get(position);
-        holder.mTemperatureView.setText(mValues.get(position).getTemp());
+        holder.mTemperatureView.setText(mValues.get(position).getTemp()+ "F");
         holder.mWeatherView.setText(mValues.get(position).getWeather());
         holder.mTime.setText(position + " ");
 
