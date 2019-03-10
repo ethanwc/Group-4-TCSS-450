@@ -8,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import ethanwc.tcss450.uw.edu.template.model.location;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment.OnLocationListFragmentInteractionListener;
 //import DummyContent.DummyItem;
-
 import java.util.Collections;
 import java.util.List;
 

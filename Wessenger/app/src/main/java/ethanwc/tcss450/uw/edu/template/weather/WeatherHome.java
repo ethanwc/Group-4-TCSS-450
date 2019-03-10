@@ -24,9 +24,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
 
+import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment;
+import ethanwc.tcss450.uw.edu.template.Messenger.HomeFragment;
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
+import ethanwc.tcss450.uw.edu.template.model.HourlyWeather;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
+
+import static ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment.ARG_DAILYWEATHER_LIST;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +48,8 @@ public class WeatherHome extends Fragment {
     private OnFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
     private Toolbar toolbar;
+    private DailyWeather[] mDailyWeatherArray;
+    private HourlyWeather[] mHourlyWeatherArray;
 
 
     @Override
@@ -82,6 +91,8 @@ public class WeatherHome extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mDailyWeatherArray = (DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST);
+            mHourlyWeatherArray = (HourlyWeather[]) getArguments().getSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST);
         }
 
 
@@ -106,14 +117,20 @@ public class WeatherHome extends Fragment {
         transaction.add(R.id.weather_home_container_1, currentWeather, "Frag_Top_tag");
 
         //TODO STEVEN INFLATE FRAGMENTS HERE
-//        transaction.add(R.id.weather_home_container_2, new HomeFragment.ForecastWeather(), "Frag_Middle_tag");
-//        transaction.add(R.id.weather_home_container_3, new ConversationFragment(), "Frag_Bottom_tag");
+        Fragment fragment = new HourlyWeatherFragment();
+        Bundle arg = new Bundle();
+        arg.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, mHourlyWeatherArray);
+        fragment.setArguments(arg);
+        transaction.add(R.id.weather_home_container_2, fragment, "Frag_Middle_tag");
+        fragment = new DailyWeatherFragment();
+        arg.putSerializable(ARG_DAILYWEATHER_LIST, mDailyWeatherArray);
+        fragment.setArguments(arg);
+        transaction.add(R.id.weather_home_container_3, fragment, "Frag_Bottom_tag");
 
 
         transaction.commit();
 
         return view;
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -192,6 +209,8 @@ public class WeatherHome extends Fragment {
         }
 
     }
+
+
 
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver

@@ -109,7 +109,7 @@ private String mMyEmail;
                     mListener.addContactButton(new Credentials.Builder(mEmail.getText().toString())
                             .addEmail2(mEmail.getText().toString())
                             .addVerify(0).build());
-
+                    mEmail.setText(""); // clear the email field after add it
                 }
             }
         });
