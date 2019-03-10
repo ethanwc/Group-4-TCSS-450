@@ -108,6 +108,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<String> mUNames;
     private ArrayList<String> mChats;
     private Map<String, String> mPeople;
+    private Map<String, String> mChatNames;
     Multimap<String, String> mChatMembers;
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
@@ -1406,7 +1407,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             Log.e("CHATID", "it is: " + mChats.get(i));
 
-            m[i] = new Message.Builder("chat name?").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
+            m[i] = new Message.Builder(mChatNames.get(mChats.get(i))).addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
         return m;
     }
@@ -1426,6 +1427,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             if (success) {
                 mChats = new ArrayList<>();
                 mPeople = new HashMap<>();
+                mChatNames = new HashMap<>();
                 mChatMembers = ArrayListMultimap.create();
                 //mchats, mchatmembers, mpeople
 
@@ -1434,8 +1436,13 @@ public class MessagingHomeActivity extends AppCompatActivity
                     String chatid = user.getString("chatid");
                     String memberid = user.getString("memberid");
                     String username = user.getString("username");
+                    String chatname = user.getString("chatname");
 
-                    if (!mChats.contains(chatid)) mChats.add(chatid);
+                    if (!mChats.contains(chatid)) {
+                        mChats.add(chatid);
+                        mChatNames.put(chatid, chatname);
+                    }
+
                     if (!mPeople.containsKey(memberid)) mPeople.put(memberid, username);
                     mChatMembers.put(chatid, memberid);
                 }
