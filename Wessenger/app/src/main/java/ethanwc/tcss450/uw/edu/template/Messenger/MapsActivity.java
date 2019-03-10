@@ -178,10 +178,12 @@ public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
             List<Address> addresses = geocoder.getFromLocation(mLat, mLong, 1);
 //            List<Address> addresses = geocoder.getFromLocation(latLng.longitude, latLng.latitude, 1);
 
-            System.out.println(addresses.get(0).getPostalCode().toString());
-            mZipcode = Integer.parseInt(addresses.get(0).getPostalCode().toString());
-            System.out.println("-------ZIPPP----"+mZipcode);
-
+            if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
+                mZipcode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
+                System.out.println( "-------ZIPPP----" + mZipcode );
+            }else{
+                System.out.println("cannot get zip code");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

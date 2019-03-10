@@ -175,7 +175,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
                             , Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_LOCATIONS);
+            System.out.println("----------not granted----");
         } else {
+            System.out.println("---------- granted----");
 //The user has already allowed the use of Locations. Get the current location.
  requestLocation();
         }
