@@ -118,8 +118,6 @@ public class CurrentWeather extends Fragment {
                 ((TextView)getView().findViewById(R.id.fragment_weather_current_main)).setText(main);
 
                 ((TextView)getView().findViewById(R.id.fragment_weather_current_temperature)).setText(temperature);
-                ((TextView)getView().findViewById(R.id.fragment_weather_current_pressure)).setText(pressure);
-                ((TextView)getView().findViewById(R.id.fragment_weather_current_wind_speed)).setText(windspeed);
 
 
                 String icon = "http://openweathermap.org/img/w/" +iconcode + ".png";

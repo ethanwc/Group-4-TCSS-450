@@ -30,9 +30,6 @@ import java.util.List;
 public class DailyWeatherFragment extends Fragment {
 
     public static final String ARG_DAILYWEATHER_LIST = "daily weather list";
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private List<DailyWeather> mDailyWeather;
@@ -42,18 +39,6 @@ public class DailyWeatherFragment extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public DailyWeatherFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static DailyWeatherFragment newInstance(int columnCount) {
-        DailyWeatherFragment fragment = new DailyWeatherFragment();
-        Bundle args = new Bundle();
-        Log.e(" column", " " + columnCount);
-       // args.putString(ARG_DAILYWEATHER_LIST, );
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
     }
 
 
