@@ -74,13 +74,11 @@ public class DailyWeatherFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Log.e("create view", " hi" + mColumnCount);
-        View view = inflater.inflate(R.layout.fragment_dailyweather_list, container, false);
-        Log.e(" create view", " here");
+        View view = inflater.inflate(R.layout.fragment_dailyweather_list, container, false);;
 
         int date = Calendar.DAY_OF_WEEK;
         Log.e("date:", " " + date);
 
-        Log.e("after get async", " ");
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();

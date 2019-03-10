@@ -41,7 +41,6 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        //holder.mItem = mValues.get(position);
         holder.mDate.setText(convertDate(position));
         holder.mTemperature.setText(mValues.get(position).getTemperature());
         holder.mWeatherMain.setText(mValues.get(position).getWeather());

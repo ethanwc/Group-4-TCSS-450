@@ -59,12 +59,14 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.CurrentWeather;
 import ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment;
+import ethanwc.tcss450.uw.edu.template.Weather.HourlyWeatherFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationViewFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
+import ethanwc.tcss450.uw.edu.template.model.HourlyWeather;
 import ethanwc.tcss450.uw.edu.template.model.Message;
 import ethanwc.tcss450.uw.edu.template.model.location;
 import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
@@ -86,7 +88,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction,
         HomeFragment.OnHomeFragmentInteractionListener,
         CurrentWeather.OnCurrentWeatherUpdateListener,
-        DailyWeatherFragment.OnListFragmentInteractionListener{
+        DailyWeatherFragment.OnListFragmentInteractionListener,
+        HourlyWeatherFragment.OnListFragmentInteractionListener{
 
 
     private Bundle mArgs;
@@ -104,6 +107,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     DrawerLayout mdrawer;
     private String mChatId = "";
     private ArrayList<location> mLocation;
+    private List<DailyWeather> mDailyWeather;
 
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
@@ -483,7 +487,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .execute();
 
 
-//            loadFragment(weatherHome);
             //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
@@ -599,6 +602,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onHourlyListFragmentInteraction (HourlyWeather weather) {
+
+    }
+
 
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
@@ -674,41 +682,34 @@ public class MessagingHomeActivity extends AppCompatActivity
     private void handleWeatherPostExecute(final String response) {
 
         try {
-            List<DailyWeather> dailyWeathers = new ArrayList<>();
+            mDailyWeather = new ArrayList<>();
             JSONObject result = new JSONObject(response);
             JSONArray listArray = result.getJSONArray("list");
             for (int i = 0; i < listArray.length(); i ++) {
                 JSONObject jsonWeather = listArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
                 JSONObject jsonTemp = listArray.getJSONObject(i).getJSONObject("main");
-//                Log.e("jsonweather", " "+ jsonWeather);
-//                Log.e("jsontemp", " " + jsonTemp);
                 double max = convertKtoF(jsonTemp.getInt("temp_max"));
                 double min = convertKtoF(jsonTemp.getInt("temp_min"));
 
-                dailyWeathers.add(new DailyWeather.Builder(
+                mDailyWeather.add(new DailyWeather.Builder(
                         jsonWeather.getString("main"))
                         .addIcon(jsonWeather.getString("icon"))
                         .addHighTemp(max)
                         .addLowTemp(min)
                         .build());
-                //Log.e("daily weather: ", " " + max + " " + min + " " + jsonWeather.getString("main") + " "+ dailyWeathers);
             }
+            new GetAsyncTask.Builder("https://api.weatherbit.io/v2.0/forecast/hourly?postal_code=98403&country=US&key=723794c0a4a547688c417ccca5784221&hours=24")//uri.toString()
+                    .onPostExecute(this::handleHourlyWeatherPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build()
+                    .execute();
 
-            DailyWeather[] dailyWeathersArray = new DailyWeather[dailyWeathers.size()];
-            dailyWeathersArray = dailyWeathers.toArray(dailyWeathersArray);
-            //Log.e("daily array: ", " " + dailyWeathersArray[0]);
-            Bundle args = new Bundle();
-            args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
-            Fragment fragment = new WeatherHome();
-            fragment.setArguments(args);
-
-            onWaitFragmentInteractionHide();
-            loadFragment(fragment);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
+
 
     /**
      * helper function to convert kelvin to Fahrenheit
@@ -718,6 +719,43 @@ public class MessagingHomeActivity extends AppCompatActivity
     private double convertKtoF(double k) {
         return  Math.round((k*1.8 - 459.67) * 100) / 100;
     }
+
+    private void handleHourlyWeatherPostExecute(final String response) {
+
+        try {
+            List<HourlyWeather> hourlyWeathers = new ArrayList<>();
+            JSONObject result = new JSONObject(response);
+            JSONArray data = result.getJSONArray("data");
+
+            for (int i = 0; i < data.length(); i ++) {
+                JSONObject jsonWeather = data.getJSONObject(i).getJSONObject("weather");
+                String temp = data.getJSONObject(i).getString("temp");
+                Log.e(" temp", " " + temp);
+                hourlyWeathers.add(new HourlyWeather.Builder(
+                        jsonWeather.getString("description"))
+                        .setTemp(temp).build());
+
+            }
+            DailyWeather[] dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
+            dailyWeathersArray = mDailyWeather.toArray(dailyWeathersArray);
+
+            HourlyWeather[] hourlyWeathersArray = new HourlyWeather[hourlyWeathers.size()];
+            hourlyWeathersArray = hourlyWeathers.toArray(hourlyWeathersArray);
+            Fragment fragment = new WeatherHome();
+            Bundle args = new Bundle();
+            args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
+            args.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, hourlyWeathersArray);
+            fragment.setArguments(args);
+
+            onWaitFragmentInteractionHide();
+            loadFragment(fragment);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     /**
      * Method to logout of the app, and delete saved password information

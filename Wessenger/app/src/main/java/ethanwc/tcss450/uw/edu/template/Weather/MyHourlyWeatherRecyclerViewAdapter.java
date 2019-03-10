@@ -37,9 +37,10 @@ public class MyHourlyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyH
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        //holder.mIdView.setText(mValues.get(position).id);
-        //holder.mContentView.setText(mValues.get(position).content);
+//        holder.mItem = mValues.get(position);
+        holder.mTemperatureView.setText(mValues.get(position).getTemp());
+        holder.mWeatherView.setText(mValues.get(position).getWeather());
+        holder.mTime.setText(position + " ");
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +48,7 @@ public class MyHourlyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyH
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                   // mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onHourlyListFragmentInteraction(holder.mItem);
                 }
             }
         });
@@ -60,20 +61,22 @@ public class MyHourlyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyH
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView mTemperatureView;
+        public final TextView mWeatherView;
+        public final TextView mTime;
         public HourlyWeather mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mWeatherView = (TextView) view.findViewById(R.id.textView_hourlyweather_weather);
+            mTemperatureView = (TextView) view.findViewById(R.id.textview_hourlyweather_temp);
+            mTime = (TextView) view.findViewById(R.id.textview_hourlyweather_time);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mTemperatureView.getText() + "'";
         }
     }
 }

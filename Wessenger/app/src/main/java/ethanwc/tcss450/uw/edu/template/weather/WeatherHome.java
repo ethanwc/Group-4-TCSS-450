@@ -41,6 +41,7 @@ import ethanwc.tcss450.uw.edu.template.Messenger.HomeFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
+import ethanwc.tcss450.uw.edu.template.model.HourlyWeather;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
@@ -59,7 +60,8 @@ public class WeatherHome extends Fragment {
     private OnFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
     private Toolbar toolbar;
-    private  DailyWeather[] mDailyWeatherArray;
+    private DailyWeather[] mDailyWeatherArray;
+    private HourlyWeather[] mHourlyWeatherArray;
 
 
     @Override
@@ -102,8 +104,7 @@ public class WeatherHome extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mDailyWeatherArray = (DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST);
-
-            Log.e("daily weather", " " + mDailyWeatherArray);
+            mHourlyWeatherArray = (HourlyWeather[]) getArguments().getSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST);
         }
     }
 
@@ -124,10 +125,10 @@ public class WeatherHome extends Fragment {
         //TODO STEVEN INFLATE FRAGMENTS HERE
         Fragment fragment = new HourlyWeatherFragment();
         Bundle arg = new Bundle();
-//        arg.putSerializable();
+        arg.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, mHourlyWeatherArray);
+        fragment.setArguments(arg);
         transaction.add(R.id.weather_home_container_2, fragment, "Frag_Middle_tag");
         fragment = new DailyWeatherFragment();
-        arg = new Bundle();
         arg.putSerializable(ARG_DAILYWEATHER_LIST, mDailyWeatherArray);
         fragment.setArguments(arg);
         transaction.add(R.id.weather_home_container_3, fragment, "Frag_Bottom_tag");
@@ -136,7 +137,6 @@ public class WeatherHome extends Fragment {
         transaction.commit();
 
         return view;
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event

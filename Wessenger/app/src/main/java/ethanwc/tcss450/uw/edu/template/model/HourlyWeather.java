@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class HourlyWeather implements Serializable {
 
     private final String mLocation;
-    private final String mMessage;
-    private final String mChatid;
+    private final String mWeather;
+    private final String mTemp;
 
 
 
@@ -14,24 +14,24 @@ public class HourlyWeather implements Serializable {
      * Helper class for building message.
      */
     public static class Builder {
-        private final String mMessage;
+        private final String mWeather;
         private String mLocation;
-        private String mChatid;
+        private String mTemp;
 
         /**
          * Constructs a new builder.
-         * @param message String used to represent the text of the message.
+         * @param weather String used to represent the text of the message.
          */
-        public Builder(String message) {
-            mMessage = message;
+        public Builder(String weather) {
+            mWeather = weather;
         }
 
         public HourlyWeather.Builder addLocation(String location) {
             mLocation = location;
             return this;
         }
-        public HourlyWeather.Builder setChatID(String chatid) {
-            mChatid = chatid;
+        public HourlyWeather.Builder setTemp(String temp) {
+            mTemp = temp;
             return this;
         }
 
@@ -48,9 +48,9 @@ public class HourlyWeather implements Serializable {
      * @param builder Builder to be applied to Connection.
      */
     private HourlyWeather(final HourlyWeather.Builder builder) {
-        this.mMessage = builder.mMessage;
+        this.mWeather = builder.mWeather;
         this.mLocation = builder.mLocation;
-        this.mChatid = builder.mChatid;
+        this.mTemp = builder.mTemp;
 
     }
 
@@ -66,8 +66,8 @@ public class HourlyWeather implements Serializable {
      * Helper method to return the text of the message.
      * @return String used to represent the text of the message.
      */
-    public String getMessage() {
-        return mMessage;
+    public String getWeather() {
+        return mWeather;
     }
 
 
@@ -75,7 +75,7 @@ public class HourlyWeather implements Serializable {
      * Helper method to return the chat id of the message.
      * @return String used to represent the chat id of the message.
      */
-    public String getChatid() {
-        return mChatid;
+    public String getTemp() {
+        return mTemp;
     }
 }

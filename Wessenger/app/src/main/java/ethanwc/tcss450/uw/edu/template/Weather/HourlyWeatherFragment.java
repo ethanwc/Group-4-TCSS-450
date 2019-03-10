@@ -10,10 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.Weather.dummy.DummyContent;
-import ethanwc.tcss450.uw.edu.template.Weather.dummy.DummyContent.HourlyWeather;
-import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
+import ethanwc.tcss450.uw.edu.template.model.HourlyWeather;
 
 /**
  * A fragment representing a list of Items.
@@ -25,9 +28,11 @@ public class HourlyWeatherFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    public static final String ARG_HOURLYWEATHER_LIST = "hourly weather list";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private List<HourlyWeather> mHourlyWeather;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,7 +56,9 @@ public class HourlyWeatherFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            mHourlyWeather =  new ArrayList<HourlyWeather>(
+                    Arrays.asList((HourlyWeather[]) getArguments().getSerializable(ARG_HOURLYWEATHER_LIST)));
+            mColumnCount = mHourlyWeather.size();
         }
     }
 
@@ -69,7 +76,7 @@ public class HourlyWeatherFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            //recyclerView.setAdapter(new MyHourlyWeatherRecyclerViewAdapter(DailyWeather., mListener));
+            recyclerView.setAdapter(new MyHourlyWeatherRecyclerViewAdapter(mHourlyWeather, mListener));
         }
         return view;
     }
@@ -102,8 +109,8 @@ public class HourlyWeatherFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
+    public interface OnListFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener{
         // TODO: Update argument type and name
-        void onListFragmentInteraction(HourlyWeather item);
+        void onHourlyListFragmentInteraction(HourlyWeather item);
     }
 }
