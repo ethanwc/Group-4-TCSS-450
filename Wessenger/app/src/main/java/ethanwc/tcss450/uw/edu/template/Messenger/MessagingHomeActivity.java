@@ -1039,7 +1039,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 frag.setArguments( args );
                 onWaitFragmentInteractionHide();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_messaging_container, frag);
+                        .replace(R.id.changeLocation_container, frag);
                 transaction.commit();
 
                 mFab.setOnClickListener(new View.OnClickListener() {
