@@ -975,6 +975,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .build());
             }
             new GetAsyncTask.Builder("https://api.weatherbit.io/v2.0/forecast/hourly?postal_code=98403&country=US&key=723794c0a4a547688c417ccca5784221&hours=24")//uri.toString()
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleHourlyWeatherPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build()
@@ -1034,7 +1035,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     private double convertCtoF(double c) {
-        return c*1.8+32;
+        return Math.round((c*1.8+32) *100) / 100;
     }
 
 
