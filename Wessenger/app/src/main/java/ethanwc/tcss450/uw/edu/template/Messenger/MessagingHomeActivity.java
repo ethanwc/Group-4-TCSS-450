@@ -3,8 +3,10 @@ package ethanwc.tcss450.uw.edu.template.Messenger;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -104,7 +106,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         HomeFragment.OnHomeFragmentInteractionListener,
         CurrentWeather.OnCurrentWeatherUpdateListener,
         DailyWeatherFragment.OnListFragmentInteractionListener,
-        HourlyWeatherFragment.OnListFragmentInteractionListener{
+        HourlyWeatherFragment.OnListFragmentInteractionListener,
+        ChangeLocationsFragment.onChangeLocationFragmentInteractionListener {
 
 
     private Bundle mArgs;
@@ -116,6 +119,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<String> mUNames;
     private ArrayList<String> mChats;
     private Map<String, String> mPeople;
+    private Map<String, String> mChatNames;
     Multimap<String, String> mChatMembers;
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
@@ -124,14 +128,15 @@ public class MessagingHomeActivity extends AppCompatActivity
     private String mChatId = "";
     private ArrayList<location> mLocation;
     private List<DailyWeather> mDailyWeather;
-
+    private BroadcastReceiver _refreshReceiver;
     private boolean mWeather = true;
+    private boolean fromMaps = false;
     private PushMessageReceiver mPushMessageReciever;
     private static final String TAG = "MessagingHomeActivity";
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent * than this value.
      */
@@ -145,34 +150,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private static final String[] COUNTRIES = new String[]{"Belgium",
             "France", "France_", "Italy", "Germany", "Spain"};
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        startLocationUpdates();
-        System.out.println("=>>>><<<<<-====");
-        if (mPushMessageReciever == null) {
-            mPushMessageReciever = new PushMessageReceiver();
-        }
 
 
-//        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
-//        getActivity().registerReceiver(mPushMessageReciever, iFilter);
-    }
-    /**
-     * OnPause handles push notifications.
-     */
-    @Override
-    public void onPause() {
-//        System.out.println("in push message receive---->On Pause");
-        super.onResume();
-        startLocationUpdates();
-        super.onPause();
-
-        if (mPushMessageReciever != null){
-//            getActivity().unregisterReceiver(mPushMessageReciever);
-        }
-    }
 
 //public void setColortitle(){
 //    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0000ff")));
@@ -185,21 +164,34 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_messaging_home);
         //init cloudinary stuffs
+        _refreshReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mZip = intent.getExtras().getInt("zip");
+                fromMaps = true;
 
+            }
+        };
         //for location
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
-                            , Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_LOCATIONS);
+                            , Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_LOCATIONS);
+            System.out.println("----------not granted----");
         } else {
+            System.out.println("---------- granted----");
 //The user has already allowed the use of Locations. Get the current location.
  requestLocation();
         }
-
+//-------
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -210,7 +202,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 // Update UI with location data
 // ...
                     setLocation(location);
-//                    Log.d("LOCATION UPDATE!", location.toString());
+                    Log.d("LOCATION UPDATE!", location.toString());
                 } };
         };
         createLocationRequest();
@@ -279,21 +271,65 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
     }
+
+    private void loadWeather() {
+        WeatherHome weatherHome = new WeatherHome();
+        Bundle args = new Bundle();
+        args.putSerializable("zip", mZip);
+        weatherHome.setArguments(args);
+        getSupportActionBar().setTitle("Weather Home");
+        mFab.hide();
+        mFab.setEnabled(false);
+
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath("api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
+                .build();
+
+        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleWeatherPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build()
+                .execute();
+
+
+        mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+        mFab.setEnabled(true);
+    }
     private void setLocation(final Location location) {
         mCurrentLocation = location;
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        IntentFilter filter = new IntentFilter("zipCodeSent");
+        this.registerReceiver(_refreshReceiver, filter);
+        if (mZip != 0 && fromMaps) {
+            fromMaps = false;
+            loadWeather();
+
+        }
+        startLocationUpdates(); }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates(); }
     /**
      * Requests location updates from the FusedLocationApi. */
     protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback,
                     null /* Looper */); }
     }
+
 
     /**
      * Removes location updates from the FusedLocationApi. */
@@ -979,20 +1015,22 @@ public class MessagingHomeActivity extends AppCompatActivity
             }
             DailyWeather[] dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
             dailyWeathersArray = mDailyWeather.toArray(dailyWeathersArray);
-
+//
             HourlyWeather[] hourlyWeathersArray = new HourlyWeather[hourlyWeathers.size()];
             hourlyWeathersArray = hourlyWeathers.toArray(hourlyWeathersArray);
             Fragment fragment = new WeatherHome();
             Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
             args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
             args.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, hourlyWeathersArray);
             fragment.setArguments(args);
-
-            //onWaitFragmentInteractionHide();
+//
+//            onWaitFragmentInteractionHide();
             loadFragment(fragment);
         } catch (JSONException e){
             e.printStackTrace();
         }
+        onWaitFragmentInteractionHide();
     }
 
     private double convertCtoF(double c) {
@@ -1069,6 +1107,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                             Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
                             //pass the current location on to the MapActivity when it is loaded
                             i.putExtra("LOCATION", mCurrentLocation);
+
                             startActivity(i);
                         }
 
@@ -1511,7 +1550,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             Log.e("CHATID", "it is: " + mChats.get(i));
 
-            m[i] = new Message.Builder("chat name?").addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
+            m[i] = new Message.Builder(mChatNames.get(mChats.get(i))).addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
         return m;
     }
@@ -1531,6 +1570,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             if (success) {
                 mChats = new ArrayList<>();
                 mPeople = new HashMap<>();
+                mChatNames = new HashMap<>();
                 mChatMembers = ArrayListMultimap.create();
                 //mchats, mchatmembers, mpeople
 
@@ -1539,8 +1579,13 @@ public class MessagingHomeActivity extends AppCompatActivity
                     String chatid = user.getString("chatid");
                     String memberid = user.getString("memberid");
                     String username = user.getString("username");
+                    String chatname = user.getString("chatname");
 
-                    if (!mChats.contains(chatid)) mChats.add(chatid);
+                    if (!mChats.contains(chatid)) {
+                        mChats.add(chatid);
+                        mChatNames.put(chatid, chatname);
+                    }
+
                     if (!mPeople.containsKey(memberid)) mPeople.put(memberid, username);
                     mChatMembers.put(chatid, memberid);
                 }

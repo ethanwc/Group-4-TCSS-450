@@ -1,41 +1,133 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
+import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.model.location;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener {
+import static ethanwc.tcss450.uw.edu.template.Main.MainActivity.EXTRA_MESSAGE;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMapClickListener,
+        GoogleMap.OnMarkerClickListener, GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener {
 
     private GoogleMap mMap;
     private Location mCurrentLocation;
+    private Double mLat;
+    private Double mLong;
+    private int mZipcode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+//mMap.setMyLocationEnabled(  );
         mCurrentLocation = (Location) getIntent().getParcelableExtra("LOCATION");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
+//        checkLocationPermission();
 
+
+        //
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_messaging_fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mapFragment.getMapAsync(new OnMapReadyCallback() {
+//                    @Override
+//                    public void onMapReady(GoogleMap googleMap) {
+//                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+//
+//                        googleMap.addMarker(new MarkerOptions()
+//                                .position(new LatLng(37.4233438, -122.0728817))
+//                                .title("LinkedIn")
+//                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+//
+//                        googleMap.addMarker(new MarkerOptions()
+//                                .position(new LatLng(37.4629101,-122.2449094))
+//                                .title("Facebook")
+//                                .snippet("Facebook HQ: Menlo Park"));
+//
+//                        googleMap.addMarker(new MarkerOptions()
+//                                .position(new LatLng(37.3092293, -122.1136845))
+//                                .title("Apple"));
+//
+//                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
+//                    }
+//                });
+//            }
+//        });
+        //
+    }
+//
+public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    public boolean checkLocationPermission(){
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+    //
 
     /**
      * Manipulates the map once available.
@@ -49,19 +141,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+//        UiSettings.setZoomControlsEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled( true );
+        mMap.getUiSettings().setMyLocationButtonEnabled( true );
+        mMap.getUiSettings().setCompassEnabled( true );
+//        mMap.getUiSettings().setMyL
+//        googleMap.setMyLocationEnabled( true );
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            googleMap.setMyLocationEnabled(true);
+        } else {
+// Show rationale and request permission.
+        }
         // Add a marker in the current device location and move the camera
         LatLng current = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
         mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
         //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15.0f));
-
+//
+//        mMap.setMyLocationEnabled(true);
+        mMap.setOnMyLocationButtonClickListener(this);
+        //
         mMap.setOnMapClickListener(this);
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        System.out.println("map clicked--------");
+        System.out.println(latLng.longitude+"map clicked--------"+latLng.latitude);
+
+        DecimalFormat df = new DecimalFormat( "#.#####" );
+        mLong = Double.parseDouble(df.format(latLng.longitude));
+        df = new DecimalFormat( "#.#######" );
+        mLat = Double.parseDouble(df.format(latLng.latitude));
+
+        System.out.println(mLong+"#####"+mLat);
+//        mCurrentLocation.setLatitude( latLng.longitude );
+        System.out.println(mCurrentLocation.getLongitude()+"map clicked+++++++"+mCurrentLocation.getLatitude());
+//        Location loc = new Location(  )
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(mLat, mLong, 1);
+//            List<Address> addresses = geocoder.getFromLocation(latLng.longitude, latLng.latitude, 1);
+
+            if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
+                mZipcode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
+                System.out.println( "-------ZIPPP----" + mZipcode );
+
+                Intent intent = new Intent("zipCodeSent");
+                intent.putExtra("zip", mZipcode);
+                sendBroadcast(intent);
+                finish();
+
+            }else{
+                System.out.println("cannot get zip code");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Log.d("LAT/LONG", latLng.toString());
 
         Marker marker = mMap.addMarker(new MarkerOptions() .position(latLng)
@@ -92,7 +228,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return true;
             }
         });
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
 
     }
     public String color(int i){
@@ -121,6 +257,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+//        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+//        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
         return false;
     }
 

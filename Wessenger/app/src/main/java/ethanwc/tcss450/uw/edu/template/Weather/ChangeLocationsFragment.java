@@ -38,11 +38,12 @@ import me.pushy.sdk.Pushy;
 
 
 /**
- * A simple {@link Fragment} subclass. */
+ * A simple {@link Fragment} subclass.
+ */
 public class ChangeLocationsFragment extends Fragment {
-private PushMessageReceiver mPushMessageReciever;
-private onChangeLocationFragmentInteractionListener mListener;
-private EditText mZip;
+    private PushMessageReceiver mPushMessageReciever;
+    private onChangeLocationFragmentInteractionListener mListener;
+    private EditText mZip;
     public ChangeLocationsFragment() {
         // Required empty public constructor
     }
@@ -54,7 +55,7 @@ private EditText mZip;
             mPushMessageReciever = new PushMessageReceiver();
         }
 
-      IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
+        IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
 
