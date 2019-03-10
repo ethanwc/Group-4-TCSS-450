@@ -1014,20 +1014,22 @@ public class MessagingHomeActivity extends AppCompatActivity
             }
             DailyWeather[] dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
             dailyWeathersArray = mDailyWeather.toArray(dailyWeathersArray);
-
+//
             HourlyWeather[] hourlyWeathersArray = new HourlyWeather[hourlyWeathers.size()];
             hourlyWeathersArray = hourlyWeathers.toArray(hourlyWeathersArray);
             Fragment fragment = new WeatherHome();
             Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
             args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
             args.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, hourlyWeathersArray);
             fragment.setArguments(args);
-
-            onWaitFragmentInteractionHide();
+//
+//            onWaitFragmentInteractionHide();
             loadFragment(fragment);
         } catch (JSONException e){
             e.printStackTrace();
         }
+        onWaitFragmentInteractionHide();
     }
 
 
