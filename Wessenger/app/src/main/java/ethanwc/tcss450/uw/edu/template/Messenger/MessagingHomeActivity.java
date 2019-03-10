@@ -666,26 +666,11 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(true);
             mFab.show();
 //            mFab.setImageResource(android.R.drawable.ic_dialog_map);
-            mWeather = false;
 
             //Set on click listener for FAB
-            mFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-                    if (mCurrentLocation == null) {
+            mWeather = false;
 
-                        Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show(); } else {
-                        Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
-                        //pass the current location on to the MapActivity when it is loaded
-                         i.putExtra("LOCATION", mCurrentLocation);
-                        startActivity(i);
-                    }
-
-                }
-
-            });
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
 
@@ -710,8 +695,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .build().execute();
 
 
-            mFab.hide();
-            mFab.setEnabled(false);
 
             loadFragment(changeLocationsFragment);
 
@@ -966,6 +949,24 @@ public class MessagingHomeActivity extends AppCompatActivity
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                         .replace(R.id.changeLocation_container, frag);
                 transaction.commit();
+
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (mCurrentLocation == null) {
+
+                            Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show(); } else {
+                            Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
+                            //pass the current location on to the MapActivity when it is loaded
+                            i.putExtra("LOCATION", mCurrentLocation);
+                            startActivity(i);
+                        }
+
+                    }
+
+                });
 
 
             } else {
