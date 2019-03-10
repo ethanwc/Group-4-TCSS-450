@@ -660,7 +660,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .build();
 
             new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                    .onPreExecute(this::onWaitFragmentInteractionShow)
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleWeatherPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build()
@@ -986,7 +986,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             args.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, hourlyWeathersArray);
             fragment.setArguments(args);
 
-            onWaitFragmentInteractionHide();
+            //onWaitFragmentInteractionHide();
             loadFragment(fragment);
         } catch (JSONException e){
             e.printStackTrace();
