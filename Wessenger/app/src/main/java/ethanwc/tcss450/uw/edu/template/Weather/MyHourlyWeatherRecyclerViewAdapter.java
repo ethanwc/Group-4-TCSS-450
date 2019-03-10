@@ -1,6 +1,7 @@
 package ethanwc.tcss450.uw.edu.template.Weather;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,8 @@ public class MyHourlyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyH
 //        holder.mItem = mValues.get(position);
         holder.mTemperatureView.setText(mValues.get(position).getTemp()+ "F");
         holder.mWeatherView.setText(mValues.get(position).getWeather());
-        holder.mTime.setText(position + " ");
+        holder.mTime.setText(mValues.get(position).getTime());
+        Log.e("time ", " " + mValues.get(position).getTime());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

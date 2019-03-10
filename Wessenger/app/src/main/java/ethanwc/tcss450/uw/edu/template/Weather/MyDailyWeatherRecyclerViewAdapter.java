@@ -7,13 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
-
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
-
 import java.util.Calendar;
 import java.util.List;
 
@@ -47,6 +44,7 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
         String iconcode = mValues.get(position).getIcon();
         String icon = "http://openweathermap.org/img/w/" +iconcode + ".png";
         Picasso.get().load(icon).into((ImageView) holder.mIcon);
+        Log.e("weather", " "+ mValues.get(position).getWeather());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

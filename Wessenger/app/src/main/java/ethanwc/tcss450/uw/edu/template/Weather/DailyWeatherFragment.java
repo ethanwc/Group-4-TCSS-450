@@ -50,7 +50,7 @@ public class DailyWeatherFragment extends Fragment {
         if (getArguments() != null) {
             mDailyWeather = new ArrayList<DailyWeather>(
                     Arrays.asList((DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST)));
-            mColumnCount = mDailyWeather.size();
+            //mColumnCount = mDailyWeather.size();
         }
     }
 
@@ -59,7 +59,7 @@ public class DailyWeatherFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Log.e("create view", " hi" + mColumnCount);
-        View view = inflater.inflate(R.layout.fragment_dailyweather_list, container, false);;
+        View view = inflater.inflate(R.layout.fragment_dailyweather_list, container, false);
 
         int date = Calendar.DAY_OF_WEEK;
         Log.e("date:", " " + date);
@@ -70,6 +70,7 @@ public class DailyWeatherFragment extends Fragment {
             RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                Log.e("here", " ");
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }

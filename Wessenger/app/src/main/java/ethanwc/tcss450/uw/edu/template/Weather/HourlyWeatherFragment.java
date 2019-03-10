@@ -58,7 +58,7 @@ public class HourlyWeatherFragment extends Fragment {
         if (getArguments() != null) {
             mHourlyWeather =  new ArrayList<HourlyWeather>(
                     Arrays.asList((HourlyWeather[]) getArguments().getSerializable(ARG_HOURLYWEATHER_LIST)));
-            mColumnCount = mHourlyWeather.size();
+            //mColumnCount = mHourlyWeather.size();
         }
     }
 

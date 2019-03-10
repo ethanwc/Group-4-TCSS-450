@@ -7,6 +7,7 @@ public class HourlyWeather implements Serializable {
     private final String mLocation;
     private final String mWeather;
     private final double mTemp;
+    private  final String mTime;
 
 
 
@@ -17,6 +18,7 @@ public class HourlyWeather implements Serializable {
         private final String mWeather;
         private String mLocation;
         private double mTemp;
+        private String mTime;
 
         /**
          * Constructs a new builder.
@@ -32,6 +34,10 @@ public class HourlyWeather implements Serializable {
         }
         public HourlyWeather.Builder setTemp(double temp) {
             mTemp = temp;
+            return this;
+        }
+        public HourlyWeather.Builder setTime(String time) {
+            mTime = parseTime(time);
             return this;
         }
 
@@ -51,6 +57,7 @@ public class HourlyWeather implements Serializable {
         this.mWeather = builder.mWeather;
         this.mLocation = builder.mLocation;
         this.mTemp = builder.mTemp;
+        this.mTime = builder.mTime;
 
     }
 
@@ -77,5 +84,15 @@ public class HourlyWeather implements Serializable {
      */
     public double getTemp() {
         return mTemp;
+    }
+
+    public String getTime() {return  mTime;}
+
+    private static String parseTime(String time) {
+        String result;
+        String[] split = time.split("T");
+        String[] split2 = split[1].split(":");
+        result = split2[0] + ":" + split2[1];
+        return result;
     }
 }
