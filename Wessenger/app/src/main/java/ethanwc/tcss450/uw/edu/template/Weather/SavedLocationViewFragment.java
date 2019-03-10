@@ -23,8 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
+import ethanwc.tcss450.uw.edu.template.R;
 import me.pushy.sdk.Pushy;
 
 
@@ -59,7 +59,7 @@ public class SavedLocationViewFragment extends Fragment {
             mPushMessageReciever = new PushMessageReceiver();
         }
 
-        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
     /**

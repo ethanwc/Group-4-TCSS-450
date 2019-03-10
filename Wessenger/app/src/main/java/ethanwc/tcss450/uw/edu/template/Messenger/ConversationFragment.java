@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Message;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
+import ethanwc.tcss450.uw.edu.template.R;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -64,7 +64,7 @@ public class ConversationFragment extends Fragment {
             mPushMessageReciever = new PushMessageReceiver();
         }
 //        System.out.println("from weather");
-        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
 

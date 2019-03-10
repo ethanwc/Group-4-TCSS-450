@@ -31,9 +31,9 @@ import org.cloudinary.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
+import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
 
@@ -55,7 +55,7 @@ private EditText mZip;
             mPushMessageReciever = new PushMessageReceiver();
         }
 
-      IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+      IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
 

@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +50,7 @@ public class RemoveFromChatFragment extends Fragment {
         }
     }
 
-    public interface OnRemoveFromChatFragmentAction extends WaitFragment.OnFragmentInteractionListener{
+    public interface OnRemoveFromChatFragmentAction extends WaitFragment.OnFragmentInteractionListener {
         void removeFromChat(Credentials credentials);
     }
 

@@ -16,8 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.R;
 
 
 /**

@@ -29,8 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;

@@ -5,7 +5,7 @@
     android:id="@+id/fragment_weather_changelocation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="Weather.ChangeLocationsFragment"
+    tools:context=".Weather.ChangeLocationsFragment"
     android:theme="@style/AppTheme">
 
 

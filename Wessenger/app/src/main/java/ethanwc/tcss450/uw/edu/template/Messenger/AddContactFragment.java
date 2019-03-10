@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,15 +23,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import java.util.Arrays;
-
-import ethanwc.tcss450.uw.edu.template.Main.LoginFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
+import ethanwc.tcss450.uw.edu.template.R;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -139,7 +134,7 @@ private String mMyEmail;
             mPushMessageReciever = new PushMessageReceiver();
         }
 //        System.out.println("from weather");
-        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
 

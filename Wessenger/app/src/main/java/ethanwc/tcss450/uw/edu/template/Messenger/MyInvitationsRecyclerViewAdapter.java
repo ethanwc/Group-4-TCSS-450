@@ -11,22 +11,21 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import ethanwc.tcss450.uw.edu.template.Messenger.InvitationsFragment.OnInvitationListFragmentInteractionListener;
+import ethanwc.tcss450.uw.edu.template.dummy.DummyContent;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnInvitationListFragmentInteractionListener}.
+ * {@link RecyclerView.Adapter} that can display a {@link DummyContent.DummyItem} and makes a call to the
+ * specified {@link InvitationsFragment.OnInvitationListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyInvitationsRecyclerViewAdapter extends RecyclerView.Adapter<MyInvitationsRecyclerViewAdapter.ViewHolder> {
 
     private final List<Connection> mValues;
-    private final OnInvitationListFragmentInteractionListener mListener;
+    private final InvitationsFragment.OnInvitationListFragmentInteractionListener mListener;
 
-    public MyInvitationsRecyclerViewAdapter(List<Connection> items, OnInvitationListFragmentInteractionListener listener) {
+    public MyInvitationsRecyclerViewAdapter(List<Connection> items, InvitationsFragment.OnInvitationListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }

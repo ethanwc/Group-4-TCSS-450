@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
@@ -31,10 +30,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.Main.LoginFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
