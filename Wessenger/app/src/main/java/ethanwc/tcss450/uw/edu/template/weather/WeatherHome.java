@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment;
@@ -41,6 +43,8 @@ import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
+
+import static ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment.ARG_DAILYWEATHER_LIST;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,6 +59,7 @@ public class WeatherHome extends Fragment {
     private OnFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
     private Toolbar toolbar;
+    private  DailyWeather[] mDailyWeatherArray;
 
 
     @Override
@@ -96,6 +101,9 @@ public class WeatherHome extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mDailyWeatherArray = (DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST);
+
+            Log.e("daily weather", " " + mDailyWeatherArray);
         }
     }
 
@@ -114,8 +122,15 @@ public class WeatherHome extends Fragment {
         transaction.add(R.id.weather_home_container_1, new CurrentWeather(), "Frag_Top_tag");
 
         //TODO STEVEN INFLATE FRAGMENTS HERE
-        //transaction.add(R.id.weather_home_container_2, new HourlyWeatherFragment(), "Frag_Middle_tag");//HomeFragment.ForecastWeather()
-        transaction.add(R.id.weather_home_container_3, new DailyWeatherFragment(), "Frag_Bottom_tag");
+        Fragment fragment = new HourlyWeatherFragment();
+        Bundle arg = new Bundle();
+//        arg.putSerializable();
+        transaction.add(R.id.weather_home_container_2, fragment, "Frag_Middle_tag");
+        fragment = new DailyWeatherFragment();
+        arg = new Bundle();
+        arg.putSerializable(ARG_DAILYWEATHER_LIST, mDailyWeatherArray);
+        fragment.setArguments(arg);
+        transaction.add(R.id.weather_home_container_3, fragment, "Frag_Bottom_tag");
 
 
         transaction.commit();

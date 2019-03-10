@@ -12,17 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
-import me.pushy.sdk.lib.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
-
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -64,34 +56,17 @@ public class DailyWeatherFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleWeatherPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build()
-                .execute();
-        Log.e("onStart", " ");
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            //mDailyWeather = new ArrayList<DailyWeather>(
-                   // Arrays.asList((DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST)));
-            //mColumnCount = mDailyWeather.size();
+            mDailyWeather = new ArrayList<DailyWeather>(
+                    Arrays.asList((DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST)));
+            mColumnCount = mDailyWeather.size();
         }
-        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleWeatherPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build()
-                .execute();
-        Log.e("oncreate", " ");
     }
 
 
@@ -104,12 +79,7 @@ public class DailyWeatherFragment extends Fragment {
 
         int date = Calendar.DAY_OF_WEEK;
         Log.e("date:", " " + date);
-        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleWeatherPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build()
-                .execute();
+
         Log.e("after get async", " ");
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -124,70 +94,6 @@ public class DailyWeatherFragment extends Fragment {
         }
 
         return view;
-    }
-
-
-    private void handleWeatherPostExecute(final String response) {
-        Log.e("handle weather", " post execute" );
-
-        try {
-            List<DailyWeather> dailyWeathers = new ArrayList<>();
-            JSONObject result = new JSONObject(response);
-            JSONArray listArray = result.getJSONArray("list");
-            for (int i = 0; i < listArray.length(); i ++) {
-                JSONObject jsonWeather = listArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
-                JSONObject jsonTemp = listArray.getJSONObject(i).getJSONObject("main");
-//                Log.e("jsonweather", " "+ jsonWeather);
-//                Log.e("jsontemp", " " + jsonTemp);
-                double max = convertKtoF(jsonTemp.getInt("temp_max"));
-                double min = convertKtoF(jsonTemp.getInt("temp_min"));
-
-                dailyWeathers.add(new DailyWeather.Builder(
-                        jsonWeather.getString("main"))
-                        .addIcon(jsonWeather.getString("icon"))
-                        .addHighTemp(max)
-                        .addLowTemp(min)
-                        .build());
-                //Log.e("daily weather: ", " " + max + " " + min + " " + jsonWeather.getString("main") + " "+ dailyWeathers);
-            }
-            mDailyWeather = dailyWeathers;
-            /*DailyWeather[] dailyWeathersArray = new DailyWeather[dailyWeathers.size()];
-            dailyWeathersArray = dailyWeathers.toArray(dailyWeathersArray);
-            //Log.e("daily array: ", " " + dailyWeathersArray[0]);
-            Bundle args = new Bundle();
-            args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
-            Fragment fragment = new DailyWeatherFragment();
-            fragment.setArguments(args);*/
-
-            onWaitFragmentInteractionHide();
-//            loadFragment(fragment);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-    private float convertKtoF(double k) {
-        return  Math.round((k*1.8 - 459.67) * 100) / 100;
-    }
-
-    private void handleErrorsInTask(String result) {
-        Log.e("ASYNC_TASK_ERROR", result);
-    }
-
-    public void onWaitFragmentInteractionShow() {
-        getActivity()
-        .getSupportFragmentManager()
-        .beginTransaction()
-        .add(R.id.weather_home_container_3, new WaitFragment(), "WAIT")
-        .addToBackStack(null)
-        .commit();
-    }
-    public void onWaitFragmentInteractionHide() {
-        getActivity()
-        .getSupportFragmentManager()
-        .beginTransaction()
-        .remove(getActivity().getSupportFragmentManager().findFragmentByTag("WAIT"))
-        .commit();
     }
 
     @Override

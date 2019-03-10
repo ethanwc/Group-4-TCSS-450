@@ -475,21 +475,15 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .appendPath("api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
                     .build();
 
-//            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
-//                    .onPostExecute(this::handleWeatherPostExecute)
-//                    .onCancelled(this::handleErrorsInTask)
-//                    .build()
-//                    .execute();
+            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleWeatherPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build()
+                    .execute();
 
-            //create daily weather frag
-            //create hourly weather frag
-            // ...
 
-//            dailyweather.setarg
-            // ...
-
-            loadFragment(weatherHome);
+//            loadFragment(weatherHome);
             //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
@@ -705,7 +699,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             //Log.e("daily array: ", " " + dailyWeathersArray[0]);
             Bundle args = new Bundle();
             args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
-            Fragment fragment = new DailyWeatherFragment();
+            Fragment fragment = new WeatherHome();
             fragment.setArguments(args);
 
             onWaitFragmentInteractionHide();
