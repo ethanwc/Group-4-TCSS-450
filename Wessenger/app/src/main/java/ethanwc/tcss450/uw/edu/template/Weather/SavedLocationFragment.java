@@ -36,20 +36,19 @@ import me.pushy.sdk.Pushy;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnLocationListFragmentInteractionListener}
  * interface.
  */
 public class SavedLocationFragment extends Fragment {
     public static final String ARG_LOCATION_LIST = "Location list";
-    // TODO: Customize parameter argument names
+
     private static final String ARG_COLUMN_COUNT = "column-count";
     private List<location> mLocationList;
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
-    private PushMessageReceiver mPushMessageReciever;
-//    private MenuItem mMenuItem;
 
+    private int mColumnCount = 1;
+    private OnLocationListFragmentInteractionListener mListener;
+    private PushMessageReceiver mPushMessageReciever;
+    private String mMyEmail;
 
     @Override
     public void onResume() {
@@ -80,8 +79,6 @@ public class SavedLocationFragment extends Fragment {
     public SavedLocationFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static SavedLocationFragment newInstance(int columnCount) {
         SavedLocationFragment fragment = new SavedLocationFragment();
         Bundle args = new Bundle();
@@ -95,8 +92,8 @@ public class SavedLocationFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            System.out.println("From Saved Location Fragment ");
             mLocationList = new ArrayList<location>( Arrays.asList((location[]) getArguments().getSerializable(ARG_LOCATION_LIST)));
+            mMyEmail = getArguments().getString("passEmail");
 
 
         }
@@ -116,7 +113,8 @@ public class SavedLocationFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.Weather.MySavedLocationRecyclerViewAdapter(mLocationList, mListener));
+            boolean change = getArguments().getBoolean("change");
+            recyclerView.setAdapter(new ethanwc.tcss450.uw.edu.template.Weather.MySavedLocationRecyclerViewAdapter(mLocationList, mListener, change));
         }
         return view;
     }
@@ -125,8 +123,8 @@ public class SavedLocationFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnLocationListFragmentInteractionListener) {
+            mListener = (OnLocationListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -149,9 +147,10 @@ public class SavedLocationFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update what method does upon list interaction.
-        void onListFragmentInteraction(location item);
+    public interface OnLocationListFragmentInteractionListener {
+
+        void onLocationListFragmentInteraction(location item);
+        void onLocationListRemoveFragmentInteraction(location item);
     }
     public void changeColorOnMsg(){
 
@@ -206,6 +205,7 @@ public class SavedLocationFragment extends Fragment {
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 String msgtype = intent.getStringExtra( "MsgType" );
+                String receiver = intent.getStringExtra( "Receiver" );
 
                 if (type.equals("inv")) {
                     changeColorOnInv();
@@ -262,6 +262,23 @@ public class SavedLocationFragment extends Fragment {
                         // Build the notification and display it
                         notificationManager.notify( 1, builder.build() );
                     }
+                }else if(type.equals("acpt")){
+                    changeColorOnInv();
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("Connection Request Accepted : " + receiver)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
                 }
             }
         }

@@ -1,10 +1,16 @@
 package ethanwc.tcss450.uw.edu.template.Messenger;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
+import android.location.Location;
+import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +18,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.text.emoji.EmojiCompat;
 import android.support.text.emoji.FontRequestEmojiCompatConfig;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -35,9 +43,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cloudinary.android.MediaManager;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -81,7 +96,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         ConversationFragment.OnMessageListFragmentInteractionListener, ConnectionsFragment.OnConnectionListFragmentInteractionListener,
         InvitationsFragment.OnInvitationListFragmentInteractionListener,
         ChangePasswordFragment.OnChangePasswordFragmentInteractionListener,
-        SavedLocationFragment.OnListFragmentInteractionListener,
+        SavedLocationFragment.OnLocationListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
         WeatherHome.OnFragmentInteractionListener,
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
@@ -105,11 +120,27 @@ public class MessagingHomeActivity extends AppCompatActivity
     private ArrayList<Connection> mConnections;
     private int mCounter = 0;
     DrawerLayout mdrawer;
+    private int mZip = 98404;
     private String mChatId = "";
     private ArrayList<location> mLocation;
     private List<DailyWeather> mDailyWeather;
 
+    private boolean mWeather = true;
     private PushMessageReceiver mPushMessageReciever;
+    private static final String TAG = "MessagingHomeActivity";
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10;
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    private static final int MY_PERMISSIONS_LOCATIONS = 8414;
+    private LocationRequest mLocationRequest;
+    private Location mCurrentLocation;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
 //    private MenuItem mMenuItem;
 
     private static final String[] COUNTRIES = new String[]{"Belgium",
@@ -117,12 +148,14 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onResume() {
         super.onResume();
+
+        startLocationUpdates();
         System.out.println("=>>>><<<<<-====");
         if (mPushMessageReciever == null) {
             mPushMessageReciever = new PushMessageReceiver();
         }
 
-        System.out.println("ole");
+
 //        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
 //        getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
@@ -132,8 +165,10 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onPause() {
 //        System.out.println("in push message receive---->On Pause");
+        super.onResume();
+        startLocationUpdates();
         super.onPause();
-        System.out.println("ole");
+
         if (mPushMessageReciever != null){
 //            getActivity().unregisterReceiver(mPushMessageReciever);
         }
@@ -151,6 +186,36 @@ public class MessagingHomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //init cloudinary stuffs
+
+        //for location
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
+                            , Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_LOCATIONS);
+        } else {
+//The user has already allowed the use of Locations. Get the current location.
+ requestLocation();
+        }
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+// Update UI with location data
+// ...
+                    setLocation(location);
+//                    Log.d("LOCATION UPDATE!", location.toString());
+                } };
+        };
+        createLocationRequest();
+
+        //
         MediaManager.init(this);
         setupEmojis();
 
@@ -212,7 +277,96 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadChats();
 
         }
+
     }
+    private void setLocation(final Location location) {
+        mCurrentLocation = location;
+
+    }
+
+    /**
+     * Requests location updates from the FusedLocationApi. */
+    protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null /* Looper */); }
+    }
+
+    /**
+     * Removes location updates from the FusedLocationApi. */
+    protected void stopLocationUpdates() {
+// It is a good practice to remove location requests when the activity is in a paused or
+// stopped state. Doing so helps battery performance and is especially
+// recommended in applications that request frequent location updates.
+ mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_LOCATIONS: {
+// If request is cancelled, the result arrays are empty.
+ if (grantResults.length > 0
+&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+// permission was granted, yay! Do the // locations-related task you need to do.
+ requestLocation();
+            } else {
+// permission denied, boo! Disable the
+// functionality that depends on this permission.
+ Log.d("PERMISSION DENIED", "Nothing to see or do here.");
+ System.out.println("-----Permission Denied");
+//Shut down the app. In production release, you would let the user
+// know why the app is shutting down...maybe ask for permission again?
+ finishAndRemoveTask();
+            } return;
+        }
+// other 'case' lines to check for other
+// permissions this app might request
+ }
+    }
+
+    private void requestLocation() {
+        System.out.println("request location----------");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("request location denied----------");
+            Log.d("REQUEST LOCATION", "User did NOT allow permission to request location!");
+        } else {
+            System.out.println("request location success----------");
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            System.out.println(" onsuccess----------");
+// Got last known location. In some rare situations this can be null.
+ if (location != null) {
+                            Log.d("LOCATION", location.toString());
+                        } }
+        }); }
+}
+
+    /**
+     * Create and configure a Location Request used when retrieving location updates */
+    protected void createLocationRequest() {
+        mLocationRequest = LocationRequest.create();
+// Sets the desired interval for active location updates. This interval is
+// inexact. You may not receive updates at all if no location sources are available, or
+// you may receive them slower than requested. You may also receive updates faster than
+// requested if other applications are requesting location at a faster interval.
+ mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+// Sets the fastest rate for active location updates. This interval is exact, and your
+// application will never receive updates faster than this value.
+ mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+
 
     /**
      * Initializes the download of emojis.
@@ -250,25 +404,47 @@ public class MessagingHomeActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
+        mWeather = true;
+
+
+        super.onBackPressed();
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
         View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
         View conversationViewFrag = findViewById(R.id.fragment_messagelist_conversation);
         View chatFrag = findViewById(R.id.fragment_chat);
         View addChatFrag = findViewById(R.id.fragment_messenger_addchat);
+        View changelocation = findViewById( R.id.fragment_weather_changelocation );
+        View currentWeather = findViewById(R.id.fragment_weather_current_main);
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
-        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null || addChatFrag != null || chatFrag != null) {
+
+        } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null
+                || addChatFrag != null || chatFrag != null|| changelocation != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setEnabled(true);
-            super.onBackPressed();
-        } else {
+
+        } else if (currentWeather != null) {
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+
+        } else if (changelocation != null) {
+            View removeLocation = findViewById(R.id.button_location_remove);
+            removeLocation.setVisibility(View.GONE);
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
+            mFab.setEnabled(true);
+            mWeather = false;
+        }else {
+
             //Hide the FAB on correct windows when back is pressed
             mFab.hide();
             mFab.setEnabled(false);
-            super.onBackPressed();
+
         }
     }
 
@@ -383,6 +559,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     onWaitFragmentInteractionHide();
                 }
 
+
             }
             /**
              * Handle errors that may occur during the AsyncTask.
@@ -470,6 +647,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (id == R.id.nav_weather_home) {
 
             WeatherHome weatherHome = new WeatherHome();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
+            weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
             mFab.hide();
             mFab.setEnabled(false);
@@ -487,22 +667,62 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .execute();
 
 
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+
+            // loadFragment(weatherHome);
             //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
+            mFab.setEnabled(true);
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_dialog_map);
+
+            //Set on click listener for FAB
+
+            mWeather = false;
+
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
-            mFab.hide();
-            mFab.setEnabled(false);
+
+
+
+            mLocation = new ArrayList<>();
+
+            //Build ASNC task to grab connections from web service.
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getLocation))
+                    .build();
+            //handleConnectionGetInfoOnPostExecute
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+//            getSupportActionBar().setTitle("Connections");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleLocationGetPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
+
+
+
             loadFragment(changeLocationsFragment);
+
+
             //Saved locations has been chosen
         }
 
         else if (id == R.id.nav_homepage) {
-
-            loadFragment(new HomeFragment());
+            Fragment homeF = new HomeFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
+            homeF.setArguments(args);
+            loadFragment(homeF);
         }
 
         else if (id == R.id.nav_View_Saved_Location) {
+            mWeather = true;
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             mLocation = new ArrayList<>();
@@ -534,6 +754,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Chat");
             mFab.setEnabled(true);
             mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -546,6 +767,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             System.out.println("===========");
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
@@ -575,7 +797,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             mFab.setEnabled(true);
             mFab.show();
-
+//            mFab.setImageResource(android.R.drawable.ic_input_add);
             //Set on click listener for FAB
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -608,6 +830,25 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
 
+    private void handleAddLocationOnPostExecute(String s) {
+        JSONObject resultJSON = null;
+        try {
+            resultJSON = new JSONObject(s);
+            boolean success = resultJSON.getBoolean("success");
+            if (success) {
+                onWaitFragmentInteractionHide();
+            } else {
+                Log.e("WEB SERVICE","Web Service returned false.");
+                onWaitFragmentInteractionHide();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
      *
@@ -616,9 +857,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     private void handleLocationGetOnPostExecute(final String result) {
         //parse JSON
         try {
-            System.out.println("-------on location click-------");
+
             onWaitFragmentInteractionHide();
-            System.out.println("2------_>");
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
@@ -633,17 +873,17 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray longitudeArray = resultJSON.getJSONArray( "longitude" );
                 JSONArray zipArray = resultJSON.getJSONArray( "zip" );
 
+                Log.e("LATITUDE!!!!", longitudeArray.toString());
 //
 //                System.out.println("EMAILS!!!" + emails.get(0).toString());
                 for (int i = 0; i < locationArray.length(); i++) {
                     location loc = new location.Builder(locationArray.get(i).toString())
                             .addNickname( locationArray.get(i).toString())
-                            .addLatitude( latitudeArray.get(i).toString() )
-                            .addLongitude( longitudeArray.get(i).toString() )
+                            .addCity( latitudeArray.get(i).toString() )
+                            .addState( longitudeArray.get(i).toString() )
                             .addzip( zipArray.get(i).toString() )
                             .build();
-//                    System.out.println("===Latitude!!!" + latitudeArray.get(i).toString());
-//                    System.out.println("===Longitude!!!" + longitudeArray.get(i).toString());
+
                     mLocation.add(loc);
 
                 }
@@ -657,7 +897,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                //Bundle connections and send as arguments
                 Bundle args = new Bundle();
                 args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
-//
+                args.putSerializable("change", false);
                 Fragment frag = new SavedLocationFragment();
                 frag.setArguments( args );
                 onWaitFragmentInteractionHide();
@@ -756,6 +996,96 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
 
+
+    /**
+     * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
+     *
+     * @param result String which represents the JSON result.
+     */
+    private void handleLocationGetPostExecute(final String result) {
+        //parse JSON
+        try {
+
+            onWaitFragmentInteractionHide();
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+
+
+
+            if (success) {
+
+                mLocation = new ArrayList<>();
+                JSONArray locationArray = resultJSON.getJSONArray( "nickname" );
+                JSONArray latitudeArray = resultJSON.getJSONArray( "latitude" );
+                JSONArray longitudeArray = resultJSON.getJSONArray( "longitude" );
+                JSONArray zipArray = resultJSON.getJSONArray( "zip" );
+
+                Log.e("LATITUDE!!!!", longitudeArray.toString());
+//
+//                System.out.println("EMAILS!!!" + emails.get(0).toString());
+                for (int i = 0; i < locationArray.length(); i++) {
+                    location loc = new location.Builder(locationArray.get(i).toString())
+                            .addNickname( locationArray.get(i).toString())
+                            .addCity( latitudeArray.get(i).toString() )
+                            .addState( longitudeArray.get(i).toString() )
+                            .addzip( zipArray.get(i).toString() )
+                            .build();
+
+                    mLocation.add(loc);
+
+                }
+                SavedLocationFragment savedLocationFragment = new SavedLocationFragment();
+//                //Bundle list of connections as arguments and load connection fragment
+//                Connection[] connectionsAsArray = new Connection[mConnections.size()];
+//                connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                location[] locationAsArray = new location[mLocation.size()];
+
+                locationAsArray = mLocation.toArray(locationAsArray);
+//                //Bundle connections and send as arguments
+                Bundle args = new Bundle();
+                args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
+                args.putSerializable("change", true);
+                Fragment frag = new SavedLocationFragment();
+                frag.setArguments( args );
+                onWaitFragmentInteractionHide();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.changeLocation_container, frag);
+                transaction.commit();
+
+                mFab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (mCurrentLocation == null) {
+
+                            Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show(); } else {
+                            Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
+                            //pass the current location on to the MapActivity when it is loaded
+                            i.putExtra("LOCATION", mCurrentLocation);
+                            startActivity(i);
+                        }
+
+                    }
+
+                });
+
+
+            } else {
+                //Not successful return from webservice
+                onWaitFragmentInteractionHide();
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("SUPER!!", e.getMessage());
+            //notify user
+            onWaitFragmentInteractionHide();
+        }
+
+    }
 
     /**
      * Method to logout of the app, and delete saved password information
@@ -894,6 +1224,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
 
 
         uri = new Uri.Builder()
@@ -951,6 +1282,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
 
     }
 
@@ -1006,6 +1338,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1244,6 +1577,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        //Show FAB
 //        mFab.setEnabled(true);
 //        mFab.show();
+        //mFab.setImageResource(android.R.drawable.ic_input_add);
     }
 
 
@@ -1475,6 +1809,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 mFab.setEnabled(true);
                 mFab.show();
+//                mFab.setImageResource(android.R.drawable.ic_input_add);
+
 
                 //Set on click listener for FAB
                 mFab.setOnClickListener(new View.OnClickListener() {
@@ -1579,21 +1915,88 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(location item) {
-        SavedLocationViewFragment savedLocationViewFragment = new SavedLocationViewFragment();
+    public void onLocationListFragmentInteraction(location item) {
 
-        Bundle args = new Bundle();
-        mFab.setEnabled(false);
+        if (mWeather) {
+            WeatherHome weatherHome = new WeatherHome();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", Integer.parseInt(item.getZip()));
+            weatherHome.setArguments(args);
+            getSupportActionBar().setTitle("Weather");
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+
+            loadFragment(weatherHome);
+
+        } else {
+            mZip = Integer.parseInt(item.getZip());
+            WeatherHome weatherHome = new WeatherHome();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
+            weatherHome.setArguments(args);
+            getSupportActionBar().setTitle("Weather Home");
+            mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+            mFab.setEnabled(true);
+
+            loadFragment(weatherHome);
+        }
+
+
+    }
+
+    @Override
+    public void onLocationListRemoveFragmentInteraction(location item) {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_removeLocation))
+                .build();
+
+        String zip = item.getZip();
+        String email = getIntent().getExtras().getString("email");
+        JSONObject json = new JSONObject();
+        try {
+
+            json.put("email", email);
+            json.put("zip", zip);
+
+        } catch (JSONException e) {
+            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+        }
+        new SendPostAsyncTask.Builder(uri.toString(), json)
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleLocationRemoveOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+    }
+
+    private void handleLocationRemoveOnPostExecute(String s) {
+        getSupportActionBar().setTitle("Saved Locations");
+        SavedLocationFragment locationFragment = new SavedLocationFragment();
+        mLocation = new ArrayList<>();
+
+        //Build ASNC task to grab connections from web service.
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getLocation))
+                .build();
+        //handleConnectionGetInfoOnPostExecute
+        String msg = getIntent().getExtras().getString("email");
+        Credentials creds = new Credentials.Builder(msg).build();
+//            getSupportActionBar().setTitle("Connections");
+        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleLocationGetOnPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
+
+
         mFab.hide();
-        args.putSerializable("nickname", item.getNickname());
-        args.putSerializable("latitude", item.getLatitude());
-        args.putSerializable("longitude", item.getLongitude());
-        args.putSerializable("zip", item.getZip());
-        savedLocationViewFragment.setArguments(args);
-        loadFragment(savedLocationViewFragment);
-        System.out.println("----"+item.getNickname());
-        System.out.println("----"+item.getLongitude());
-        System.out.println("----"+item.getLatitude());
+        mFab.setEnabled(false);
+        onWaitFragmentInteractionHide();
     }
 
 
@@ -1738,6 +2141,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
+//        mFab.setImageResource(android.R.drawable.ic_input_add);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1758,6 +2162,24 @@ public class MessagingHomeActivity extends AppCompatActivity
     public void onHomeFragmentInteraction(Uri uri) {
 
     }
+
+    //@Override
+    public void onChangeLocationSubmit(int zip) {
+        mZip = zip;
+
+        WeatherHome weatherHome = new WeatherHome();
+        Bundle args = new Bundle();
+        args.putSerializable("zip", mZip);
+        weatherHome.setArguments(args);
+        getSupportActionBar().setTitle("Weather Home");
+        mFab.show();
+        //mFab.setImageResource(android.R.drawable.ic_menu_save);
+        mFab.setEnabled(true);
+
+        loadFragment(weatherHome);
+
+    }
+
 
     // Deleting the Pushy device token must be done asynchronously. Good thing
     // we have something that allows us to do that.

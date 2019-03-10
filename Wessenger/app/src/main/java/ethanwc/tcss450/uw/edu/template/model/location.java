@@ -3,15 +3,15 @@ import java.io.Serializable;
 
 public class location  implements Serializable, Comparable{
     private final String mNickname;
-    private final String mLatitude;
-    private final String mLongitude;
+    private final String mCity;
+    private final String mState;
     private final String mZip;
 
 
     @Override
     public int compareTo(Object o) {
         location loc = (location) o;
-        return mNickname.compareTo(loc.mNickname);
+        return mZip.compareTo(loc.mZip);
     }
 
     /**
@@ -19,8 +19,8 @@ public class location  implements Serializable, Comparable{
      */
     public static class Builder {
         private String mNickname = "";
-        private String mLatitude = "";
-        private String mLongitude = "";
+        private String mCity = "";
+        private String mState = "";
         private String mZip = "";
 
         public Builder(String nickname) {
@@ -44,8 +44,8 @@ public class location  implements Serializable, Comparable{
 //         * @param val String used to represent the last name of the connection.
 //         * @return Builder.
 //         */
-        public Builder addLatitude(final String val) {
-            mLatitude = val;
+        public Builder addCity(final String val) {
+            mCity = val;
             return this;
         }
 
@@ -54,13 +54,12 @@ public class location  implements Serializable, Comparable{
 //         * @param val String used to represent the username of the connection.
 //         * @return Builder.
 //         */
-        public Builder addLongitude(final String val) {
-            mLongitude = val;
+        public Builder addState(final String val) {
+            mState = val;
             return this;
         }
         public Builder addzip(final String val) {
             mZip = val;
-            System.out.println("------the zip "+val );
             return this;
         }
 
@@ -78,8 +77,8 @@ public class location  implements Serializable, Comparable{
      */
     private location(final Builder builder) {
         this.mNickname = builder.mNickname;
-        this.mLatitude = builder.mLatitude;
-        this.mLongitude = builder.mLongitude;
+        this.mCity = builder.mCity;
+        this.mState = builder.mState;
         this.mZip = builder.mZip;
     }
 
@@ -95,16 +94,16 @@ public class location  implements Serializable, Comparable{
 //     * Helper method to return the last name of the connection.
 //     * @return String used to represent the last name of the connection.
 //     */
-    public String getLongitude() {
-        return mLongitude;
+    public String getCity() {
+        return mCity;
     }
     //
 //    /**
 //     * Helper method to return the username of the connection.
 //     * @return String used to represent the username of the connection.
 //     */
-    public String getLatitude() {
-        return mLatitude;
+    public String getState() {
+        return mState;
     }
     //
 //    /**

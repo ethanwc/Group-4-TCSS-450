@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
@@ -31,10 +30,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
-import ethanwc.tcss450.uw.edu.template.Main.LoginFragment;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
@@ -406,13 +404,15 @@ public class ChangePasswordFragment extends WaitFragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->Change Password Fragment"+intent.toString());
+            System.out.println("in push message receive---+++++->SavedLocationFragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 String msgtype = intent.getStringExtra( "MsgType" );
+                String receiver = intent.getStringExtra( "Receiver" );
+
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -433,6 +433,7 @@ public class ChangePasswordFragment extends WaitFragment {
 
 
                 }else if(type.equals("msg")) {
+//                    String msgtype = intent.getStringExtra( "MsgType" );
                     changeColorOnMsg();
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -467,6 +468,23 @@ public class ChangePasswordFragment extends WaitFragment {
                         // Build the notification and display it
                         notificationManager.notify( 1, builder.build() );
                     }
+                }else if(type.equals("acpt")){
+                    changeColorOnInv();
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("Connection Request Accepted : " + receiver)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
                 }
             }
         }

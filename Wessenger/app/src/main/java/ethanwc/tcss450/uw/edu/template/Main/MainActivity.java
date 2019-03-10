@@ -10,12 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.auth.api.credentials.CredentialPickerConfig;
-import com.google.android.gms.auth.api.credentials.CredentialRequest;
-import com.google.android.gms.auth.api.credentials.CredentialsApi;
 import com.google.android.gms.auth.api.credentials.CredentialsClient;
 import com.google.android.gms.auth.api.credentials.CredentialsOptions;
 import com.google.android.gms.auth.api.credentials.HintRequest;
@@ -28,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.R;
 import me.pushy.sdk.Pushy;
 
 /**

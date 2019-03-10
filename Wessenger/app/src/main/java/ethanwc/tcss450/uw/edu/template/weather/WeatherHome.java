@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -14,27 +13,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.HomeFragment;
@@ -106,6 +94,8 @@ public class WeatherHome extends Fragment {
             mDailyWeatherArray = (DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST);
             mHourlyWeatherArray = (HourlyWeather[]) getArguments().getSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST);
         }
+
+
     }
 
     @Override
@@ -119,8 +109,12 @@ public class WeatherHome extends Fragment {
 
 
         FragmentTransaction transaction= manager.beginTransaction();//create an instance of Fragment-transaction
+        Fragment currentWeather = new CurrentWeather();
+        Bundle args = new Bundle();
+        args.putSerializable("zip", getArguments().getInt("zip"));
 
-        transaction.add(R.id.weather_home_container_1, new CurrentWeather(), "Frag_Top_tag");
+        currentWeather.setArguments(args);
+        transaction.add(R.id.weather_home_container_1, currentWeather, "Frag_Top_tag");
 
         //TODO STEVEN INFLATE FRAGMENTS HERE
         Fragment fragment = new HourlyWeatherFragment();
@@ -226,12 +220,14 @@ public class WeatherHome extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->WeatherHome"+intent.toString());
+            System.out.println("in push message receive---+++++->SavedLocationFragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
+                String msgtype = intent.getStringExtra( "MsgType" );
+                String receiver = intent.getStringExtra( "Receiver" );
 
                 if (type.equals("inv")) {
                     changeColorOnInv();
@@ -253,11 +249,47 @@ public class WeatherHome extends Fragment {
 
 
                 }else if(type.equals("msg")) {
+//                    String msgtype = intent.getStringExtra( "MsgType" );
                     changeColorOnMsg();
+                    if(msgtype.equals( "0" )){
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                                .setAutoCancel(true)
+                                .setSmallIcon(R.drawable.ic_message_black_24dp)
+                                .setContentTitle("Message from: " + sender)
+                                .setContentText(messageText)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel(builder, context);
+
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                        // Build the notification and display it
+                        notificationManager.notify(1, builder.build());
+                    }else {
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder( context, CHANNEL_ID )
+                                .setAutoCancel( true )
+                                .setSmallIcon( R.drawable.ic_message_black_24dp )
+                                .setContentTitle( "Message from: " + sender )
+                                .setContentText("Picture Message : " +messageText )
+                                .setPriority( NotificationCompat.PRIORITY_DEFAULT );
+
+                        // Automatically configure a Notification Channel for devices running Android O+
+                        Pushy.setNotificationChannel( builder, context );
+
+                        // Get an instance of the NotificationManager service
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService( context.NOTIFICATION_SERVICE );
+
+                        // Build the notification and display it
+                        notificationManager.notify( 1, builder.build() );
+                    }
+                }else if(type.equals("acpt")){
+                    changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                             .setAutoCancel(true)
-                            .setSmallIcon(R.drawable.ic_message_black_24dp)
-                            .setContentTitle("Message from: " + sender)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("Connection Request Accepted : " + receiver)
                             .setContentText(messageText)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 

@@ -12,7 +12,6 @@ import android.util.Log;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.model.Credentials;
 import me.pushy.sdk.Pushy;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;

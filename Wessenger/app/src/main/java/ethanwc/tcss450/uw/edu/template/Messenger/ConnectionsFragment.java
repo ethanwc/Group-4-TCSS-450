@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
-import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
 /**
@@ -158,7 +158,7 @@ public class ConnectionsFragment extends Fragment {
             mPushMessageReciever = new PushMessageReceiver();
         }
 //        System.out.println("from weather");
-        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
         getActivity().registerReceiver(mPushMessageReciever, iFilter);
     }
 
@@ -196,6 +196,7 @@ public class ConnectionsFragment extends Fragment {
     }
     public void changeColorOnInv(){
 
+
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
         text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
@@ -211,6 +212,18 @@ public class ConnectionsFragment extends Fragment {
 
         }
 
+    }
+    public void refreshFragment(){
+        System.out.println("#############");
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_chat_view_connections);
+//            ((MessagingHomeActivity)getActivity()).onNavigationItemSelected(item);
+
+
+        }
     }
 
     /**
@@ -228,6 +241,7 @@ public class ConnectionsFragment extends Fragment {
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 String msgtype = intent.getStringExtra( "MsgType" );
+                System.out.println("---------------------------------------------------"+type);
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -282,6 +296,8 @@ public class ConnectionsFragment extends Fragment {
                         // Build the notification and display it
                         notificationManager.notify( 1, builder.build() );
                     }
+                }else if(type.equals( "acpt" )){
+//                    refreshFragment();
                 }
             }
         }

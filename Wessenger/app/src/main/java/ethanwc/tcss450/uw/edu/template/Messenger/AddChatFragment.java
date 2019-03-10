@@ -49,7 +49,7 @@ public class AddChatFragment extends Fragment {
         }
     }
 
-    public interface OnAddChatFragmentAction extends WaitFragment.OnFragmentInteractionListener{
+    public interface OnAddChatFragmentAction extends WaitFragment.OnFragmentInteractionListener {
         void addChat(String chatName);
     }
 

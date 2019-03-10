@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.Messenger.RequestsFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 
@@ -16,15 +15,15 @@ import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link RequestsFragment.OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MyRequestsRecyclerViewAdapter extends RecyclerView.Adapter<MyRequestsRecyclerViewAdapter.ViewHolder> {
 
     private final List<Connection> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final RequestsFragment.OnListFragmentInteractionListener mListener;
 
-    public MyRequestsRecyclerViewAdapter(List<Connection> items, OnListFragmentInteractionListener listener) {
+    public MyRequestsRecyclerViewAdapter(List<Connection> items, RequestsFragment.OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }

@@ -12,8 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.model.Message;
+import ethanwc.tcss450.uw.edu.template.R;
 
 /**
  * Class which handles creating and populating the list for the recyclerview.
