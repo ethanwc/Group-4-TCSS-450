@@ -69,7 +69,6 @@ public class HourlyWeatherFragment extends Fragment {
 
         // Set the adapter
         if (view instanceof RecyclerView) {
-            //view.l
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
