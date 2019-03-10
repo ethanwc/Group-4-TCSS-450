@@ -38,9 +38,6 @@ import java.util.List;
 public class DailyWeatherFragment extends Fragment {
 
     public static final String ARG_DAILYWEATHER_LIST = "daily weather list";
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private List<DailyWeather> mDailyWeather;
@@ -52,46 +49,15 @@ public class DailyWeatherFragment extends Fragment {
     public DailyWeatherFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static DailyWeatherFragment newInstance(int columnCount) {
-        DailyWeatherFragment fragment = new DailyWeatherFragment();
-        Bundle args = new Bundle();
-        Log.e(" column", " " + columnCount);
-       // args.putString(ARG_DAILYWEATHER_LIST, );
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onStart() {
         super.onStart();
-        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleWeatherPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build()
-                .execute();
-        Log.e("onStart", " ");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            //mDailyWeather = new ArrayList<DailyWeather>(
-                   // Arrays.asList((DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST)));
-            //mColumnCount = mDailyWeather.size();
-        }
-        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                .onPreExecute(this::onWaitFragmentInteractionShow)
-                .onPostExecute(this::handleWeatherPostExecute)
-                .onCancelled(this::handleErrorsInTask)
-                .build()
-                .execute();
-        Log.e("oncreate", " ");
     }
 
 
@@ -110,18 +76,6 @@ public class DailyWeatherFragment extends Fragment {
                 .onCancelled(this::handleErrorsInTask)
                 .build()
                 .execute();
-        Log.e("after get async", " ");
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyDailyWeatherRecyclerViewAdapter(mDailyWeather, mListener));
-        }
 
         return view;
     }
@@ -151,13 +105,16 @@ public class DailyWeatherFragment extends Fragment {
                 //Log.e("daily weather: ", " " + max + " " + min + " " + jsonWeather.getString("main") + " "+ dailyWeathers);
             }
             mDailyWeather = dailyWeathers;
-            /*DailyWeather[] dailyWeathersArray = new DailyWeather[dailyWeathers.size()];
-            dailyWeathersArray = dailyWeathers.toArray(dailyWeathersArray);
-            //Log.e("daily array: ", " " + dailyWeathersArray[0]);
-            Bundle args = new Bundle();
-            args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
-            Fragment fragment = new DailyWeatherFragment();
-            fragment.setArguments(args);*/
+
+            //set recycle view
+            Context context = getView().getContext();
+            RecyclerView recyclerView = (RecyclerView) getView();
+            if (mColumnCount <= 1) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            } else {
+                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            }
+            recyclerView.setAdapter(new MyDailyWeatherRecyclerViewAdapter(mDailyWeather, mListener));
 
             onWaitFragmentInteractionHide();
 //            loadFragment(fragment);
