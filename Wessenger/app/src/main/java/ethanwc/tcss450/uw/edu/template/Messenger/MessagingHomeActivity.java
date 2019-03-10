@@ -104,7 +104,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         HomeFragment.OnHomeFragmentInteractionListener,
         CurrentWeather.OnCurrentWeatherUpdateListener,
         DailyWeatherFragment.OnListFragmentInteractionListener,
-        HourlyWeatherFragment.OnListFragmentInteractionListener{
+        HourlyWeatherFragment.OnListFragmentInteractionListener,
+        ChangeLocationsFragment.onChangeLocationFragmentInteractionListener {
 
 
     private Bundle mArgs;
