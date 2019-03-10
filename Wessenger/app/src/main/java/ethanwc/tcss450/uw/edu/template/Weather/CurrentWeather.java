@@ -76,6 +76,7 @@ public class CurrentWeather extends Fragment {
         // TODO: update zip with set home zip instead of hard coding
         mZip = getArguments().getInt("zip");
 
+
         FloatingActionButton fab = getActivity().findViewById(R.id.fab_messaging_fab);
         fab.setOnClickListener( new View.OnClickListener() {
 

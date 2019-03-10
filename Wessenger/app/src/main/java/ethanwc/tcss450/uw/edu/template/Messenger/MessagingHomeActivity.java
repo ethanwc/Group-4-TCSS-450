@@ -703,8 +703,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
         else if (id == R.id.nav_homepage) {
-
-            loadFragment(new HomeFragment());
+            Fragment homeF = new HomeFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
+            homeF.setArguments(args);
+            loadFragment(homeF);
         }
 
         else if (id == R.id.nav_View_Saved_Location) {

@@ -56,7 +56,14 @@ public class HomeFragment extends Fragment {
 
         FragmentTransaction transaction= manager.beginTransaction();//create an instance of Fragment-transaction
 
-        transaction.add(R.id.messaging_home_container_1, new CurrentWeather(), "Frag_Top_tag");
+        //pass zip to currentWeather
+        Bundle args = new Bundle();
+        args.putSerializable("zip", getArguments().getInt("zip"));
+        Fragment currentWeather = new CurrentWeather();
+        currentWeather.setArguments(args);
+
+
+        transaction.add(R.id.messaging_home_container_1, currentWeather, "Frag_Top_tag");
         transaction.add(R.id.messaging_home_container_2, new ForecastWeather(), "Frag_Middle_tag");
         transaction.add(R.id.messaging_home_container_3, new ConversationFragment(), "Frag_Bottom_tag");
 
