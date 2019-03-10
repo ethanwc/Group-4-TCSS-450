@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment.OnListFragmentInteractionListener;
-//import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.DummyItem;
+//import ethanwc.tcss450.uw.edu.template.dummy.DummyContent.HourlyWeather;
 import ethanwc.tcss450.uw.edu.template.model.location;
 
 import java.util.List;

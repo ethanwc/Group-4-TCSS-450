@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.MainActivity;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
@@ -57,11 +58,13 @@ import ethanwc.tcss450.uw.edu.template.Messenger.AddContactFragment.OnNewContact
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.ChangeLocationsFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.CurrentWeather;
+import ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationViewFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
+import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
 import ethanwc.tcss450.uw.edu.template.model.Message;
 import ethanwc.tcss450.uw.edu.template.model.location;
 import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
@@ -82,7 +85,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
         RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction,
         HomeFragment.OnHomeFragmentInteractionListener,
-        CurrentWeather.OnCurrentWeatherUpdateListener {
+        CurrentWeather.OnCurrentWeatherUpdateListener,
+        DailyWeatherFragment.OnListFragmentInteractionListener{
 
 
     private Bundle mArgs;
@@ -465,6 +469,26 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Weather Home");
             mFab.hide();
             mFab.setEnabled(false);
+
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath("api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
+                    .build();
+
+//            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
+//                    .onPostExecute(this::handleWeatherPostExecute)
+//                    .onCancelled(this::handleErrorsInTask)
+//                    .build()
+//                    .execute();
+
+            //create daily weather frag
+            //create hourly weather frag
+            // ...
+
+//            dailyweather.setarg
+            // ...
+
             loadFragment(weatherHome);
             //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
@@ -575,6 +599,13 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         return true;
     }
+
+    @Override
+    public void onWeatherListFragmentInteraction (DailyWeather weather) {
+
+    }
+
+
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
      *
@@ -644,6 +675,54 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
         }
 
+    }
+
+    private void handleWeatherPostExecute(final String response) {
+
+        try {
+            List<DailyWeather> dailyWeathers = new ArrayList<>();
+            JSONObject result = new JSONObject(response);
+            JSONArray listArray = result.getJSONArray("list");
+            for (int i = 0; i < listArray.length(); i ++) {
+                JSONObject jsonWeather = listArray.getJSONObject(i).getJSONArray("weather").getJSONObject(0);
+                JSONObject jsonTemp = listArray.getJSONObject(i).getJSONObject("main");
+//                Log.e("jsonweather", " "+ jsonWeather);
+//                Log.e("jsontemp", " " + jsonTemp);
+                double max = convertKtoF(jsonTemp.getInt("temp_max"));
+                double min = convertKtoF(jsonTemp.getInt("temp_min"));
+
+                dailyWeathers.add(new DailyWeather.Builder(
+                        jsonWeather.getString("main"))
+                        .addIcon(jsonWeather.getString("icon"))
+                        .addHighTemp(max)
+                        .addLowTemp(min)
+                        .build());
+                //Log.e("daily weather: ", " " + max + " " + min + " " + jsonWeather.getString("main") + " "+ dailyWeathers);
+            }
+
+            DailyWeather[] dailyWeathersArray = new DailyWeather[dailyWeathers.size()];
+            dailyWeathersArray = dailyWeathers.toArray(dailyWeathersArray);
+            //Log.e("daily array: ", " " + dailyWeathersArray[0]);
+            Bundle args = new Bundle();
+            args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
+            Fragment fragment = new DailyWeatherFragment();
+            fragment.setArguments(args);
+
+            onWaitFragmentInteractionHide();
+            loadFragment(fragment);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * helper function to convert kelvin to Fahrenheit
+     * @param k
+     * @return
+     */
+    private double convertKtoF(double k) {
+        return  Math.round((k*1.8 - 459.67) * 100) / 100;
     }
 
     /**

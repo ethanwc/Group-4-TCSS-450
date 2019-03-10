@@ -27,10 +27,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toolbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.HomeFragment;
 import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
@@ -106,8 +114,8 @@ public class WeatherHome extends Fragment {
         transaction.add(R.id.weather_home_container_1, new CurrentWeather(), "Frag_Top_tag");
 
         //TODO STEVEN INFLATE FRAGMENTS HERE
-//        transaction.add(R.id.weather_home_container_2, new HomeFragment.ForecastWeather(), "Frag_Middle_tag");
-//        transaction.add(R.id.weather_home_container_3, new ConversationFragment(), "Frag_Bottom_tag");
+        //transaction.add(R.id.weather_home_container_2, new HourlyWeatherFragment(), "Frag_Middle_tag");//HomeFragment.ForecastWeather()
+        transaction.add(R.id.weather_home_container_3, new DailyWeatherFragment(), "Frag_Bottom_tag");
 
 
         transaction.commit();
@@ -192,6 +200,8 @@ public class WeatherHome extends Fragment {
         }
 
     }
+
+
 
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
