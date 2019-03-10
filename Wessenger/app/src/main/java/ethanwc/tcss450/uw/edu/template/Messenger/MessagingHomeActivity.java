@@ -1030,7 +1030,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         } catch (JSONException e){
             e.printStackTrace();
         }
-        onWaitFragmentInteractionHide();
+        //onWaitFragmentInteractionHide();
     }
 
     private double convertCtoF(double c) {
