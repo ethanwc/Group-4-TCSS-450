@@ -1523,35 +1523,29 @@ public class MessagingHomeActivity extends AppCompatActivity
         try {
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
-            JSONArray chatids = resultJSON.getJSONArray("chatid");
-            JSONArray people = resultJSON.getJSONArray("people");
-            JSONArray usernames = resultJSON.getJSONArray("username");
+            JSONArray users = resultJSON.getJSONArray("users");
 
 
             if (success) {
                 mChats = new ArrayList<>();
                 mPeople = new HashMap<>();
                 mChatMembers = ArrayListMultimap.create();
+                //mchats, mchatmembers, mpeople
 
-                for (int i = 0; i < chatids.length(); i ++)
-                    mChats.add(chatids.get(i).toString());
+                for (int i = 0; i < users.length(); i++) {
+                    JSONObject user = users.getJSONObject(i);
+                    String chatid = user.getString("chatid");
+                    String memberid = user.getString("memberid");
+                    String username = user.getString("username");
 
-                for (int i = 0; i < people.length(); i ++)
-                    mChatMembers.put(people.getJSONObject(i).getString("id"), people.getJSONObject(i).getString("member"));
-
-                for (int i = 0; i < usernames.length(); i ++)
-                    if (!mPeople.containsKey(usernames.getJSONObject(i).getString("id")))
-                        mPeople.put(usernames.getJSONObject(i).getString("id"), usernames.getJSONObject(i).getString("username"));
+                    if (!mChats.contains(chatid)) mChats.add(chatid);
+                    if (!mPeople.containsKey(memberid)) mPeople.put(memberid, username);
+                    mChatMembers.put(chatid, memberid);
+                }
 
 
-                Log.e("Output", mChats.toString());
-
-                Log.e("Output", mChatMembers.toString());
-
-                Log.e("Output", mPeople.toString());
                 swapToChats();
             }
-
 
             else onWaitFragmentInteractionHide();
 
