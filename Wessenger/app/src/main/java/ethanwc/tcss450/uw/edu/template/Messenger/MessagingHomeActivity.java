@@ -133,7 +133,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent * than this value.
      */
@@ -147,34 +147,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private static final String[] COUNTRIES = new String[]{"Belgium",
             "France", "France_", "Italy", "Germany", "Spain"};
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        startLocationUpdates();
-        System.out.println("=>>>><<<<<-====");
-        if (mPushMessageReciever == null) {
-            mPushMessageReciever = new PushMessageReceiver();
-        }
 
 
-//        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
-//        getActivity().registerReceiver(mPushMessageReciever, iFilter);
-    }
-    /**
-     * OnPause handles push notifications.
-     */
-    @Override
-    public void onPause() {
-//        System.out.println("in push message receive---->On Pause");
-        super.onResume();
-        startLocationUpdates();
-        super.onPause();
-
-        if (mPushMessageReciever != null){
-//            getActivity().unregisterReceiver(mPushMessageReciever);
-        }
-    }
 
 //public void setColortitle(){
 //    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0000ff")));
@@ -187,21 +161,25 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_messaging_home);
         //init cloudinary stuffs
 
         //for location
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
-                            , Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_LOCATIONS);
+                            , Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_LOCATIONS);
         } else {
 //The user has already allowed the use of Locations. Get the current location.
  requestLocation();
         }
-
+//-------
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -212,7 +190,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 // Update UI with location data
 // ...
                     setLocation(location);
-//                    Log.d("LOCATION UPDATE!", location.toString());
+                    Log.d("LOCATION UPDATE!", location.toString());
                 } };
         };
         createLocationRequest();
@@ -285,17 +263,26 @@ public class MessagingHomeActivity extends AppCompatActivity
         mCurrentLocation = location;
 
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates(); }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates(); }
     /**
      * Requests location updates from the FusedLocationApi. */
     protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback,
                     null /* Looper */); }
     }
+
 
     /**
      * Removes location updates from the FusedLocationApi. */
@@ -1052,7 +1039,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 frag.setArguments( args );
                 onWaitFragmentInteractionHide();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.changeLocation_container, frag);
+                        .replace(R.id.fragment_messaging_container, frag);
                 transaction.commit();
 
                 mFab.setOnClickListener(new View.OnClickListener() {
