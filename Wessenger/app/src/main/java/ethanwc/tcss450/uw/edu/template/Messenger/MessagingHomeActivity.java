@@ -1972,19 +1972,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onLocationListFragmentInteraction(location item) {
 
-        if (mWeather) {
-            WeatherHome weatherHome = new WeatherHome();
-            Bundle args = new Bundle();
-            args.putSerializable("zip", Integer.parseInt(item.getZip()));
-            weatherHome.setArguments(args);
-            getSupportActionBar().setTitle("Weather");
-            mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
-            mFab.setEnabled(true);
 
-            loadFragment(weatherHome);
-
-        } else {
             mZip = Integer.parseInt(item.getZip());
             WeatherHome weatherHome = new WeatherHome();
             Bundle args = new Bundle();
@@ -2011,7 +1999,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
 
-        }
+
 
 
     }
