@@ -271,8 +271,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .add(R.id.fragment_messaging_container, invitation)
                     .commit();
         } else {
-            loadChats();
-
+            loadHome();
         }
 
     }
@@ -758,20 +757,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         else if (id == R.id.nav_homepage) {
             //Build ASNC task to grab connections from web service.
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_getContacts))
-                    .build();
-            //handleConnectionGetInfoOnPostExecute
-            String msg = getIntent().getExtras().getString("email");
-            Credentials creds = new Credentials.Builder(msg).build();
-            getSupportActionBar().setTitle("Connections");
-            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
-                    .onPreExecute(this::onWaitFragmentInteractionShow)
-                    .onPostExecute(this::handleLoadHomeOnPost)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build().execute();
+            loadHome();
         }
 
         else if (id == R.id.nav_View_Saved_Location) {
@@ -1574,6 +1560,26 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
         }
 
+    }
+
+    /**
+     * Loads the home fragment
+     */
+    private void loadHome() {
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath(getString(R.string.ep_base_url))
+                .appendPath(getString(R.string.ep_getContacts))
+                .build();
+        //handleConnectionGetInfoOnPostExecute
+        String msg = getIntent().getExtras().getString("email");
+        Credentials creds = new Credentials.Builder(msg).build();
+        getSupportActionBar().setTitle("Connections");
+        new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleLoadHomeOnPost)
+                .onCancelled(this::handleErrorsInTask)
+                .build().execute();
     }
 
 
