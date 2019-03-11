@@ -22,14 +22,16 @@
 
             <ImageView
                 android:id="@+id/imageView_weathericon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
                 app:srcCompat="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/textView_dayofweek"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/placeholder"
                 android:layout_margin="@dimen/text_margin"
                 android:textAppearance="?attr/textAppearanceListItem" />
 
@@ -37,11 +39,15 @@
                 android:id="@+id/textview_weathermain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/placeholder"
+
                 android:layout_margin="@dimen/text_margin"
                 android:textAppearance="?attr/textAppearanceListItem" />
 
             <TextView
                 android:id="@+id/textview_temperature"
+                android:text="@string/placeholder"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/text_margin"
