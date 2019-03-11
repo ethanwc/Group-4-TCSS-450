@@ -3,7 +3,9 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:background="@color/weatherDark"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/AppTheme"
+    >
 
 
     <FrameLayout
@@ -14,6 +16,12 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hourly Weather" />
+
     <FrameLayout
         android:id="@+id/weather_home_container_2"
         android:layout_width="match_parent"
@@ -21,6 +29,12 @@
 
         android:layout_height="0dp">
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Daily Weather" />
 
     <FrameLayout
         android:id="@+id/weather_home_container_3"

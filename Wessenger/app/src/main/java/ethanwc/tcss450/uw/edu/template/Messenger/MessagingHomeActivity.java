@@ -203,7 +203,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 // Update UI with location data
 // ...
                     setLocation(location);
-                    Log.d("LOCATION UPDATE!", location.toString());
+                    Log.d("LOCATION UPDATE!", mCurrentLocation.toString());
                 } };
         };
         createLocationRequest();
@@ -1295,6 +1295,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(this._refreshReceiver);
+    }
 
     /**
      * Method which listens for adding a contact button.

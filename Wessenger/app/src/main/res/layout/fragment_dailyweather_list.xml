@@ -11,4 +11,5 @@
     android:orientation="horizontal"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
     tools:context=".Weather.DailyWeatherFragment"
-    tools:listitem="@layout/fragment_dailyweather" />
+    tools:listitem="@layout/fragment_dailyweather"
+    android:theme="@style/AppTheme"/>
