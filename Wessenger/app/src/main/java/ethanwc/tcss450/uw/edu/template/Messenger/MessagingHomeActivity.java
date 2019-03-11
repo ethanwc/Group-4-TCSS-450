@@ -133,6 +133,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private boolean fromMaps = false;
     private PushMessageReceiver mPushMessageReciever;
     private static final String TAG = "MessagingHomeActivity";
+    private boolean mIsMedia = false;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
@@ -208,7 +209,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         createLocationRequest();
 
         //
-        MediaManager.init(this);
+        if (!mIsMedia) {
+            MediaManager.init(this);
+            mIsMedia = true;
+        }
         setupEmojis();
 
         setContentView(R.layout.activity_messaging_home);
@@ -1612,6 +1616,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         args.putSerializable(ConversationFragment.ARG_MESSAGE_LIST, m);
         Fragment frag = new ConversationFragment();
         frag.setArguments(args);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // this will clear the back stack and displays no animation on the screen
+        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_messaging_container, frag)
                 .addToBackStack(null);

@@ -117,10 +117,11 @@ public class WeatherHome extends Fragment {
         transaction.add(R.id.weather_home_container_1, currentWeather, "Frag_Top_tag");
 
         //TODO STEVEN INFLATE FRAGMENTS HERE
+
         Fragment fragment = new HourlyWeatherFragment();
         Bundle arg = new Bundle();
-        arg.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, mHourlyWeatherArray);
         fragment.setArguments(arg);
+        arg.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, mHourlyWeatherArray);
         transaction.add(R.id.weather_home_container_2, fragment, "Frag_Middle_tag");
         fragment = new DailyWeatherFragment();
         arg.putSerializable(ARG_DAILYWEATHER_LIST, mDailyWeatherArray);

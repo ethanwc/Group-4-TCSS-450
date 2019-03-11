@@ -41,15 +41,6 @@ public class HourlyWeatherFragment extends Fragment {
     public HourlyWeatherFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static HourlyWeatherFragment newInstance(int columnCount) {
-        HourlyWeatherFragment fragment = new HourlyWeatherFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
