@@ -23,11 +23,4 @@
         android:layout_height="0dp">
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/messaging_home_container_3"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </FrameLayout>
-
 </LinearLayout>

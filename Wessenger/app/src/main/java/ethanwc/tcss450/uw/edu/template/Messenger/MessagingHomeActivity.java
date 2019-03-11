@@ -134,6 +134,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private PushMessageReceiver mPushMessageReciever;
     private static final String TAG = "MessagingHomeActivity";
     private boolean mIsMedia = false;
+    private Connection[] mConnectionsAsArray;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
@@ -755,11 +756,21 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
         else if (id == R.id.nav_homepage) {
-            Fragment homeF = new HomeFragment();
-            Bundle args = new Bundle();
-            args.putSerializable("zip", mZip);
-            homeF.setArguments(args);
-            loadFragment(homeF);
+            //Build ASNC task to grab connections from web service.
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath(getString(R.string.ep_base_url))
+                    .appendPath(getString(R.string.ep_getContacts))
+                    .build();
+            //handleConnectionGetInfoOnPostExecute
+            String msg = getIntent().getExtras().getString("email");
+            Credentials creds = new Credentials.Builder(msg).build();
+            getSupportActionBar().setTitle("Connections");
+            new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleLoadHomeOnPost)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build().execute();
         }
 
         else if (id == R.id.nav_View_Saved_Location) {
@@ -1419,6 +1430,52 @@ public class MessagingHomeActivity extends AppCompatActivity
         loadChats();
     }
 
+    private void handleLoadHomeOnPost (final String result){
+        //parse JSON
+        try {
+            onWaitFragmentInteractionHide();
+            System.out.println("2------_>");
+            JSONObject resultJSON = new JSONObject(result);
+            boolean success = resultJSON.getBoolean("success");
+
+
+            if (success) {
+
+                mConnections = new ArrayList<>();
+                JSONArray firstnames = resultJSON.getJSONArray("firstnames");
+                JSONArray lastnames = resultJSON.getJSONArray("lastnames");
+                JSONArray usernames = resultJSON.getJSONArray("usernames");
+                JSONArray emails = resultJSON.getJSONArray("emails");
+
+
+                for (int i = 0; i < firstnames.length(); i++) {
+                    Connection conn = new Connection.Builder(emails.get(i).toString())
+                            .addFirst(firstnames.get(i).toString()).addLast(lastnames.get(i).toString())
+                            .addUsername(usernames.get(i).toString()).build();
+                    mConnections.add(conn);
+
+                }
+
+                //Bundle list of connections as arguments and load connection fragment
+
+                mConnectionsAsArray = new Connection[mConnections.size()];
+                mConnectionsAsArray = mConnections.toArray(mConnectionsAsArray);
+
+                //load home after connections setup
+                Fragment homeF = new HomeFragment();
+                Bundle args = new Bundle();
+                args.putSerializable("zip", mZip);
+                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, mConnectionsAsArray);
+                homeF.setArguments(args);
+                loadFragment(homeF);
+            }
+        }
+        catch (Exception e) {
+
+        }
+
+    }
+
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
      *
@@ -1451,11 +1508,12 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 }
                 //Bundle list of connections as arguments and load connection fragment
-                Connection[] connectionsAsArray = new Connection[mConnections.size()];
-                connectionsAsArray = mConnections.toArray(connectionsAsArray);
+
+                mConnectionsAsArray = new Connection[mConnections.size()];
+                mConnectionsAsArray = mConnections.toArray(mConnectionsAsArray);
                 //Bundle connections and send as arguments
                 Bundle args = new Bundle();
-                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, mConnectionsAsArray);
 
                 Fragment frag = new ConnectionInviteFragment();
                 loadFragment(frag);
@@ -1470,12 +1528,12 @@ public class MessagingHomeActivity extends AppCompatActivity
                 Log.e("super!!!!!", "yup");
 
                 if (mConnections.isEmpty()) {
-                    connectionsAsArray = new Connection[mConnections.size()];
-                    connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                    mConnectionsAsArray = new Connection[mConnections.size()];
+                    mConnectionsAsArray = mConnections.toArray(mConnectionsAsArray);
                     //Bundle connections and send as arguments
                     args = new Bundle();
                     System.out.println("4------_>");
-                    args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, connectionsAsArray);
+                    args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, mConnectionsAsArray);
                     frag = new ConnectionInviteFragment();
                     loadFragment(frag);
                     frag = new ConnectionsFragment();

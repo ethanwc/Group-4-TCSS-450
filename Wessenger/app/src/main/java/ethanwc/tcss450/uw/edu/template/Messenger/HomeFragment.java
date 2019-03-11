@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 
 import ethanwc.tcss450.uw.edu.template.R;
 import ethanwc.tcss450.uw.edu.template.Weather.CurrentWeather;
+import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import me.pushy.sdk.Pushy;
 
@@ -76,11 +77,16 @@ public class HomeFragment extends Fragment {
         args.putSerializable("zip", getArguments().getInt("zip"));
         Fragment currentWeather = new CurrentWeather();
         currentWeather.setArguments(args);
+        Fragment connectionsF = new ConnectionsFragment();
+        Bundle args2 = new Bundle();
+
+        args2.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST,
+                getArguments().getSerializable(ConnectionsFragment.ARG_CONNECTION_LIST));
+        connectionsF.setArguments(args2);
 
 
         transaction.add(R.id.messaging_home_container_1, currentWeather, "Frag_Top_tag");
-        transaction.add(R.id.messaging_home_container_2, new ForecastWeather(), "Frag_Middle_tag");
-        transaction.add(R.id.messaging_home_container_3, new ConversationFragment(), "Frag_Bottom_tag");
+        transaction.add(R.id.messaging_home_container_2, connectionsF, "Frag_Middle_tag");
 
 
         transaction.commit();
