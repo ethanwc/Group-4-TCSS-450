@@ -22,8 +22,8 @@ import ethanwc.tcss450.uw.edu.template.R;
 public class MultiViewTypeAdapter extends RecyclerView.Adapter {
 
     private ArrayList<ChatModel>dataSet;
-    Context mContext;
-    int total_types;
+    private Context mContext;
+    private int total_types;
 
     public static class TextTypeViewHolder extends RecyclerView.ViewHolder {
 
