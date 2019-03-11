@@ -1378,7 +1378,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         try {
 
             json.put("chatid", chatId);
-
+            json.put("email", getIntent().getExtras().getString("email"));
         } catch (JSONException e) {
             Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
         }
