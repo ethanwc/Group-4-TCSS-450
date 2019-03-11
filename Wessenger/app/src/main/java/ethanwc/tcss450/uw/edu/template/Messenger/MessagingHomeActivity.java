@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.location.Location;
@@ -37,6 +38,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -132,7 +135,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     private boolean mWeather = true;
     private boolean fromMaps = false;
     private PushMessageReceiver mPushMessageReciever;
-    private static final String TAG = "MessagingHomeActivity";
+    private static final String TAG = "MyLocationsActivity";
     private boolean mIsMedia = false;
     private Connection[] mConnectionsAsArray;
     /**
@@ -211,7 +214,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //
         if (!mIsMedia) {
-            MediaManager.init(this);
+//            MediaManager.init(this);
             mIsMedia = true;
         }
         setupEmojis();
@@ -362,8 +365,9 @@ public class MessagingHomeActivity extends AppCompatActivity
  System.out.println("-----Permission Denied");
 //Shut down the app. In production release, you would let the user
 // know why the app is shutting down...maybe ask for permission again?
- finishAndRemoveTask();
-            } return;
+// finishAndRemoveTask();
+            }
+            return;
         }
 // other 'case' lines to check for other
 // permissions this app might request
@@ -669,6 +673,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         int id = item.getItemId();
         //Chat has been chosen
         if (id == R.id.nav_global_chat) {
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
+            item.setTitle(s);
 
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
             String email = getIntent().getExtras().getString(("email"));
@@ -789,6 +796,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             //Messenger home has been chosen
         }
         else if (id == R.id.nav_chat_home) {
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
+            item.setTitle(s);
             getSupportActionBar().setTitle("Chat");
             mFab.setEnabled(true);
             mFab.show();
@@ -806,7 +816,15 @@ public class MessagingHomeActivity extends AppCompatActivity
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
 //            mFab.setImageResource(android.R.drawable.ic_input_add);
-            System.out.println("===========");
+//            System.out.println("===========");
+
+
+                SpannableString s = new SpannableString(item.getTitle());
+                s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
+                item.setTitle(s);
+
+
+
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
             mLasts = new ArrayList<>();
