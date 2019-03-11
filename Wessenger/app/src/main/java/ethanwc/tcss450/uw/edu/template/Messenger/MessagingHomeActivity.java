@@ -1492,7 +1492,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         //parse JSON
         try {
             onWaitFragmentInteractionHide();
-            System.out.println("2------_>");
+
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
@@ -1528,8 +1528,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                args.putString("passemail", email);
                 frag.setArguments(args);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_messaging_connection_container, frag )
-                        .addToBackStack(null);
+                        .replace(R.id.fragment_messaging_connection_container, frag );
                 transaction.commit();
 
                 Log.e("super!!!!!", "yup");
@@ -1539,7 +1538,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     mConnectionsAsArray = mConnections.toArray(mConnectionsAsArray);
                     //Bundle connections and send as arguments
                     args = new Bundle();
-                    System.out.println("4------_>");
+
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, mConnectionsAsArray);
                     frag = new ConnectionInviteFragment();
                     loadFragment(frag);
@@ -1547,8 +1546,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                args.putString("passemail", email);
                     frag.setArguments(args);
                     transaction = getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_messaging_connection_container, frag )
-                            .addToBackStack(null);
+                            .replace(R.id.fragment_messaging_connection_container, frag );
                     transaction.commit();
                 }
 
