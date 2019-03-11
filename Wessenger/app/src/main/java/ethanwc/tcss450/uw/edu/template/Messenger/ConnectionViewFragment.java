@@ -31,34 +31,12 @@ import me.pushy.sdk.Pushy;
  * Fragment used to represent the view of an individual contact's details.
  */
 public class ConnectionViewFragment extends Fragment {
-    private PushMessageReceiver mPushMessageReciever;
+
 
     public ConnectionViewFragment() {
         // Required empty public constructor
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-//        System.out.println("in push message receive---->On Resume");
-        if (mPushMessageReciever == null) {
-            mPushMessageReciever = new PushMessageReceiver();
-        }
-//        System.out.println("from weather");
-        IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
-        getActivity().registerReceiver(mPushMessageReciever, iFilter);
-    }
 
-    /**
-     * OnPause handles push notifications.
-     */
-    @Override
-    public void onPause() {
-//        System.out.println("in push message receive---->On Pause");
-        super.onPause();
-        if (mPushMessageReciever != null){
-            getActivity().unregisterReceiver(mPushMessageReciever);
-        }
-    }
 
     /**
      * OnCreateView used to instantiate relevant items to the fragment.
@@ -101,10 +79,34 @@ public class ConnectionViewFragment extends Fragment {
 
         }
     }
+    private PushMessageReceiver mPushMessageReciever;
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("in push message receive---->On Resume");
+        if (mPushMessageReciever == null) {
+            mPushMessageReciever = new PushMessageReceiver();
+        }
+
+        IntentFilter iFilter = new IntentFilter( PushReceiver.RECEIVED_NEW_MESSAGE);
+        getActivity().registerReceiver(mPushMessageReciever, iFilter);
+    }
+    /**
+     * OnPause handles push notifications.
+     */
+    @Override
+    public void onPause() {
+//        System.out.println("in push message receive---->On Pause");
+        super.onPause();
+        if (mPushMessageReciever != null){
+            getActivity().unregisterReceiver(mPushMessageReciever);
+        }
+    }
+
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
-        text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        text.setSpan(new ForegroundColorSpan( Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
 
 
@@ -139,6 +141,25 @@ public class ConnectionViewFragment extends Fragment {
 
     }
 
+    public void changeColorOnAddToChat(){
+
+        Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
+        text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
+
+
+        NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
+        if(navigationView!= null){
+            Menu menu = navigationView.getMenu();
+
+            MenuItem item = menu.findItem(R.id.nav_chat_home);
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+            item.setTitle(s);
+
+        }
+
+    }
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
@@ -147,13 +168,19 @@ public class ConnectionViewFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            System.out.println("in push message receive---+++++->ConnectionViewFragment"+intent.toString());
+            System.out.println("in push message receive---+++++->Connection View Fragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
                 String msgtype = intent.getStringExtra( "MsgType" );
+                String receiver = intent.getStringExtra( "Receiver" );
+                String chatid = intent.getStringExtra( "chatid" );
+                String chatName = intent.getStringExtra( "chatName" );
+                System.out.println(chatid+"  chatid ---and--- chatName  "+chatName);
+
+
                 if (type.equals("inv")) {
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -174,13 +201,21 @@ public class ConnectionViewFragment extends Fragment {
 
 
                 }else if(type.equals("msg")) {
-                    changeColorOnMsg();
+//                    String msgtype = intent.getStringExtra( "MsgType" );
+                    if(chatid.equals( "1" )) {
+                        changeColorOnMsg();
+                    }else{
+                        changeColorOnAddToChat();
+                    }
+                    //
+
+
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                                 .setAutoCancel(true)
                                 .setSmallIcon(R.drawable.ic_message_black_24dp)
                                 .setContentTitle("Message from: " + sender)
-                                .setContentText(messageText)
+                                .setContentText(chatName+" : "+messageText)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
                         // Automatically configure a Notification Channel for devices running Android O+
@@ -208,6 +243,44 @@ public class ConnectionViewFragment extends Fragment {
                         // Build the notification and display it
                         notificationManager.notify( 1, builder.build() );
                     }
+
+
+                    //
+                }else if(type.equals("acpt")){
+                    changeColorOnInv();
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_person_black_24dp)
+                            .setContentTitle("Connection Request Accepted : " + receiver)
+                            .setContentText(messageText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel(builder, context);
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+                    // Build the notification and display it
+                    notificationManager.notify(1, builder.build());
+                } else if(type.equals( "addchat" )){
+                    System.out.println("  ---------------------- chatName  "+chatName);
+                    changeColorOnAddToChat();
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder( context, CHANNEL_ID )
+                            .setAutoCancel( true )
+                            .setSmallIcon( R.drawable.ic_message_black_24dp )
+                            .setContentTitle( "You have been added to the group "  )
+                            .setContentText(" "+chatName  )
+                            .setPriority( NotificationCompat.PRIORITY_DEFAULT );
+
+                    // Automatically configure a Notification Channel for devices running Android O+
+                    Pushy.setNotificationChannel( builder, context );
+
+                    // Get an instance of the NotificationManager service
+                    NotificationManager notificationManager = (NotificationManager) context.getSystemService( context.NOTIFICATION_SERVICE );
+
+                    // Build the notification and display it
+                    notificationManager.notify( 1, builder.build() );
                 }
             }
         }
