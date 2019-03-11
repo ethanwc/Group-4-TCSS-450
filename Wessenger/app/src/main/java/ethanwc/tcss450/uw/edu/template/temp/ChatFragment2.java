@@ -559,7 +559,7 @@ public class ChatFragment2 extends Fragment {
             JSONObject res = new JSONObject(result);
             if(res.has("success") && res.getBoolean("success")) {
                 //The web service got our message. Time to clear out the input EditText
-                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1, mEmail));
+//                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1, mEmail));
                 mMessageInputEditText.setText("");
                 finalizeChat();
                 //its up to you to decide if you want to send the message to the output here
@@ -658,7 +658,8 @@ public class ChatFragment2 extends Fragment {
                 Log.e("MESSAGETYPE", " type: " + type + " messagetype: " + msgtype);
 
                 if(msgtype != null && msgtype.equals("0")) {
-                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1, sender));
+                    int position = sender.equals(mEmail) ? 1 : 0;
+                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, position, sender));
                     finalizeChat();
 
                 }
