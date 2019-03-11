@@ -287,7 +287,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         Uri uri = new Uri.Builder()
                 .scheme("https")
-                .appendPath("api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
+                .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
                 .build();
 
         new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip="+ mZip+"&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
@@ -451,7 +451,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
         View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
         View conversationViewFrag = findViewById(R.id.fragment_messagelist_conversation);
-        View chatFrag = findViewById(R.id.fragment_chat);
+        View chatFrag = findViewById(R.id.fragment_messaging_message);
         View addChatFrag = findViewById(R.id.fragment_messenger_addchat);
         View changelocation = findViewById( R.id.fragment_weather_changelocation );
         View currentWeather = findViewById(R.id.fragment_weather_current_main);
@@ -696,10 +696,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             Uri uri = new Uri.Builder()
                     .scheme("https")
-                    .appendPath("api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
+                    .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
                     .build();
 
-            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
 //                    .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleWeatherPostExecute)
                     .onCancelled(this::handleErrorsInTask)
@@ -1990,11 +1990,26 @@ public class MessagingHomeActivity extends AppCompatActivity
             args.putSerializable("zip", mZip);
             weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
+            mFab.hide();
+            mFab.setEnabled(false);
+
+            Uri uri = new Uri.Builder()
+                    .scheme("https")
+                    .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
+                    .build();
+
+            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleWeatherPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build()
+                    .execute();
+
+
             mFab.show();
 //            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
 
-            loadFragment(weatherHome);
         }
 
 
@@ -2226,11 +2241,25 @@ public class MessagingHomeActivity extends AppCompatActivity
         args.putSerializable("zip", mZip);
         weatherHome.setArguments(args);
         getSupportActionBar().setTitle("Weather Home");
-        mFab.show();
-        //mFab.setImageResource(android.R.drawable.ic_menu_save);
-        mFab.setEnabled(true);
+        mFab.hide();
+        mFab.setEnabled(false);
 
-        loadFragment(weatherHome);
+        Uri uri = new Uri.Builder()
+                .scheme("https")
+                .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
+                .build();
+
+        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::handleWeatherPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build()
+                .execute();
+
+
+        mFab.show();
+//            mFab.setImageResource(android.R.drawable.ic_menu_save);
+        mFab.setEnabled(true);
 
     }
 
