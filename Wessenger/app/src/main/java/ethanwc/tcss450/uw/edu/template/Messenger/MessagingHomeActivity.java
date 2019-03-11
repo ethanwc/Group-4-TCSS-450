@@ -338,8 +338,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 //            List<Address> addresses = geocoder.getFromLocation(latLng.longitude, latLng.latitude, 1);
 
             if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
-                mZipCode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
-                System.out.println( "-------ZIPPP----" + mZipCode );
+                mZip = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
+                System.out.println( "-------ZIPPP----" + mZip );
 
 //                            Intent intent = new Intent("zipCodeSent");
 //                            intent.putExtra("zip", mZipcode);
