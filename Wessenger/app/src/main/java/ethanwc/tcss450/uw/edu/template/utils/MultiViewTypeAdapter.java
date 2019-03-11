@@ -28,11 +28,13 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
     public static class TextTypeViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtType;
+        TextView sender;
         CardView cardView;
 
         public TextTypeViewHolder(View itemView) {
             super(itemView);
 
+            this.sender = (TextView) itemView.findViewById(R.id.text_type_sender);
             this.txtType = (TextView) itemView.findViewById(R.id.type);
             this.cardView = (CardView) itemView.findViewById(R.id.card_view);
         }
@@ -43,7 +45,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
 
     public static class ImageTypeViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtType;
+        TextView txtType, sender;
         ImageView image;
 
         public ImageTypeViewHolder(View itemView) {
@@ -51,6 +53,7 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
 
             this.txtType = (TextView) itemView.findViewById(R.id.type);
             this.image = (ImageView) itemView.findViewById(R.id.background);
+            this.sender = (TextView) itemView.findViewById(R.id.image_type_sender);
         }
     }
 
@@ -97,13 +100,21 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
             switch (object.type) {
                 case ChatModel.TEXT_TYPE:
                    ((TextTypeViewHolder) holder).txtType.setText(object.text);
+                   ((TextTypeViewHolder) holder).sender.setText(object.sender);
 
-                    if (object.data == 1)  ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.RIGHT);
-//                    else  ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.LEFT);
-
+                    if (object.data == 1)  {
+                        ((TextTypeViewHolder) holder).txtType.setGravity(Gravity.RIGHT);
+                        ((TextTypeViewHolder) holder).sender.setGravity(Gravity.RIGHT);
+                    }
                     break;
                 case ChatModel.IMAGE_TYPE:
                     Picasso.get().load(object.text).into(((ImageTypeViewHolder) holder).image);
+                    ((ImageTypeViewHolder) holder).sender.setText(object.sender);
+
+                    if (object.data == 1)  {
+                        ((ImageTypeViewHolder) holder).txtType.setGravity(Gravity.RIGHT);
+                        ((ImageTypeViewHolder) holder).sender.setGravity(Gravity.RIGHT);
+                    }
                     break;
             }
         }

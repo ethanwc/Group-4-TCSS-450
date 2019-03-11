@@ -262,7 +262,7 @@ public class ChatFragment2 extends Fragment {
                         String imageUrl = resultData.get("url").toString();
                         //add new message, that is actually an image.
                         addPhotoToConversation(imageUrl);
-                        list.add(new ChatModel(ChatModel.IMAGE_TYPE, imageUrl, 0));
+                        list.add(new ChatModel(ChatModel.IMAGE_TYPE, imageUrl, 0, mEmail));
                         finalizeChat();
                     }
 
@@ -554,7 +554,7 @@ public class ChatFragment2 extends Fragment {
             JSONObject res = new JSONObject(result);
             if(res.has("success") && res.getBoolean("success")) {
                 //The web service got our message. Time to clear out the input EditText
-                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1));
+                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1, mEmail));
                 mMessageInputEditText.setText("");
                 finalizeChat();
                 //its up to you to decide if you want to send the message to the output here
@@ -586,13 +586,12 @@ public class ChatFragment2 extends Fragment {
                     String type = chatHistoryArray.getJSONObject(i).getString("type");
                     int data = chatHistoryArray.getJSONObject(i).getString("email").equals(mEmail) ? 1 : 0;
                     String msg = chatHistoryArray.getJSONObject(i).getString("messages");
+                    String sender = chatHistoryArray.getJSONObject(i).getString("email");
 
                     //txt
-                    if (type.equals("0")) list.add(new ChatModel(ChatModel.TEXT_TYPE, msg, data));
+                    if (type.equals("0")) list.add(new ChatModel(ChatModel.TEXT_TYPE, msg, data, sender));
                     //img
-                    else if (type.equals("1")) list.add(new ChatModel(ChatModel.IMAGE_TYPE, msg, 0));
-
-
+                    else if (type.equals("1")) list.add(new ChatModel(ChatModel.IMAGE_TYPE, msg, 0, sender));
 
 
                 }
@@ -649,33 +648,18 @@ public class ChatFragment2 extends Fragment {
                     // Build the notification and display it
                     notificationManager.notify(1, builder.build());
 
-
                 }
+
                 if(type != null && type.equals("0")) {
                     Log.e("MESSAGETYPE", "message is text");
-                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1));
+                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1, sender));
                     finalizeChat();
 
-//                    changeColorOnMsg();
-//                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-//                            .setAutoCancel(true)
-//                            .setSmallIcon(R.drawable.ic_message_black_24dp)
-//                            .setContentTitle("Message from: " + sender)
-//                            .setContentText(messageText)
-//                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//
-//                    // Automatically configure a Notification Channel for devices running Android O+
-//                    Pushy.setNotificationChannel(builder, context);
-//
-//                    // Get an instance of the NotificationManager service
-//                    NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-//
-//                    // Build the notification and display it
-//                    notificationManager.notify(1, builder.build());
                 }
-                if(type != null && type.equals("1")) {
+
+                else if(type != null && type.equals("1")) {
                     Log.e("MESSAGETYPE", "adding an imagee");
-                    list.add(new ChatModel(ChatModel.IMAGE_TYPE, messageText, 0));
+                    list.add(new ChatModel(ChatModel.IMAGE_TYPE, messageText, 0, sender));
                     finalizeChat();
 
                 }

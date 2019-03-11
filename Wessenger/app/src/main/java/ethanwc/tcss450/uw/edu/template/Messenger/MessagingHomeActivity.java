@@ -214,7 +214,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //
         if (!mIsMedia) {
-//            MediaManager.init(this);
+            MediaManager.init(this);
             mIsMedia = true;
         }
         setupEmojis();
@@ -1639,10 +1639,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         for (int i = 0; i < mChats.size(); i++) {
             StringBuilder members = new StringBuilder(256);
             List<String> peopleInChat = new ArrayList(mChatMembers.get(mChats.get(i)));
-            for (String person: peopleInChat)
+            for (String person: peopleInChat) {
                 members.append(mPeople.get(person) + " ");
+                Log.e("MESSAGESENDER", "it is: " + person);
+            }
 
-            Log.e("CHATID", "it is: " + mChats.get(i));
 
             m[i] = new Message.Builder(mChatNames.get(mChats.get(i))).addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
