@@ -298,9 +298,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .execute();
         onWaitFragmentInteractionHide();
 
-
+        //mFab.setImageResource(R.drawable.ic_saved_location);
         mFab.show();
 //            mFab.setImageResource(android.R.drawable.ic_menu_save);
+
         mFab.setEnabled(true);
     }
     private void setLocation(final Location location) {
