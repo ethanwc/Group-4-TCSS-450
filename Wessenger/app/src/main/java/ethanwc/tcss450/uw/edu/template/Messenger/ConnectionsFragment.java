@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -74,7 +75,7 @@ public class ConnectionsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mConnections = new ArrayList<Connection> (Arrays.asList((Connection[]) getArguments().getSerializable(ARG_CONNECTION_LIST)));
+            mConnections = new ArrayList<Connection> (Arrays.asList((Connection[]) Objects.requireNonNull(getArguments().getSerializable(ARG_CONNECTION_LIST))));
             mMyEmail = getArguments().getString("passEmail");
             System.out.println(mMyEmail+"----- in connections");
         }
