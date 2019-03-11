@@ -290,7 +290,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .appendPath("api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
                 .build();
 
-        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=98403&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip="+ mZip+"&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleWeatherPostExecute)
                 .onCancelled(this::handleErrorsInTask)
@@ -978,7 +978,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .addLowTemp(min)
                         .build());
             }
-            new GetAsyncTask.Builder("https://api.weatherbit.io/v2.0/forecast/hourly?postal_code=98403&country=US&key=723794c0a4a547688c417ccca5784221&hours=24")//uri.toString()
+
+            new GetAsyncTask.Builder("https://api.weatherbit.io/v2.0/forecast/hourly?postal_code=" + mZip +"&country=US&key=723794c0a4a547688c417ccca5784221&hours=24")//uri.toString()
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleHourlyWeatherPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build()
@@ -1034,11 +1036,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         } catch (JSONException e){
             e.printStackTrace();
         }
-        //onWaitFragmentInteractionHide();
+        onWaitFragmentInteractionHide();
     }
 
     private double convertCtoF(double c) {
-        return c*1.8+32;
+        return Math.round((c*1.8+32) *100) / 100;
     }
 
 
