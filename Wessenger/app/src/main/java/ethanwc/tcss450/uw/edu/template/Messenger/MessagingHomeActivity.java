@@ -275,6 +275,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .commit();
         } else {
             loadHome();
+            mFab.hide();
+            mFab.setEnabled(false);
         }
 
     }
@@ -699,8 +701,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             args.putSerializable("zip", mZip);
             weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
-            mFab.hide();
-            mFab.setEnabled(false);
+
 
             Uri uri = new Uri.Builder()
                     .scheme("https")
@@ -764,6 +765,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         else if (id == R.id.nav_homepage) {
             //Build ASNC task to grab connections from web service.
             loadHome();
+            mFab.hide();
+            mFab.setEnabled(false);
         }
 
         else if (id == R.id.nav_View_Saved_Location) {
