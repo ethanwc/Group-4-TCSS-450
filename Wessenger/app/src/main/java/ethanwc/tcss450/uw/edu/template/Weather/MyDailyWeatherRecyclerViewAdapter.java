@@ -1,5 +1,8 @@
 package ethanwc.tcss450.uw.edu.template.Weather;
 
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,7 +46,20 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
         holder.mWeatherMain.setText(mValues.get(position).getWeather());
         String iconcode = mValues.get(position).getIcon();
         String icon = "http://openweathermap.org/img/w/" +iconcode + ".png";
-        Picasso.get().load(icon).into((ImageView) holder.mIcon);
+
+        Picasso.get().load(icon)
+                .into((ImageView) holder.mIcon, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
+
         Log.e("weather", " "+ mValues.get(position).getWeather());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
