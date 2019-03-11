@@ -1,6 +1,5 @@
 package ethanwc.tcss450.uw.edu.template.utils;
 
-import android.graphics.Bitmap;
 public class ChatModel {
 
     public static final int TEXT_TYPE = 0;
@@ -8,13 +7,14 @@ public class ChatModel {
 
     public int type;
     public int data;
+    public String sender;
     public String text;
-    public Bitmap bitmap;
 
-    public ChatModel(int type, String text, int data)
+    public ChatModel(int type, String text, int data, String sender)
     {
         this.type = type;
         this.data = data;
         this.text = text;
+        this.sender = sender;
     }
 }

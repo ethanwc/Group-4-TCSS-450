@@ -214,7 +214,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         //
         if (!mIsMedia) {
-//            MediaManager.init(this);
+            MediaManager.init(this);
             mIsMedia = true;
         }
         setupEmojis();
@@ -275,6 +275,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .commit();
         } else {
             loadHome();
+            mFab.hide();
+            mFab.setEnabled(false);
         }
 
     }
@@ -700,8 +702,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             args.putSerializable("zip", mZip);
             weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
-            mFab.hide();
-            mFab.setEnabled(false);
+
 
             Uri uri = new Uri.Builder()
                     .scheme("https")
@@ -765,6 +766,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         else if (id == R.id.nav_homepage) {
             //Build ASNC task to grab connections from web service.
             loadHome();
+            mFab.hide();
+            mFab.setEnabled(false);
         }
 
         else if (id == R.id.nav_View_Saved_Location) {
@@ -1490,7 +1493,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         //parse JSON
         try {
             onWaitFragmentInteractionHide();
-            System.out.println("2------_>");
+
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
@@ -1526,8 +1529,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                args.putString("passemail", email);
                 frag.setArguments(args);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_messaging_connection_container, frag )
-                        .addToBackStack(null);
+                        .replace(R.id.fragment_messaging_connection_container, frag );
                 transaction.commit();
 
                 Log.e("super!!!!!", "yup");
@@ -1537,7 +1539,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     mConnectionsAsArray = mConnections.toArray(mConnectionsAsArray);
                     //Bundle connections and send as arguments
                     args = new Bundle();
-                    System.out.println("4------_>");
+
                     args.putSerializable(ConnectionsFragment.ARG_CONNECTION_LIST, mConnectionsAsArray);
                     frag = new ConnectionInviteFragment();
                     loadFragment(frag);
@@ -1545,8 +1547,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 //                args.putString("passemail", email);
                     frag.setArguments(args);
                     transaction = getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_messaging_connection_container, frag )
-                            .addToBackStack(null);
+                            .replace(R.id.fragment_messaging_connection_container, frag );
                     transaction.commit();
                 }
 
@@ -1640,10 +1641,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         for (int i = 0; i < mChats.size(); i++) {
             StringBuilder members = new StringBuilder(256);
             List<String> peopleInChat = new ArrayList(mChatMembers.get(mChats.get(i)));
-            for (String person: peopleInChat)
+            for (String person: peopleInChat) {
                 members.append(mPeople.get(person) + " ");
+                Log.e("MESSAGESENDER", "it is: " + person);
+            }
 
-            Log.e("CHATID", "it is: " + mChats.get(i));
 
             m[i] = new Message.Builder(mChatNames.get(mChats.get(i))).addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
