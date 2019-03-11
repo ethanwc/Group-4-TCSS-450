@@ -8,11 +8,12 @@
         <menu>
             <item
                 android:id="@+id/nav_homepage"
+                android:icon="@drawable/ic_home"
                 android:title="@string/Chat_Home" />
             <item
                 android:id="@+id/nav_chat_home"
-                android:icon="@drawable/ic_home"
-                android:title="@string/Chat_Home" />
+                android:icon="@drawable/ic_message_black_24dp"
+                android:title="@string/Chat_Messages" />
             <item
                 android:id="@+id/nav_global_chat"
                 android:icon="@drawable/ic_message_black_24dp"

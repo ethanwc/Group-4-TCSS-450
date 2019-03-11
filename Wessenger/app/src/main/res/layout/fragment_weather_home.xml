@@ -40,7 +40,7 @@
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="10 Day Forecast"
+        android:text="Daily Forecast"
         android:textColor="@color/weatherText"
         android:textSize="18sp" />
 

@@ -4,7 +4,7 @@
     <string name="email_registerToLogin">email</string>
     <string name="email_list">emailArray</string>
     <string name="password_registerToLogin">password</string>
-
+    <string name ="Chat_Messages">Chats</string>
     <string name="login_emailHint">E-mail Address</string>
     <string name="login_passwordHint">Password</string>
     <string name="login_password_confirmHint">Confirm Password</string>
