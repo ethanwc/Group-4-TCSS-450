@@ -132,6 +132,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     private Map<String, String> mChatNames;
     Multimap<String, String> mChatMembers;
     private ArrayList<Connection> mConnections;
+    DailyWeather[] dailyWeathersArray;
+    HourlyWeather[] hourlyWeathersArray;
     private int mCounter = 0;
     DrawerLayout mdrawer;
     private int mZip = 98404;
@@ -1143,6 +1145,42 @@ public class MessagingHomeActivity extends AppCompatActivity
         return  Math.round((k*1.8 - 459.67) * 100) / 100;
     }
 
+    private void updateHourlyWeather(final String response) {
+
+        try {
+            List<HourlyWeather> hourlyWeathers = new ArrayList<>();
+            JSONObject result = new JSONObject(response);
+            JSONArray data = result.getJSONArray("data");
+
+            for (int i = 0; i < data.length(); i ++) {
+                JSONObject jsonWeather = data.getJSONObject(i).getJSONObject("weather");
+                double temp = convertCtoF( data.getJSONObject(i).getDouble("temp"));
+                double temp2 = data.getJSONObject(i).getDouble("temp");
+                temp2 = (temp2 * 9/5) + 32;
+                String time = data.getJSONObject(i).getString("timestamp_local");
+                hourlyWeathers.add(new HourlyWeather.Builder(
+                        jsonWeather.getString("description"))
+                        .setTemp(temp2)
+                        .setTime(time)
+                        .build());
+
+                Log.e("WEATHERIS: ", "temp: " + data.getJSONObject(i).getDouble("temp") + " ACTUAL: " + temp2);
+            }
+            if (mDailyWeather != null) {
+                dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
+                dailyWeathersArray = mDailyWeather.toArray(dailyWeathersArray);
+            }
+
+            hourlyWeathersArray = new HourlyWeather[hourlyWeathers.size()];
+            hourlyWeathersArray = hourlyWeathers.toArray(hourlyWeathersArray);
+
+
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        onWaitFragmentInteractionHide();
+    }
+
     private void handleHourlyWeatherPostExecute(final String response) {
 
         try {
@@ -1153,18 +1191,21 @@ public class MessagingHomeActivity extends AppCompatActivity
             for (int i = 0; i < data.length(); i ++) {
                 JSONObject jsonWeather = data.getJSONObject(i).getJSONObject("weather");
                 double temp =convertCtoF( data.getJSONObject(i).getDouble("temp"));
+                int temp2 = (int) (data.getJSONObject(i).getDouble("temp"));
+                temp2 = (temp2 * 9/5) + 32;
                 String time = data.getJSONObject(i).getString("timestamp_local");
                 hourlyWeathers.add(new HourlyWeather.Builder(
                         jsonWeather.getString("description"))
-                        .setTemp(temp)
+                        .setTemp(temp2)
                         .setTime(time)
                         .build());
             }
-            DailyWeather[] dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
+            dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
             dailyWeathersArray = mDailyWeather.toArray(dailyWeathersArray);
 //
-            HourlyWeather[] hourlyWeathersArray = new HourlyWeather[hourlyWeathers.size()];
+            hourlyWeathersArray = new HourlyWeather[hourlyWeathers.size()];
             hourlyWeathersArray = hourlyWeathers.toArray(hourlyWeathersArray);
+
             Fragment fragment = new WeatherHome();
             Bundle args = new Bundle();
             args.putSerializable("zip", mZip);
@@ -1181,7 +1222,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     private double convertCtoF(double c) {
-        return Math.round((c*1.8+32) *100) / 100;
+        return Math.round(c * (9/5)) + 32;
     }
 
 
@@ -2185,11 +2226,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
             mZip = Integer.parseInt(item.getZip());
-            WeatherHome weatherHome = new WeatherHome();
-            Bundle args = new Bundle();
-            args.putSerializable("zip", mZip);
-            weatherHome.setArguments(args);
-            getSupportActionBar().setTitle("Weather Home");
+//            WeatherHome weatherHome = new WeatherHome();
+//            Bundle args = new Bundle();
+//            args.putSerializable("zip", mZip);
+//            weatherHome.setArguments(args);
+//            getSupportActionBar().setTitle("Weather Home");
             mFab.hide();
             mFab.setEnabled(false);
 
@@ -2435,6 +2476,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     //@Override
     public void onChangeLocationSubmit(int zip) {
         mZip = zip;
+
+        new GetAsyncTask.Builder("https://api.weatherbit.io/v2.0/forecast/hourly?postal_code=" + mZip +"&country=US&key=723794c0a4a547688c417ccca5784221&hours=24")//uri.toString()
+                .onPreExecute(this::onWaitFragmentInteractionShow)
+                .onPostExecute(this::updateHourlyWeather)
+                .onCancelled(this::handleErrorsInTask)
+                .build()
+                .execute();
 
         WeatherHome weatherHome = new WeatherHome();
         Bundle args = new Bundle();

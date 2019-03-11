@@ -9,6 +9,7 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:text="Current Weather"
         android:textColor="@color/weatherText"
         android:textSize="18sp" />
@@ -26,6 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="24 Hour Forecast"
+        android:layout_margin="10dp"
         android:textColor="@color/weatherText"
         android:textSize="18sp" />
 
@@ -41,6 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Daily Forecast"
+        android:layout_margin="10dp"
         android:textColor="@color/weatherText"
         android:textSize="18sp" />
 
