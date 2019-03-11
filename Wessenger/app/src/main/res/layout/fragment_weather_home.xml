@@ -1,12 +1,17 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/weatherDark"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:theme="@style/AppTheme"
-    >
+    android:theme="@style/AppTheme">
 
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Weather"
+        android:textColor="@color/weatherText"
+        android:textSize="18sp" />
 
     <FrameLayout
         android:id="@+id/weather_home_container_1"
@@ -20,27 +25,29 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hourly Weather" />
+        android:text="24 Hour Forecast"
+        android:textColor="@color/weatherText"
+        android:textSize="18sp" />
 
     <FrameLayout
         android:id="@+id/weather_home_container_2"
         android:layout_width="match_parent"
-        android:layout_weight="1"
+        android:layout_height="99dp"
 
-        android:layout_height="0dp">
-    </FrameLayout>
+        android:layout_weight="1"></FrameLayout>
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Daily Weather" />
+        android:text="10 Day Forecast"
+        android:textColor="@color/weatherText"
+        android:textSize="18sp" />
 
     <FrameLayout
         android:id="@+id/weather_home_container_3"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-    </FrameLayout>
+        android:layout_height="108dp"
+        android:layout_weight="1"></FrameLayout>
 
 </LinearLayout>
