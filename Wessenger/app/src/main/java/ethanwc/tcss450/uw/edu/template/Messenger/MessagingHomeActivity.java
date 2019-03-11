@@ -290,12 +290,13 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
                 .build();
 
-        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip="+ mZip+"&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                .onPreExecute(this::onWaitFragmentInteractionShow)
+        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+//                    .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleWeatherPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build()
                 .execute();
+        onWaitFragmentInteractionHide();
 
 
         mFab.show();
