@@ -12,16 +12,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import java.text.DecimalFormat;
-import java.util.Locale;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -70,11 +65,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
@@ -147,9 +140,6 @@ public class MessagingHomeActivity extends AppCompatActivity
     private static final String TAG = "MyLocationsActivity";
     private boolean mIsMedia = false;
     private Connection[] mConnectionsAsArray;
-    private int mZipCode;
-    private Double mLat;
-    private Double mLong;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
@@ -188,7 +178,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             public void onReceive(Context context, Intent intent) {
                 mZip = intent.getExtras().getInt("zip");
                 fromMaps = true;
-//                System.out.println();
 
             }
         };
@@ -221,35 +210,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 // ...
                     setLocation(location);
                     Log.d("LOCATION UPDATE!", mCurrentLocation.toString());
-                    getLatLongFromAddress();
-                    //--
-//                    DecimalFormat df = new DecimalFormat( "#.#####" );
-//                    mLong = Double.parseDouble(df.format(mCurrentLocation.getLongitude()));
-//                    df = new DecimalFormat( "#.#######" );
-//                    mLat = Double.parseDouble(df.format(mCurrentLocation.getLatitude()));
-//                    Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-//                    try {
-//                        List<Address> addresses = geocoder.getFromLocation(mLat, mLong, 1);
-////            List<Address> addresses = geocoder.getFromLocation(latLng.longitude, latLng.latitude, 1);
-//
-//                        if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
-//                            mZipCode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
-//                            System.out.println( "-------ZIPPP----" + mZipCode );
-//
-////                            Intent intent = new Intent("zipCodeSent");
-////                            intent.putExtra("zip", mZipcode);
-////                            sendBroadcast(intent);
-////                            finish();
-//
-//                        }else{
-//                            System.out.println("cannot get zip code");
-//                        }
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
-                    //--
-
                 } };
         };
         createLocationRequest();
@@ -321,88 +281,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(false);
         }
 
-    }
-
-    private void getLatLongFromAddress()
-
-
-    {
-
-        DecimalFormat df = new DecimalFormat( "#.#####" );
-        mLong = Double.parseDouble(df.format(mCurrentLocation.getLongitude()));
-        df = new DecimalFormat( "#.#######" );
-        mLat = Double.parseDouble(df.format(mCurrentLocation.getLatitude()));
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocation(mLat, mLong, 1);
-//            List<Address> addresses = geocoder.getFromLocation(latLng.longitude, latLng.latitude, 1);
-
-            if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
-                mZip = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
-                System.out.println( "-------ZIPPP----" + mZip );
-
-//                            Intent intent = new Intent("zipCodeSent");
-//                            intent.putExtra("zip", mZipcode);
-//                            sendBroadcast(intent);
-//                            finish();
-
-            }else{
-                System.out.println("cannot get zip code");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        double lat= 0.0, lng= 0.0;
-
-        Geocoder geoCoder = new Geocoder(this, Locale.getDefault());
-        //
-//        DecimalFormat df = new DecimalFormat( "#.#####" );
-//        mLong = Double.parseDouble(df.format(mCurrentLocation.getLongitude()));
-//        df = new DecimalFormat( "#.#######" );
-//        mLat = Double.parseDouble(df.format(mCurrentLocation.getLatitude()));
-//        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-//        try {
-//            List<Address> addresses = geocoder.getFromLocation(mLat, mLong, 1);
-////            List<Address> addresses = geocoder.getFromLocation(latLng.longitude, latLng.latitude, 1);
-//
-//            if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
-//                mZipCode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
-//                System.out.println( "-------ZIPPP----" + mZipCode );
-//
-////                            Intent intent = new Intent("zipCodeSent");
-////                            intent.putExtra("zip", mZipcode);
-////                            sendBroadcast(intent);
-////                            finish();
-//
-//            }else{
-//                System.out.println("cannot get zip code");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        //
-//        try
-//        {
-//            List<Address> addresses = geoCoder.getFromLocationName(address , 1);
-//            if (addresses.size() > 0)
-//            {
-//
-//                GeoPoint p = new GeoPoint(
-//                        (int) (addresses.get(0).getLatitude() * 1E6),
-//                        (int) (addresses.get(0).getLongitude() * 1E6));
-//
-//                lat=p.getLatitudeE6()/1E6;
-//                lng=p.getLongitudeE6()/1E6;
-//
-//                Log.d("Latitude", ""+lat);
-//                Log.d("Longitude", ""+lng);
-//            }
-//        }
-//        catch(Exception e)
-//        {
-//            e.printStackTrace();
-//        }
     }
 
     private void loadWeather() {
