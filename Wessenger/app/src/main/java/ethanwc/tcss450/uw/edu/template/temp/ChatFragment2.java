@@ -83,6 +83,7 @@ public class ChatFragment2 extends Fragment {
     private static final int TAKEN_PHOTO_UPLOAD = 444;
     private static final int REQUEST_VIDEO_CAPTURE = 555;
     private Map<String, Bitmap> mImages;
+    private RecyclerView mRecyclerView;
     private PushMessageReceiver mPushMessageReciever;
     private EditText mMessageInputEditText;
     private String currentPhotoPath;
@@ -386,12 +387,16 @@ public class ChatFragment2 extends Fragment {
     }
 
     public void finalizeChat() {
-        MultiViewTypeAdapter adapter = new MultiViewTypeAdapter(list, getActivity());
+        MultiViewTypeAdapter adapter = new MultiViewTypeAdapter(list, getActivity(), this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
-        RecyclerView mRecyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView) getView().findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.scrollToPosition(list.size()-1);
+    }
+
+    public void scrollDown() {
         mRecyclerView.scrollToPosition(list.size()-1);
     }
 

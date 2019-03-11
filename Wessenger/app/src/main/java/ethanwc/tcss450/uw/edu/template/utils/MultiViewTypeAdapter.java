@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import ethanwc.tcss450.uw.edu.template.R;
+import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
 
 /**
  * Created by anupamchugh on 09/02/16.
@@ -22,6 +23,7 @@ import ethanwc.tcss450.uw.edu.template.R;
 public class MultiViewTypeAdapter extends RecyclerView.Adapter {
 
     private ArrayList<ChatModel>dataSet;
+    private ChatFragment2 parent;
     private Context mContext;
     private int total_types;
 
@@ -58,9 +60,10 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
     }
 
 
-    public MultiViewTypeAdapter(ArrayList<ChatModel>data, Context context) {
+    public MultiViewTypeAdapter(ArrayList<ChatModel>data, Context context, ChatFragment2 parent) {
         this.dataSet = data;
         this.mContext = context;
+        this.parent = parent;
         total_types = dataSet.size();
     }
 
@@ -108,7 +111,20 @@ public class MultiViewTypeAdapter extends RecyclerView.Adapter {
                     }
                     break;
                 case ChatModel.IMAGE_TYPE:
-                    Picasso.get().load(object.text).into(((ImageTypeViewHolder) holder).image);
+                    Picasso.get().load(object.text)
+                            .into(((ImageTypeViewHolder) holder).image, new com.squareup.picasso.Callback() {
+                                @Override
+                                public void onSuccess() {
+                                    parent.scrollDown();
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                }
+                            });
+
+
                     ((ImageTypeViewHolder) holder).sender.setText(object.sender);
 
                     if (object.data == 1)  {
