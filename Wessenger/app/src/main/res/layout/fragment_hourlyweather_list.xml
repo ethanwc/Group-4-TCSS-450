@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/hourlyweather_list"
     android:name="ethanwc.tcss450.uw.edu.template.Weather.HourlyWeatherFragment"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/backgroundDark"
     app:reverseLayout="true"
+    android:orientation="horizontal"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
     tools:context=".Weather.HourlyWeatherFragment"
     tools:listitem="@layout/fragment_hourlyweather" />
