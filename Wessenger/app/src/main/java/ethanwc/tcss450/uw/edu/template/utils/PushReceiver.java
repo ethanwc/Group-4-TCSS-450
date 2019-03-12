@@ -37,7 +37,6 @@ public class PushReceiver extends BroadcastReceiver {
         //for your project, the WS need to send different types of push messages.
         //perform so logic/routing based on the "type"
         //feel free to change the key or type of values. You could use numbers like HTTP: 404 etc
-        String typeOfMessage = intent.getStringExtra("type");
 //        Log.e("MESSAGETYPE", typeOfMessage + " alalala");
 //        System.out.println("type of msg =========>  "+typeOfMessage);
         MessagingHomeActivity ho = new MessagingHomeActivity();
@@ -46,10 +45,10 @@ public class PushReceiver extends BroadcastReceiver {
 
         //The WS sent us the name of the sender
         String sender = intent.getStringExtra("sender");
-
+        String typeOfMessage = intent.getStringExtra("type");
         String messageText = intent.getStringExtra("message");
         String receiver = intent.getStringExtra("receiver");
-        String msgtype = intent.getStringExtra( "msgtype" );
+        String msgtype = "" + intent.getIntExtra( "msgtype", 0);
         System.out.println("The email receiver---->"+receiver);
 
         ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
@@ -59,14 +58,14 @@ public class PushReceiver extends BroadcastReceiver {
             //app is in the foreground so send the message to the active Activities
             Log.d("Wessenger", "Message received in foreground:"+messageText);
 
-
+            Log.e("MESSAGETYPE", "1 or 0: " + msgtype);
             //create an Intent to broadcast a message to other parts of the app.
             Intent i = new Intent(RECEIVED_NEW_MESSAGE);
             i.putExtra("SENDER", sender);
             i.putExtra("MESSAGE", messageText);
             i.putExtra("TYPE", typeOfMessage);
             i.putExtra("Receiver",receiver);
-            i.putExtra("MsgType",msgtype);
+            i.putExtra("MsgType", msgtype);
             i.putExtras(intent.getExtras());
 
             context.sendBroadcast(i);

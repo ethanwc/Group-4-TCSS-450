@@ -559,7 +559,7 @@ public class ChatFragment2 extends Fragment {
             JSONObject res = new JSONObject(result);
             if(res.has("success") && res.getBoolean("success")) {
                 //The web service got our message. Time to clear out the input EditText
-                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1, mEmail));
+//                list.add(new ChatModel(ChatModel.TEXT_TYPE, mMessageInputEditText.getText().toString(), 1, mEmail));
                 mMessageInputEditText.setText("");
                 finalizeChat();
                 //its up to you to decide if you want to send the message to the output here
@@ -631,7 +631,8 @@ public class ChatFragment2 extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
-                String type = intent.getStringExtra("TYPE");
+                String msgtype = intent.getStringExtra("MsgType");
+                String type = intent.getStringExtra("type");
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
 
@@ -654,15 +655,16 @@ public class ChatFragment2 extends Fragment {
                     notificationManager.notify(1, builder.build());
 
                 }
+                Log.e("MESSAGETYPE", " type: " + type + " messagetype: " + msgtype);
 
-                if(type != null && type.equals("0")) {
-                    Log.e("MESSAGETYPE", "message is text");
-                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, 1, sender));
+                if(msgtype != null && msgtype.equals("0")) {
+                    int position = sender.equals(mEmail) ? 1 : 0;
+                    list.add(new ChatModel(ChatModel.TEXT_TYPE, messageText, position, sender));
                     finalizeChat();
 
                 }
 
-                else if(type != null && type.equals("1")) {
+                else if(msgtype != null && msgtype.equals("1")) {
                     Log.e("MESSAGETYPE", "adding an imagee");
                     list.add(new ChatModel(ChatModel.IMAGE_TYPE, messageText, 0, sender));
                     finalizeChat();
