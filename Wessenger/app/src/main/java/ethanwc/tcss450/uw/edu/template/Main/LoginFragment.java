@@ -127,9 +127,6 @@ public class LoginFragment extends WaitFragment {
         mEditEmail = mView.findViewById(R.id.edittext_login_email);
         mEditPass = mView.findViewById(R.id.edittext_login_password);
 
-        SignInButton signInButton = mView.findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(this::showHint);
-
 
         return mView;
 
