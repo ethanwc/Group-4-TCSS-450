@@ -140,6 +140,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     private static final String TAG = "MyLocationsActivity";
     private boolean mIsMedia = false;
     private Connection[] mConnectionsAsArray;
+    SearchView mSearchView;
+    MenuItem mSearchMenu;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
@@ -513,13 +515,13 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         // Get the search menu.
-        MenuItem searchMenu = menu.findItem(R.id.app_bar_menu_search);
+        mSearchMenu = menu.findItem(R.id.app_bar_menu_search);
 
         // Get SearchView object.
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchMenu);
 
         // Get SearchView autocomplete object.
-        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setBackgroundColor(getResources().getColor(R.color.backgroundDark));
         searchAutoComplete.setTextColor(getResources().getColor(R.color.messageText));
         searchAutoComplete.setDropDownBackgroundResource(android.R.color.holo_blue_light);
@@ -676,6 +678,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        mMenuItem = R.id.nav_global_chat
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        mSearchView.setEnabled(false);
+        mSearchMenu.setEnabled(false);
+        mSearchMenu.setVisible(false);
+
         //Chat has been chosen
         if (id == R.id.nav_global_chat) {
             SpannableString s = new SpannableString(item.getTitle());
@@ -693,6 +699,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Global chat");
             mFab.hide();
             mFab.setEnabled(false);
+            mSearchView.setEnabled(false);
+            mSearchMenu.setEnabled(false);
+            mSearchMenu.setVisible(false);
 
             loadFragment(chatFrag);
         }
@@ -829,7 +838,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                 s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
                 item.setTitle(s);
 
-
+            mSearchMenu.setVisible(true);
+            mSearchMenu.setEnabled(true);
+            mSearchView.setEnabled(true);
 
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
