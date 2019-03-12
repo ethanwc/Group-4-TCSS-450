@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +34,8 @@ import org.cloudinary.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
+import ethanwc.tcss450.uw.edu.template.Messenger.MapsActivity;
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -76,6 +81,28 @@ public class ChangeLocationsFragment extends Fragment {
         Button btnChangePassword = v.findViewById(R.id.button_changelocation_submit);
         btnChangePassword.setOnClickListener(v1 ->changeLocation(v));
 
+        FloatingActionButton mFab = v.findViewById(R.id.fab_map_fab);
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                System.out.println("???????????????????");
+                Location mCurrentLocation = getArguments().getParcelable("locations");
+                if (mCurrentLocation == null) {
+
+                    Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show(); } else {
+                    Intent i = new Intent(getActivity(), MapsActivity.class);
+                    //pass the current location on to the MapActivity when it is loaded
+                    i.putExtra("LOCATION", mCurrentLocation);
+
+                    startActivity(i);
+                }
+
+            }
+
+        });
         return v;
 
 

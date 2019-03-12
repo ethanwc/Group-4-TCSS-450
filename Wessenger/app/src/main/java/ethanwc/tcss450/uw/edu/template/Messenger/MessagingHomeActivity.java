@@ -115,6 +115,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     private Bundle mArgs;
     private FloatingActionButton mFab;
+    private FloatingActionButton mSaveFab;
     private ArrayList<String> mEmailList;
     private ArrayList<String> mEmails;
     private ArrayList<String> mFirsts;
@@ -228,6 +229,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         //loadChats();
         //Hide the FAB upon main activity loading.
         mFab = findViewById(R.id.fab_messaging_fab);
+        mSaveFab = findViewById(R.id.fab_save);
+        mSaveFab.setEnabled(false);
+        mSaveFab.hide();
         mFab.setEnabled(true);
         mFab.show();
 
@@ -306,9 +310,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         onWaitFragmentInteractionHide();
 
 
-        mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
-        mFab.setEnabled(true);
+
+
     }
     private void setLocation(final Location location) {
         mCurrentLocation = location;
@@ -322,6 +325,8 @@ public class MessagingHomeActivity extends AppCompatActivity
         this.registerReceiver(_refreshReceiver, filter);
         if (mZip != 0 && fromMaps) {
             fromMaps = false;
+            mSaveFab.setEnabled(true);
+            mSaveFab.show();
             loadWeather();
 
         }
@@ -470,24 +475,14 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null
-                || addChatFrag != null || chatFrag != null|| changelocation != null) {
+                || addChatFrag != null || chatFrag != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_input_add);
-            mFab.setEnabled(true);
 
-        } else if (currentWeather != null) {
-            mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
+            mSaveFab.hide();
+            mSaveFab.setEnabled(false);
 
-        } else if (changelocation != null) {
-            View removeLocation = findViewById(R.id.button_location_remove);
-            removeLocation.setVisibility(View.GONE);
-            mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_input_add);
-            mFab.setEnabled(true);
-            mWeather = false;
         }else {
 
             //Hide the FAB on correct windows when back is pressed
@@ -718,16 +713,14 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .execute();
 
 
-            mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
-            mFab.setEnabled(true);
 
+
+            mSaveFab.show();
+            mSaveFab.setEnabled(true);
             // loadFragment(weatherHome);
             //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
-            mFab.setEnabled(true);
-            mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_dialog_map);
+
 
             //Set on click listener for FAB
 
@@ -757,10 +750,17 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .build().execute();
 
 
-
+            Bundle args = new Bundle();
+            args.putParcelable("locations", mCurrentLocation);
+            changeLocationsFragment.setArguments(args);
+            location location = new location.Builder("something").build();
+            args.putSerializable("location", location);
             loadFragment(changeLocationsFragment);
 
-
+            mSaveFab.hide();
+            mSaveFab.setEnabled(false);
+            mFab.setEnabled(false);
+            mFab.hide();
             //Saved locations has been chosen
         }
 
@@ -769,6 +769,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadHome();
             mFab.hide();
             mFab.setEnabled(false);
+
+            mSaveFab.hide();
+            mSaveFab.setEnabled(false);
         }
 
         else if (id == R.id.nav_View_Saved_Location) {
@@ -797,6 +800,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.hide();
             mFab.setEnabled(false);
 
+            mSaveFab.hide();
+            mSaveFab.setEnabled(false);
+
 //            loadFragment(locationFragment);
             //Messenger home has been chosen
         }
@@ -807,7 +813,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Chat");
             mFab.setEnabled(true);
             mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_input_add);
+
+            mSaveFab.hide();
+            mSaveFab.setEnabled(false);
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -820,8 +828,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
-//            mFab.setImageResource(android.R.drawable.ic_input_add);
-//            System.out.println("===========");
+
 
 
                 SpannableString s = new SpannableString(item.getTitle());
@@ -858,7 +865,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             mFab.setEnabled(true);
             mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_input_add);
+            mSaveFab.hide();
+            mSaveFab.setEnabled(false);
             //Set on click listener for FAB
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1093,6 +1101,8 @@ public class MessagingHomeActivity extends AppCompatActivity
 //
 //            onWaitFragmentInteractionHide();
             loadFragment(fragment);
+
+
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -1162,24 +1172,24 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .replace(R.id.changeLocation_container, frag);
                 transaction.commit();
 
-                mFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        if (mCurrentLocation == null) {
-
-                            Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show(); } else {
-                            Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
-                            //pass the current location on to the MapActivity when it is loaded
-                            i.putExtra("LOCATION", mCurrentLocation);
-
-                            startActivity(i);
-                        }
-
-                    }
-
-                });
+//                mFab.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//
+//                        if (mCurrentLocation == null) {
+//
+//                            Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
+//                                    .setAction("Action", null).show(); } else {
+//                            Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
+//                            //pass the current location on to the MapActivity when it is loaded
+//                            i.putExtra("LOCATION", mCurrentLocation);
+//
+//                            startActivity(i);
+//                        }
+//
+//                    }
+//
+//                });
 
 
             } else {
@@ -1334,7 +1344,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
-//        mFab.setImageResource(android.R.drawable.ic_input_add);
+
 
 
         uri = new Uri.Builder()
@@ -1397,7 +1407,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
         mFab.show();
-//        mFab.setImageResource(android.R.drawable.ic_input_add);
+
 
     }
 
@@ -1453,7 +1463,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
-//        mFab.setImageResource(android.R.drawable.ic_input_add);
+
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1759,10 +1769,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         transaction.commit();
 
 
-//        //Show FAB
-//        mFab.setEnabled(true);
-//        mFab.show();
-        //mFab.setImageResource(android.R.drawable.ic_input_add);
+
     }
 
 
@@ -1994,7 +2001,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 mFab.setEnabled(true);
                 mFab.show();
-//                mFab.setImageResource(android.R.drawable.ic_input_add);
+
 
 
                 //Set on click listener for FAB
@@ -2124,10 +2131,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .build()
                     .execute();
 
-
-            mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
-            mFab.setEnabled(true);
 
 
 
@@ -2329,7 +2332,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Chat");
         mFab.setEnabled(true);
         mFab.show();
-//        mFab.setImageResource(android.R.drawable.ic_input_add);
+
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -2383,9 +2386,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .execute();
 
 
-        mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
-        mFab.setEnabled(true);
 
     }
 

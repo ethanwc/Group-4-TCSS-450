@@ -52,6 +52,8 @@ public class DailyWeatherFragment extends Fragment {
                     Arrays.asList((DailyWeather[]) getArguments().getSerializable(ARG_DAILYWEATHER_LIST)));
             //mColumnCount = mDailyWeather.size();
         }
+
+
     }
 
 
