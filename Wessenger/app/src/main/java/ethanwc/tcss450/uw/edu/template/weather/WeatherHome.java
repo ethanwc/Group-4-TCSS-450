@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment;
@@ -69,6 +70,12 @@ public class WeatherHome extends Fragment {
     }
 
     @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+        TextView cityView = view.findViewById(R.id.textview_weather_location);
+        cityView.setText(getArguments().getString("city"));
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -76,6 +83,7 @@ public class WeatherHome extends Fragment {
         toolbar = (Toolbar) view.findViewById(R.id.toolbar_messenging_toolbar);
 
         FragmentManager manager= getChildFragmentManager();//create an instance of fragment manager
+
 
 
         FragmentTransaction transaction= manager.beginTransaction();//create an instance of Fragment-transaction
@@ -100,6 +108,7 @@ public class WeatherHome extends Fragment {
 
 
         transaction.commit();
+
 
         return view;
     }

@@ -69,8 +69,6 @@ public class ChangeLocationsFragment extends Fragment {
         }
     }
 
-
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,7 +85,6 @@ public class ChangeLocationsFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                System.out.println("???????????????????");
                 Location mCurrentLocation = getArguments().getParcelable("locations");
                 if (mCurrentLocation == null) {
 

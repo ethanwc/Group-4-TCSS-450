@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -56,9 +58,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
@@ -115,6 +119,7 @@ public class MessagingHomeActivity extends AppCompatActivity
     HourlyWeather[] hourlyWeathersArray;
     private int mCounter = 0;
     DrawerLayout mdrawer;
+    private String mCity = "";
     private int mZip = 98404;
     private String mChatId = "";
     private ArrayList<location> mLocation;
@@ -876,7 +881,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray longitudeArray = resultJSON.getJSONArray( "longitude" );
                 JSONArray zipArray = resultJSON.getJSONArray( "zip" );
 
-                Log.e("LATITUDE!!!!", longitudeArray.toString());
                 for (int i = 0; i < locationArray.length(); i++) {
                     location loc = new location.Builder(locationArray.get(i).toString())
                             .addNickname( locationArray.get(i).toString())
@@ -1027,23 +1031,49 @@ public class MessagingHomeActivity extends AppCompatActivity
             }
             dailyWeathersArray = new DailyWeather[mDailyWeather.size()];
             dailyWeathersArray = mDailyWeather.toArray(dailyWeathersArray);
-//
+
             hourlyWeathersArray = new HourlyWeather[hourlyWeathers.size()];
             hourlyWeathersArray = hourlyWeathers.toArray(hourlyWeathersArray);
 
-            Fragment fragment = new WeatherHome();
-            Bundle args = new Bundle();
-            args.putSerializable("zip", mZip);
-            args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
-            args.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, hourlyWeathersArray);
-            fragment.setArguments(args);
 
-            loadFragment(fragment);
+            new GetAsyncTask.Builder("http://ziptasticapi.com/" + mZip)//uri.toString()
+                    .onPreExecute(this::onWaitFragmentInteractionShow)
+                    .onPostExecute(this::handleGetZipOnPostExecute)
+                    .onCancelled(this::handleErrorsInTask)
+                    .build()
+                    .execute();
+
 
         } catch (JSONException e){
             e.printStackTrace();
         }
         onWaitFragmentInteractionHide();
+    }
+
+    /**
+     * Helper method used to handle what happens after the web service for getting a city name returns.
+     * @param s String used to represent the JSON response.
+     */
+    private void handleGetZipOnPostExecute(String s) {
+        try {
+            JSONObject resultJSON = new JSONObject(s);
+            mCity = resultJSON.getString("city");
+
+            Fragment fragment = new WeatherHome();
+
+            Bundle args = new Bundle();
+            args.putSerializable("zip", mZip);
+
+            args.putSerializable("city", mCity);
+            args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
+            args.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, hourlyWeathersArray);
+            fragment.setArguments(args);
+
+            loadFragment(fragment);
+            onWaitFragmentInteractionHide();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -1076,8 +1106,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray longitudeArray = resultJSON.getJSONArray( "longitude" );
                 JSONArray zipArray = resultJSON.getJSONArray( "zip" );
 
-                Log.e("LATITUDE!!!!", longitudeArray.toString());
-
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!" + locationArray.length());
                 for (int i = 0; i < locationArray.length(); i++) {
                     location loc = new location.Builder(locationArray.get(i).toString())
                             .addNickname( locationArray.get(i).toString())
