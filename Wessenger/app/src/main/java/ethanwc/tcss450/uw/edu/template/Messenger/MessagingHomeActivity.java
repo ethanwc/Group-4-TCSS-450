@@ -1940,10 +1940,11 @@ public class MessagingHomeActivity extends AppCompatActivity
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_declineinvitation))
+                .appendPath(getString(R.string.ep_deleteContact))
                 .build();
         String msg = getIntent().getExtras().getString("email");
-        Credentials creds = new Credentials.Builder(msg).build();
+        Credentials creds = new Credentials.Builder(msg).addEmail2(item.getEmail()).build();
+        System.out.println(creds.asJSONObject().toString());
         getSupportActionBar().setTitle("Invitations");
         new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                 .onPreExecute(this::onWaitFragmentInteractionShow)
