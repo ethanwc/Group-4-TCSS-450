@@ -3,17 +3,12 @@ package ethanwc.tcss450.uw.edu.template.Messenger;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.location.Location;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,17 +16,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.text.emoji.EmojiCompat;
 import android.support.text.emoji.FontRequestEmojiCompatConfig;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.provider.FontRequest;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.provider.FontRequest;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -48,7 +40,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.cloudinary.android.MediaManager;
@@ -81,7 +72,6 @@ import ethanwc.tcss450.uw.edu.template.Weather.CurrentWeather;
 import ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.HourlyWeatherFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationFragment;
-import ethanwc.tcss450.uw.edu.template.Weather.SavedLocationViewFragment;
 import ethanwc.tcss450.uw.edu.template.Weather.WeatherHome;
 import ethanwc.tcss450.uw.edu.template.model.Connection;
 import ethanwc.tcss450.uw.edu.template.model.Credentials;
@@ -91,7 +81,6 @@ import ethanwc.tcss450.uw.edu.template.model.Message;
 import ethanwc.tcss450.uw.edu.template.model.location;
 import ethanwc.tcss450.uw.edu.template.temp.ChatFragment2;
 import me.pushy.sdk.Pushy;
-import me.pushy.sdk.lib.jackson.core.io.JsonEOFException;
 
 /**
  * Acivity class which manages functionality beyond login/registration.
@@ -103,13 +92,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         ChangePasswordFragment.OnChangePasswordFragmentInteractionListener,
         SavedLocationFragment.OnLocationListFragmentInteractionListener,
         OnNewContactFragmentButtonAction,
-        WeatherHome.OnFragmentInteractionListener,
         ChatFragment2.OnChatFragmentButtonAction, AddToChatFragment.OnAddToChatFragmentAction,
         RemoveFromChatFragment.OnRemoveFromChatFragmentAction, AddChatFragment.OnAddChatFragmentAction,
-        HomeFragment.OnHomeFragmentInteractionListener,
         CurrentWeather.OnCurrentWeatherUpdateListener,
-        DailyWeatherFragment.OnListFragmentInteractionListener,
-        HourlyWeatherFragment.OnListFragmentInteractionListener,
         ChangeLocationsFragment.onChangeLocationFragmentInteractionListener {
 
 
@@ -154,16 +139,10 @@ public class MessagingHomeActivity extends AppCompatActivity
     private Location mCurrentLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
-//    private MenuItem mMenuItem;
 
     private static final String[] COUNTRIES = new String[]{"Belgium",
             "France", "France_", "Italy", "Germany", "Spain"};
 
-
-
-//public void setColortitle(){
-//    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#0000ff")));
-//}
     /**
      * OnCreate used to instantiate the starting state of the application.
      *
@@ -182,7 +161,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             }
         };
-        //for location
+        //Get location
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -193,13 +172,11 @@ public class MessagingHomeActivity extends AppCompatActivity
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION
                             , Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_LOCATIONS);
-            System.out.println("----------not granted----");
         } else {
-            System.out.println("---------- granted----");
-//The user has already allowed the use of Locations. Get the current location.
- requestLocation();
+        //The user has already allowed the use of Locations. Get the current location.
+        requestLocation();
         }
-//-------
+
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -207,15 +184,14 @@ public class MessagingHomeActivity extends AppCompatActivity
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-// Update UI with location data
-// ...
+                    // Update UI with location data
                     setLocation(location);
                     Log.d("LOCATION UPDATE!", mCurrentLocation.toString());
                 } };
         };
         createLocationRequest();
 
-        //
+
         if (!mIsMedia) {
             MediaManager.init(this);
             mIsMedia = true;
@@ -226,7 +202,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar_messenging_toolbar);
         setSupportActionBar(toolbar);
 
-        //loadChats();
         //Hide the FAB upon main activity loading.
         mFab = findViewById(R.id.fab_messaging_fab);
         mSaveFab = findViewById(R.id.fab_save);
@@ -235,6 +210,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab.setEnabled(true);
         mFab.show();
 
+
         if (getIntent().getExtras() != null) {
             Bundle extras = getIntent().getExtras();
             //System.out.println("+=======from pushy");
@@ -242,6 +218,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             mEmailList = getIntent().getStringArrayListExtra("a");
         }
 
+        //Set on click listener for plus fab button
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -266,6 +243,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.navview_messanging_nav);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Load homepage fragment
         Fragment fragment;
         if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_msg), false)) {
             fragment = new ChatFragment2();
@@ -274,19 +252,22 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .commit();
         } else if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_invitation), false)) {
             InvitationsFragment invitation = new InvitationsFragment();
-//            fragment = new InvitationsFragment();
-//            System.out.println("invitation intent------>"+getIntent().getExtras().getString(("email")));
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_messaging_container, invitation)
                     .commit();
         } else {
             loadHome();
+            getSupportActionBar().setTitle("Home");
+
             mFab.hide();
             mFab.setEnabled(false);
         }
 
     }
 
+    /**
+     * Helper method used to load the weather fragment.
+     */
     private void loadWeather() {
         WeatherHome weatherHome = new WeatherHome();
         Bundle args = new Bundle();
@@ -296,27 +277,28 @@ public class MessagingHomeActivity extends AppCompatActivity
         mFab.hide();
         mFab.setEnabled(false);
 
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
-                .build();
-
+        //Async task to handle getting weather information
         new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleWeatherPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build()
                 .execute();
         onWaitFragmentInteractionHide();
-
-
-
-
     }
+
+    /**
+     * Helper method used to set the current location.
+     * @param location Location which represents the new current location.
+     */
     private void setLocation(final Location location) {
         mCurrentLocation = location;
 
     }
+
+    /**
+     * Overridden method to handle when the application comes back into focus.
+     * Method used to handle the transition from map activity.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -330,13 +312,22 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadWeather();
 
         }
-        startLocationUpdates(); }
+        startLocationUpdates();
+    }
+
+    /**
+     * Overridden method to handle when the application leaves focus.
+     * Used to stop location updates.
+     */
     @Override
     protected void onPause() {
         super.onPause();
-        stopLocationUpdates(); }
+        stopLocationUpdates();
+    }
+
     /**
-     * Requests location updates from the FusedLocationApi. */
+     * Requests location updates from the FusedLocationApi.
+     */
     protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED
@@ -347,80 +338,85 @@ public class MessagingHomeActivity extends AppCompatActivity
                     null /* Looper */); }
     }
 
-
     /**
-     * Removes location updates from the FusedLocationApi. */
+     * Removes location updates from the FusedLocationApi.
+     */
     protected void stopLocationUpdates() {
-// It is a good practice to remove location requests when the activity is in a paused or
-// stopped state. Doing so helps battery performance and is especially
-// recommended in applications that request frequent location updates.
- mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        // It is a good practice to remove location requests when the activity is in a paused or
+        // stopped state. Doing so helps battery performance and is especially
+        // recommended in applications that request frequent location updates.
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
+    /**
+     * Method used handle when location request response.
+     * @param requestCode Int used to represent the request codee
+     * @param permissions String[] used to represent the permissions to be changed.
+     * @param grantResults int[] used to represent which premissions to be granted.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_LOCATIONS: {
-// If request is cancelled, the result arrays are empty.
- if (grantResults.length > 0
-&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-// permission was granted, yay! Do the // locations-related task you need to do.
- requestLocation();
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the // locations-related task you need to do.
+                    requestLocation();
             } else {
-// permission denied, boo! Disable the
-// functionality that depends on this permission.
- Log.d("PERMISSION DENIED", "Nothing to see or do here.");
- System.out.println("-----Permission Denied");
-//Shut down the app. In production release, you would let the user
-// know why the app is shutting down...maybe ask for permission again?
-// finishAndRemoveTask();
+                // permission denied, boo! Disable the
+                // functionality that depends on this permission.
+                Log.d("PERMISSION DENIED", "Nothing to see or do here.");
+
+                //Shut down the app. In production release, you would let the user
+                // know why the app is shutting down...maybe ask for permission again?
+                // finishAndRemoveTask();
             }
             return;
         }
-// other 'case' lines to check for other
-// permissions this app might request
- }
+}
     }
 
+    /**
+     * Helper method used to request user location.
+     */
     private void requestLocation() {
-        System.out.println("request location----------");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("request location denied----------");
             Log.d("REQUEST LOCATION", "User did NOT allow permission to request location!");
         } else {
-            System.out.println("request location success----------");
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-                            System.out.println(" onsuccess----------");
-// Got last known location. In some rare situations this can be null.
- if (location != null) {
-                            Log.d("LOCATION", location.toString());
-                        } }
-        }); }
-}
 
-    /**
-     * Create and configure a Location Request used when retrieving location updates */
-    protected void createLocationRequest() {
-        mLocationRequest = LocationRequest.create();
-// Sets the desired interval for active location updates. This interval is
-// inexact. You may not receive updates at all if no location sources are available, or
-// you may receive them slower than requested. You may also receive updates faster than
-// requested if other applications are requesting location at a faster interval.
- mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-// Sets the fastest rate for active location updates. This interval is exact, and your
-// application will never receive updates faster than this value.
- mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                Log.d("LOCATION", location.toString());
+                            }
+                    }
+            });
+        }
     }
 
-
+    /**
+     * Create and configure a Location Request used when retrieving location updates.
+     */
+    protected void createLocationRequest() {
+        mLocationRequest = LocationRequest.create();
+        // Sets the desired interval for active location updates. This interval is
+        // inexact. You may not receive updates at all if no location sources are available, or
+        // you may receive them slower than requested. You may also receive updates faster than
+        // requested if other applications are requesting location at a faster interval.
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        // Sets the fastest rate for active location updates. This interval is exact, and your
+        // application will never receive updates faster than this value.
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
 
     /**
      * Initializes the download of emojis.
@@ -435,7 +431,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     "Noto Color Emoji Compat",
                     R.array.com_google_android_gms_fonts_certs);
             config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
-
 
         config.setReplaceAll(true)
                 .registerInitCallback(new EmojiCompat.InitCallback() {
@@ -462,6 +457,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
 
         super.onBackPressed();
+        //Create views to check if fab buttons need to be removed or shown.
         View connectionViewFrag = findViewById(R.id.fragment_messaging_connectionView);
         View addcontactViewFrag = findViewById(R.id.fragment_messenger_addcontact);
         View conversationViewFrag = findViewById(R.id.fragment_messagelist_conversation);
@@ -470,15 +466,15 @@ public class MessagingHomeActivity extends AppCompatActivity
         View changelocation = findViewById( R.id.fragment_weather_changelocation );
         View currentWeather = findViewById(R.id.fragment_weather_current_main);
         @SuppressWarnings("RedundantCast") DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_messaging_container);
+        //Remove drawer
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
-
+        //Show mFab
         } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null
                 || addChatFrag != null || chatFrag != null) {
             //Show the FAB on correct windows when back is pressed.
             mFab.show();
-
             mFab.setEnabled(true);
             mSaveFab.hide();
             mSaveFab.setEnabled(false);
@@ -488,7 +484,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             //Hide the FAB on correct windows when back is pressed
             mFab.hide();
             mFab.setEnabled(false);
-
         }
     }
 
@@ -500,11 +495,9 @@ public class MessagingHomeActivity extends AppCompatActivity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//    mMenu = menu;
         // Inflate the search menu action bar.
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.messaging_home, menu);
-
 
         // Get the search menu.
         MenuItem searchMenu = menu.findItem(R.id.app_bar_menu_search);
@@ -531,6 +524,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int itemIndex, long id) {
                 String queryString = (String) adapterView.getItemAtPosition(itemIndex);
                 searchAutoComplete.setText("" + queryString);
+                //Async task for getting contact details.
                 Uri uri = new Uri.Builder()
                         .scheme("https")
                         .appendPath(getString(R.string.ep_base_url))
@@ -546,16 +540,20 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
             }
+
+            /**
+             * Inner helper method to show wait fragment.
+             */
             public void onWaitFragmentInteractionShow() {
-//                System.out.println("======>onwaitshow");
-                getSupportFragmentManager()
+              getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.activity_messaging_container, new WaitFragment(), "WAIT")
                         .addToBackStack(null)
                         .commit();
             }
+
             /**
-             * Helper method used to hide the wait fragment.
+             *  Inner helper method used to hide the wait fragment.
              */
             public void onWaitFragmentInteractionHide() {
 
@@ -564,10 +562,14 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
                         .commit();
             }
+
+            /**
+             * Inner helper method to handle what happens after the web service returns details for contacts.
+             * @param result String which represents a JSON result from the web service.
+             */
             public void handleConnectionGetDetailOnPostExecute(final String result){
                 //parse JSON
                 try {
-//                    System.out.println("======>try");
                     mEmails = new ArrayList<>();
                     mConnections = new ArrayList<>();
                     JSONObject resultJSON = new JSONObject(result);
@@ -578,6 +580,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         ConnectionViewFragment connectionViewFrag;
                         connectionViewFrag = new ConnectionViewFragment();
 
+                        //Send contact information to contact fragment.
                         Bundle args = new Bundle();
                         String email = resultJSON.getString("email");
                         String username = resultJSON.getString("username");
@@ -602,7 +605,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     //notify user
                     onWaitFragmentInteractionHide();
                 }
-
 
             }
             /**
@@ -649,14 +651,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    public void messageIn(){
-
-
-
-        mdrawer.closeDrawers();
-
-
-    }
 
     /**
      * Method used to handle when menu items are selected.
@@ -699,21 +693,12 @@ public class MessagingHomeActivity extends AppCompatActivity
             weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
 
-
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
-                    .build();
-
+            //Async task for getting weather information.
             new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleWeatherPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build()
                     .execute();
-
-
-
 
             mSaveFab.show();
             mSaveFab.setEnabled(true);
@@ -722,27 +707,20 @@ public class MessagingHomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_Change_Locations) {
 
 
-            //Set on click listener for FAB
-
             mWeather = false;
-
             ChangeLocationsFragment changeLocationsFragment = new ChangeLocationsFragment();
             getSupportActionBar().setTitle("Change Location");
 
-
-
             mLocation = new ArrayList<>();
 
-            //Build ASNC task to grab connections from web service.
+            //Build ASNC task to grab locations from web service.
             Uri uri = new Uri.Builder()
                     .scheme("https")
                     .appendPath(getString(R.string.ep_base_url))
                     .appendPath(getString(R.string.ep_getLocation))
                     .build();
-            //handleConnectionGetInfoOnPostExecute
             String msg = getIntent().getExtras().getString("email");
             Credentials creds = new Credentials.Builder(msg).build();
-//            getSupportActionBar().setTitle("Connections");
             new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleLocationGetPostExecute)
@@ -756,46 +734,44 @@ public class MessagingHomeActivity extends AppCompatActivity
             location location = new location.Builder("something").build();
             args.putSerializable("location", location);
             loadFragment(changeLocationsFragment);
-
+            //Hide fabs
             mSaveFab.hide();
             mSaveFab.setEnabled(false);
             mFab.setEnabled(false);
             mFab.hide();
             //Saved locations has been chosen
         }
-
+        //Home page has been selected.
         else if (id == R.id.nav_homepage) {
-            //Build ASNC task to grab connections from web service.
+
+            //Load homepage from helper method.
             loadHome();
             mFab.hide();
             mFab.setEnabled(false);
-
+            getSupportActionBar().setTitle("Home");
             mSaveFab.hide();
             mSaveFab.setEnabled(false);
         }
-
+        //Saved locations has been selected.
         else if (id == R.id.nav_View_Saved_Location) {
             mWeather = true;
             SavedLocationFragment locationFragment = new SavedLocationFragment();
             getSupportActionBar().setTitle("Saved Location");
             mLocation = new ArrayList<>();
 
-            //Build ASNC task to grab connections from web service.
+            //Build ASNC task to grab locations from web service.
             Uri uri = new Uri.Builder()
                     .scheme("https")
                     .appendPath(getString(R.string.ep_base_url))
                     .appendPath(getString(R.string.ep_getLocation))
                     .build();
-            //handleConnectionGetInfoOnPostExecute
             String msg = getIntent().getExtras().getString("email");
             Credentials creds = new Credentials.Builder(msg).build();
-//            getSupportActionBar().setTitle("Connections");
             new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleLocationGetOnPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
-
 
             mFab.hide();
             mFab.setEnabled(false);
@@ -803,14 +779,17 @@ public class MessagingHomeActivity extends AppCompatActivity
             mSaveFab.hide();
             mSaveFab.setEnabled(false);
 
-//            loadFragment(locationFragment);
             //Messenger home has been chosen
         }
+        //Chats has been selected.
         else if (id == R.id.nav_chat_home) {
+
+            //Set title red if pushy message received.
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
             item.setTitle(s);
             getSupportActionBar().setTitle("Chat");
+            //Enable mFab, disable saveFab
             mFab.setEnabled(true);
             mFab.show();
 
@@ -828,14 +807,10 @@ public class MessagingHomeActivity extends AppCompatActivity
             loadChats();
             //Connections has been chosen
         } else if (id == R.id.nav_chat_view_connections) {
-
-
-
-                SpannableString s = new SpannableString(item.getTitle());
-                s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
-                item.setTitle(s);
-
-
+            //Set title color if pushy message is received.
+            SpannableString s = new SpannableString(item.getTitle());
+            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
+            item.setTitle(s);
 
             mEmails = new ArrayList<>();
             mFirsts = new ArrayList<>();
@@ -848,7 +823,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .appendPath(getString(R.string.ep_base_url))
                     .appendPath(getString(R.string.ep_getContacts))
                     .build();
-            //handleConnectionGetInfoOnPostExecute
             String msg = getIntent().getExtras().getString("email");
             Credentials creds = new Credentials.Builder(msg).build();
             getSupportActionBar().setTitle("Connections");
@@ -857,12 +831,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .onPostExecute(this::handleConnectionGetOnPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build().execute();
-            //Show FAB
-
-
-
-
-
+            //Show mFAB, hide save fab
             mFab.setEnabled(true);
             mFab.show();
             mSaveFab.hide();
@@ -876,47 +845,15 @@ public class MessagingHomeActivity extends AppCompatActivity
                     mFab.hide();
                     mFab.setEnabled(false);
                 }
-
             });
-            //Requests/Invitations has been chosen
         }
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         drawer.closeDrawer(GravityCompat.START);
 
-
         return true;
     }
 
-    @Override
-    public void onWeatherListFragmentInteraction (DailyWeather weather) {
-
-    }
-
-    @Override
-    public void onHourlyListFragmentInteraction (HourlyWeather weather) {
-
-    }
-
-
-    private void handleAddLocationOnPostExecute(String s) {
-        JSONObject resultJSON = null;
-        try {
-            resultJSON = new JSONObject(s);
-            boolean success = resultJSON.getBoolean("success");
-            if (success) {
-                onWaitFragmentInteractionHide();
-            } else {
-                Log.e("WEB SERVICE","Web Service returned false.");
-                onWaitFragmentInteractionHide();
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-    }
 
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
@@ -931,9 +868,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
-
-
-
             if (success) {
 
                 mLocation = new ArrayList<>();
@@ -943,8 +877,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray zipArray = resultJSON.getJSONArray( "zip" );
 
                 Log.e("LATITUDE!!!!", longitudeArray.toString());
-//
-//                System.out.println("EMAILS!!!" + emails.get(0).toString());
                 for (int i = 0; i < locationArray.length(); i++) {
                     location loc = new location.Builder(locationArray.get(i).toString())
                             .addNickname( locationArray.get(i).toString())
@@ -957,13 +889,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 }
                 SavedLocationFragment savedLocationFragment = new SavedLocationFragment();
-//                //Bundle list of connections as arguments and load connection fragment
-//                Connection[] connectionsAsArray = new Connection[mConnections.size()];
-//                connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                //Bundle list of connections as arguments and load connection fragment
                 location[] locationAsArray = new location[mLocation.size()];
 
                 locationAsArray = mLocation.toArray(locationAsArray);
-//                //Bundle connections and send as arguments
+                //Bundle connections and send as arguments
                 Bundle args = new Bundle();
                 args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
                 args.putSerializable("change", false);
@@ -972,12 +902,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 onWaitFragmentInteractionHide();
                 loadFragment(frag);
 
-
             } else {
                 //Not successful return from webservice
                 onWaitFragmentInteractionHide();
             }
-
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -985,9 +913,12 @@ public class MessagingHomeActivity extends AppCompatActivity
             //notify user
             onWaitFragmentInteractionHide();
         }
-
     }
 
+    /**
+     * Helper method used to handle what happens after the web service for getting weather info returns.
+     * @param response String which represents the JSON response.
+     */
     private void handleWeatherPostExecute(final String response) {
 
         try {
@@ -1008,6 +939,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .build());
             }
 
+            //ASYNC task for getting weather information.
             new GetAsyncTask.Builder("https://api.weatherbit.io/v2.0/forecast/hourly?postal_code=" + mZip +"&country=US&key=723794c0a4a547688c417ccca5784221&hours=24")//uri.toString()
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleHourlyWeatherPostExecute)
@@ -1021,16 +953,19 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-
     /**
      * helper function to convert kelvin to Fahrenheit
-     * @param k
-     * @return
+     * @param k double used to represent kelvin.
+     * @return double used to represent fahrenheit.
      */
     private double convertKtoF(double k) {
         return  Math.round((k*1.8 - 459.67) * 100) / 100;
     }
 
+    /**
+     * Helper method used to update the hourly weather fragment.
+     * @param response String used to represent the JSON result.
+     */
     private void updateHourlyWeather(final String response) {
 
         try {
@@ -1067,6 +1002,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         onWaitFragmentInteractionHide();
     }
 
+    /**
+     * Helper method used to handle what happens after the web service for hourly weather returns.
+     * @param response String used to represent the JSON result.
+     */
     private void handleHourlyWeatherPostExecute(final String response) {
 
         try {
@@ -1098,10 +1037,8 @@ public class MessagingHomeActivity extends AppCompatActivity
             args.putSerializable(DailyWeatherFragment.ARG_DAILYWEATHER_LIST, dailyWeathersArray);
             args.putSerializable(HourlyWeatherFragment.ARG_HOURLYWEATHER_LIST, hourlyWeathersArray);
             fragment.setArguments(args);
-//
-//            onWaitFragmentInteractionHide();
-            loadFragment(fragment);
 
+            loadFragment(fragment);
 
         } catch (JSONException e){
             e.printStackTrace();
@@ -1109,12 +1046,14 @@ public class MessagingHomeActivity extends AppCompatActivity
         onWaitFragmentInteractionHide();
     }
 
+    /**
+     * Helper method used to convert celcius to Farhenheit.
+     * @param c double used to represent celcius.
+     * @return double used to represent Farhenheit.
+     */
     private double convertCtoF(double c) {
         return Math.round(c * (9/5)) + 32;
     }
-
-
-
 
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
@@ -1129,9 +1068,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
-
-
-
             if (success) {
 
                 mLocation = new ArrayList<>();
@@ -1141,8 +1077,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray zipArray = resultJSON.getJSONArray( "zip" );
 
                 Log.e("LATITUDE!!!!", longitudeArray.toString());
-//
-//                System.out.println("EMAILS!!!" + emails.get(0).toString());
+
                 for (int i = 0; i < locationArray.length(); i++) {
                     location loc = new location.Builder(locationArray.get(i).toString())
                             .addNickname( locationArray.get(i).toString())
@@ -1155,13 +1090,11 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 }
                 SavedLocationFragment savedLocationFragment = new SavedLocationFragment();
-//                //Bundle list of connections as arguments and load connection fragment
-//                Connection[] connectionsAsArray = new Connection[mConnections.size()];
-//                connectionsAsArray = mConnections.toArray(connectionsAsArray);
+                //Bundle list of connections as arguments and load connection fragment
                 location[] locationAsArray = new location[mLocation.size()];
 
                 locationAsArray = mLocation.toArray(locationAsArray);
-//                //Bundle connections and send as arguments
+                //Bundle connections and send as arguments
                 Bundle args = new Bundle();
                 args.putSerializable(savedLocationFragment.ARG_LOCATION_LIST, locationAsArray);
                 args.putSerializable("change", true);
@@ -1171,26 +1104,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                         .replace(R.id.changeLocation_container, frag);
                 transaction.commit();
-
-//                mFab.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//
-//                        if (mCurrentLocation == null) {
-//
-//                            Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
-//                                    .setAction("Action", null).show(); } else {
-//                            Intent i = new Intent(MessagingHomeActivity.this, MapsActivity.class);
-//                            //pass the current location on to the MapActivity when it is loaded
-//                            i.putExtra("LOCATION", mCurrentLocation);
-//
-//                            startActivity(i);
-//                        }
-//
-//                    }
-//
-//                });
-
 
             } else {
                 //Not successful return from webservice
@@ -1204,7 +1117,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             //notify user
             onWaitFragmentInteractionHide();
         }
-
     }
 
     /**
@@ -1229,7 +1141,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         finish();
     }
 
-
     /**
      * Handle errors that may occur during the AsyncTask.
      *
@@ -1239,6 +1150,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * Helper method used to show wait fragment.
+     */
     public void onWaitFragmentInteractionShow() {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -1265,9 +1179,9 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     /**
-     * Load the desire fragment
+     * Helper method used to load an input fragment.
      *
-     * @param frag
+     * @param frag Fragment used to represent the chosen fragment to load.
      */
     private void loadFragment(Fragment frag) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
@@ -1275,7 +1189,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .addToBackStack(null);
         transaction.commit();
     }
-
 
     /**
      * Method which listens for a connection being selected in the recycler view.
@@ -1339,20 +1252,15 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-
-
-
         mFab.setEnabled(true);
         mFab.show();
 
-
-
+        //Build ASYNC task for getting connection information.
         uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
                 .appendPath(getString(R.string.ep_getContacts))
                 .build();
-        //handleConnectionGetInfoOnPostExecute
         msg = getIntent().getExtras().getString("email");
         Credentials creds = new Credentials.Builder(msg).build();
         getSupportActionBar().setTitle("Connections");
@@ -1364,6 +1272,9 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Helper method used to handle when the application is closed.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -1404,13 +1315,15 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-
         mFab.setEnabled(true);
         mFab.show();
 
-
     }
 
+    /**
+     * Helper method used to initiate what happens when a chat is selected.
+     * @param item Message used to represent the selected chat to load.
+     */
     @Override
     public void onMessageListFragmentInteraction(Message item) {
 
@@ -1419,9 +1332,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         Bundle args = new Bundle();
 
-//        mEmail = getArguments().getString("email_token_123");
-//        mJwToken = getArguments().getString("jwt_token");
-//        mChatID = getArguments().getString("chat_id");
         Log.e("CHATID", "it is: " + item.getChatid());
         mChatId = item.getChatid();
         args.putString("chat_id", item.getChatid());
@@ -1434,8 +1344,13 @@ public class MessagingHomeActivity extends AppCompatActivity
         loadFragment(chatFrag);
     }
 
+    /**
+     * Helper method used to initiate what happens when chat delete button is selected.
+     * @param item Messaged used to represent the message to be removed.
+     */
     @Override
     public void onMessageListRemoveFragmentInteraction(Message item) {
+        //Build ASYNC task for deleting a chat.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -1458,6 +1373,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
     }
 
+    /**
+     * Helper method used to handle what happens after the web service for removing a chat returns.
+     * @param s String used to represent a JSON result.
+     */
     private void handleChatRemoveOnPostExecute(String s) {
 
         getSupportActionBar().setTitle("Chat");
@@ -1478,7 +1397,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         onWaitFragmentInteractionHide();
     }
 
-
     /**
      * Method listening for change password button to be clicked.
      */
@@ -1488,6 +1406,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         loadChats();
     }
 
+    /**
+     * Helper method used to handle what happens after the get chat web service returns.
+     * @param result String used to represent the JSON response.
+     */
     private void handleLoadHomeOnPost (final String result){
         //parse JSON
         try {
@@ -1547,8 +1469,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
-
-
             if (success) {
 
                 mConnections = new ArrayList<>();
@@ -1556,7 +1476,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 JSONArray lastnames = resultJSON.getJSONArray("lastnames");
                 JSONArray usernames = resultJSON.getJSONArray("usernames");
                 JSONArray emails = resultJSON.getJSONArray("emails");
-
 
                 for (int i = 0; i < firstnames.length(); i++) {
                     Connection conn = new Connection.Builder(emails.get(i).toString())
@@ -1601,6 +1520,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                     transaction.commit();
                 }
 
+                //Build ASYNC task for getting pending invitations.
                 mEmails = new ArrayList<>();
                 Uri uri2 = new Uri.Builder()
                         .scheme("https")
@@ -1621,7 +1541,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 onWaitFragmentInteractionHide();
             }
 
-
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("SUPER!!", e.getMessage());
@@ -1635,6 +1554,7 @@ public class MessagingHomeActivity extends AppCompatActivity
      * Loads the home fragment
      */
     private void loadHome() {
+        //Build ASYNC task for getting contact information.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -1650,7 +1570,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
     }
-
 
     /**
      * Makes a request, if wish is granted, makes stuff happen.
@@ -1676,11 +1595,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleGetChatsOnPost)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-
-
-        //onWaitFragmentInteractionHide();
     }
-
 
     /**
      * Setup chats after they are loaded.
@@ -1695,8 +1610,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 members.append(mPeople.get(person) + " ");
                 Log.e("MESSAGESENDER", "it is: " + person);
             }
-
-
             m[i] = new Message.Builder(mChatNames.get(mChats.get(i))).addUsers(("" + members.toString())).setChatID(mChats.get(i)).build();
         }
         return m;
@@ -1712,7 +1625,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
             JSONArray users = resultJSON.getJSONArray("users");
-
 
             if (success) {
                 mChats = new ArrayList<>();
@@ -1736,7 +1648,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     if (!mPeople.containsKey(memberid)) mPeople.put(memberid, username);
                     mChatMembers.put(chatid, memberid);
                 }
-
 
                 swapToChats();
             }
@@ -1768,10 +1679,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .addToBackStack(null);
         transaction.commit();
 
-
-
     }
-
 
     /**
      * Method used to handle the tasks after the ASYNC task returns for deleting a contact.
@@ -1837,7 +1745,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 onWaitFragmentInteractionHide();
                 //Not successful return from webservice
 
-
             } else {
                 //Add was unsuccessful, let user know the email is unavailable for adding.
                 EditText email = findViewById(R.id.edittext_newcontact_email);
@@ -1857,10 +1764,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-
-
-
-
+    /**
+     * Helper method used to handle what happens after the web service for getting invitations returns.
+     * @param result String used to represent the JSON result.
+     */
     private void handleInvitationGetOnPostExecute(String result) {
 
         //parse JSON
@@ -1885,7 +1792,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     mConnections.add(conn);
                 }
 
-
                 //Bundle list of connections as arguments and load connection fragment
                 Connection[] connectionsAsArray = new Connection[mConnections.size()];
                 connectionsAsArray = mConnections.toArray(connectionsAsArray);
@@ -1894,8 +1800,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 Bundle args = new Bundle();
                 args.putSerializable(InvitationsFragment.ARG_INVITATION_LIST, connectionsAsArray);
                 args.putString("passemail", email);
-                System.out.println("before calling inv/req "+email);
-
 
                 Fragment frag = new InvitationsFragment();
 
@@ -1903,9 +1807,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_messaging_inv_container, frag );
                 transaction.commit();
-
-                Log.e("super!!!!!", "yup");
-
 
             }
             onWaitFragmentInteractionHide();
@@ -1918,9 +1819,13 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-
+    /**
+     * Helper method used to initiate what happens when user accepts invitation.
+     * @param item Connection used to represent the invitation accepted.
+     */
     @Override
     public void onInvitationAcceptFragmentInteraction(Connection item) {
+        //Build ASYNC task for accepting a contact
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -1943,23 +1848,28 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleInvitationAcceptOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-        uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_accept_invitation))
-                .build();
-        json = new JSONObject();
-        try {
-            json.put("email", msg);
-            json.put("email2", email2);
-            json.put("accept","true");
-        } catch (JSONException e) {
-            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
-        }
-        new SendPostAsyncTask.Builder(uri.toString(), json)
-                .build().execute();
+        //TODO: Test accepting invitation, there was 2 accept invitation asyncs
+//        uri = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(R.string.ep_base_url))
+//                .appendPath(getString(R.string.ep_accept_invitation))
+//                .build();
+//        json = new JSONObject();
+//        try {
+//            json.put("email", msg);
+//            json.put("email2", email2);
+//            json.put("accept","true");
+//        } catch (JSONException e) {
+//            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+//        }
+//        new SendPostAsyncTask.Builder(uri.toString(), json)
+//                .build().execute();
     }
 
+    /**
+     * Helper method used to handle what happens after the web service for accepting invitations returns.
+     * @param result String used to represent the JSON response.
+     */
     private void handleInvitationAcceptOnPostExecute(String result) {
         //parse JSON
         try {
@@ -1972,7 +1882,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             if (success) {
                 onWaitFragmentInteractionHide();
 
-                System.out.println("===========");
                 mEmails = new ArrayList<>();
                 mFirsts = new ArrayList<>();
                 mLasts = new ArrayList<>();
@@ -1994,15 +1903,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
                 //Show FAB
-
-
-
-
-
                 mFab.setEnabled(true);
                 mFab.show();
-
-
 
                 //Set on click listener for FAB
                 mFab.setOnClickListener(new View.OnClickListener() {
@@ -2016,7 +1918,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
                 });
 
-
             }
             onWaitFragmentInteractionHide();
         } catch (JSONException e) {
@@ -2026,11 +1927,16 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
         }
 
-
     }
 
+    //TODO: fix invitation decline bug.
+    /**
+     * Helper method used to initiate what happens when the user declines the contact invitation.
+     * @param item
+     */
     @Override
     public void onInvitationDeclineFragmentInteraction(Connection item) {
+        //Build ASYNC task for declining a contact invitation.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -2044,24 +1950,28 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleInvitationDeclineOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-
-        uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath(getString(R.string.ep_base_url))
-                .appendPath(getString(R.string.ep_accept_invitation))
-                .build();
-        JSONObject json = new JSONObject();
-        try {
-            json.put("email", msg);
-            json.put("email2", item.getEmail());
-            json.put("accept","false");
-        } catch (JSONException e) {
-            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
-        }
-        new SendPostAsyncTask.Builder(uri.toString(), json)
-                .build().execute();
+//
+//        uri = new Uri.Builder()
+//                .scheme("https")
+//                .appendPath(getString(R.string.ep_base_url))
+//                .appendPath(getString(R.string.ep_accept_invitation))
+//                .build();
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put("email", msg);
+//            json.put("email2", item.getEmail());
+//            json.put("accept","false");
+//        } catch (JSONException e) {
+//            Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
+//        }
+//        new SendPostAsyncTask.Builder(uri.toString(), json)
+//                .build().execute();
     }
 
+    /**
+     * Helper method used to handle what happens after the web service for declining a contact invitation returns.
+     * @param result String which represent the JSON response.
+     */
     private void handleInvitationDeclineOnPostExecute(String result) {
 
         //parse JSON
@@ -2074,6 +1984,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             if (success) {
                 onWaitFragmentInteractionHide();
 
+                //Build ASYNC task for getting invitations
                 Uri uri2 = new Uri.Builder()
                         .scheme("https")
                         .appendPath(getString(R.string.ep_base_url))
@@ -2088,7 +1999,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .onCancelled(this::handleErrorsInTask)
                         .build().execute();
 
-
             }
             onWaitFragmentInteractionHide();
         } catch (JSONException e) {
@@ -2098,47 +2008,35 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
         }
 
-
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
+    /**
+     * Helper method used to initiate what happens when a location is selected.
+     * @param item location used to represent the selected location to display.
+     */
     @Override
     public void onLocationListFragmentInteraction(location item) {
 
-
             mZip = Integer.parseInt(item.getZip());
-//            WeatherHome weatherHome = new WeatherHome();
-//            Bundle args = new Bundle();
-//            args.putSerializable("zip", mZip);
-//            weatherHome.setArguments(args);
-//            getSupportActionBar().setTitle("Weather Home");
             mFab.hide();
             mFab.setEnabled(false);
 
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
-                    .build();
-
+            //Build ASYNC task to get weather information.
             new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleWeatherPostExecute)
                     .onCancelled(this::handleErrorsInTask)
                     .build()
                     .execute();
 
-
-
-
-
     }
 
+    /**
+     * Helper method used to initiate what happens when the user selects to delete a location.
+     * @param item location used to represent the item to be removed.
+     */
     @Override
     public void onLocationListRemoveFragmentInteraction(location item) {
+        //Build ASYNC task for deleting a location.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -2163,34 +2061,38 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
     }
 
+    /**
+     * Helper method used to handle what happens after the web service for removing locations returns.
+     * @param s String used to represent the JSON result.
+     */
     private void handleLocationRemoveOnPostExecute(String s) {
         getSupportActionBar().setTitle("Saved Locations");
         SavedLocationFragment locationFragment = new SavedLocationFragment();
         mLocation = new ArrayList<>();
 
-        //Build ASNC task to grab connections from web service.
+        //Build ASNC task to get locations from web service.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
                 .appendPath(getString(R.string.ep_getLocation))
                 .build();
-        //handleConnectionGetInfoOnPostExecute
         String msg = getIntent().getExtras().getString("email");
         Credentials creds = new Credentials.Builder(msg).build();
-//            getSupportActionBar().setTitle("Connections");
         new SendPostAsyncTask.Builder(uri.toString(),creds.asJSONObject())
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleLocationGetOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-
         mFab.hide();
         mFab.setEnabled(false);
         onWaitFragmentInteractionHide();
     }
 
-
+    /**
+     * Helper method used to initiate what happens when the user selects add to chat.
+     * @param credentials Credentials used to represent the user to add to the chat.
+     */
     @Override
     public void addToChatButton(Credentials credentials) {
 
@@ -2203,6 +2105,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         loadFragment(addToChat);
     }
 
+    /**
+     * Helper method used to initiate what happens when the user selects remove from chat.
+     * @param credentials Credentials used to represent the user to remove from the chat.
+     */
     @Override
     public void removeFromChatButton(Credentials credentials) {
         Bundle args = new Bundle();
@@ -2215,9 +2121,14 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Helper method used to add user to a chat.
+     * @param credentials Credentials used to represent the user to be added to the chat.
+     */
     @Override
     public void addToChat(Credentials credentials) {
 
+        //Build ASYNC task to add user to chat.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -2237,9 +2148,12 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
 
-
     }
 
+    /**
+     * Helper method used to handle what happens after the web service to add user to a chat returns.
+     * @param result String used to represent the JSON response.
+     */
     private void handleAddToChatOnPostExecute(String result) {
 
         JSONObject resultJSON = null;
@@ -2252,10 +2166,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 chatFrag = new ChatFragment2();
 
                 Bundle args = new Bundle();
-
-//              mEmail = getArguments().getString("email_token_123");
-//              mJwToken = getArguments().getString("jwt_token");
-//              mChatID = getArguments().getString("chat_id");
 
                 args.putString("chat_id", mChatId);
                 args.putString("email_token_123", getIntent().getExtras().getString("email"));
@@ -2276,11 +2186,15 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
         }
 
-
     }
 
+    /**
+     * Helper method used to remove user from a chat.
+     * @param credentials Credentials used to represent the user to remove from the chat.
+     */
     @Override
     public void removeFromChat(Credentials credentials) {
+        //Build ASYNC task to remove a user from the chat.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -2302,8 +2216,13 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Helper method used to add a chat.
+     * @param chatName String used to represent the chat name.
+     */
     @Override
     public void addChat(String chatName) {
+        //Build ASYNC task to add a chat.
         Uri uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -2327,6 +2246,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
     }
 
+    /**
+     * Helper method used to handle what happens after the web service to add a chat returns.
+     * @param s String used to represent the JSON response.
+     */
     private void handleAddChatOnPostExecute(String s) {
         loadChats();
         getSupportActionBar().setTitle("Chat");
@@ -2345,19 +2268,16 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         onWaitFragmentInteractionHide();
 
-        //Connections has been chosen
-
     }
 
-    @Override
-    public void onHomeFragmentInteraction(Uri uri) {
-
-    }
-
+    /**
+     * Helper method used to initiate what happens when the user selects to change locations.
+     * @param zip int used to represent the zip code of the new location.
+     */
     //@Override
     public void onChangeLocationSubmit(int zip) {
         mZip = zip;
-
+        //Build ASYNC task to get weather information.
         new GetAsyncTask.Builder("https://api.weatherbit.io/v2.0/forecast/hourly?postal_code=" + mZip +"&country=US&key=723794c0a4a547688c417ccca5784221&hours=24")//uri.toString()
                 .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::updateHourlyWeather)
@@ -2372,23 +2292,14 @@ public class MessagingHomeActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Weather Home");
         mFab.hide();
         mFab.setEnabled(false);
-
-        Uri uri = new Uri.Builder()
-                .scheme("https")
-                .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
-                .build();
-
+        //Build ASYNC task to get weather information.
         new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-//                    .onPreExecute(this::onWaitFragmentInteractionShow)
                 .onPostExecute(this::handleWeatherPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build()
                 .execute();
 
-
-
     }
-
 
     // Deleting the Pushy device token must be done asynchronously. Good thing
     // we have something that allows us to do that.
@@ -2419,11 +2330,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             super.onPostExecute(aVoid);
             //close the app
             finishAndRemoveTask();
-            //or close this activity and bring back the Login
-            // Intent i = new Intent(this, MainActivity.class);
-            // startActivity(i);
-            // //Ends this Activity and removes it from the Activity back stack.
-            // finish();
         }
     }
     /**
@@ -2436,9 +2342,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
                 String sender = intent.getStringExtra("SENDER");
                 String messageText = intent.getStringExtra("MESSAGE");
-//                mMessageOutputTextView.append(sender + ":" + messageText);
-//                mMessageOutputTextView.append(System.lineSeparator());
-//                mMessageOutputTextView.append(System.lineSeparator());
             }
         }
     }

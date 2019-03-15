@@ -21,7 +21,6 @@ import ethanwc.tcss450.uw.edu.template.model.HourlyWeather;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
 public class HourlyWeatherFragment extends Fragment {
@@ -31,7 +30,6 @@ public class HourlyWeatherFragment extends Fragment {
     public static final String ARG_HOURLYWEATHER_LIST = "hourly weather list";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
     private List<HourlyWeather> mHourlyWeather;
 
     /**
@@ -67,41 +65,14 @@ public class HourlyWeatherFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount, GridLayoutManager.HORIZONTAL, false));
             }
-            recyclerView.setAdapter(new MyHourlyWeatherRecyclerViewAdapter(mHourlyWeather, mListener));
+            recyclerView.setAdapter(new MyHourlyWeatherRecyclerViewAdapter(mHourlyWeather));
         }
         return view;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener{
-        // TODO: Update argument type and name
-        void onHourlyListFragmentInteraction(HourlyWeather item);
-    }
 }
