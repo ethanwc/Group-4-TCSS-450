@@ -50,7 +50,9 @@ public class SavedLocationViewFragment extends Fragment {
     private PushMessageReceiver mPushMessageReciever;
 //    private MenuItem mMenuItem;
 
-
+    /**
+     * empty constructor
+     */
     public SavedLocationViewFragment() {
         // Required empty public constructor
     }
@@ -177,6 +179,9 @@ public class SavedLocationViewFragment extends Fragment {
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
+    /**
+     * method to change the titlebar color on new message
+     */
 
     public void changeColorOnMsg(){
 
@@ -197,6 +202,9 @@ public class SavedLocationViewFragment extends Fragment {
         }
 
     }
+    /**
+     * method to change the titlebar color on new connection
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -215,7 +223,9 @@ public class SavedLocationViewFragment extends Fragment {
         }
 
     }
-
+    /**
+     * method to change the titlebar color on new chat add
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());

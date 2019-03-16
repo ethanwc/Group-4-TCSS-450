@@ -156,7 +156,10 @@ public class LoginFragment extends WaitFragment {
         mListener = null;
     }
 
-
+    /**
+     * The helper method checks if the credential is correct.
+     * @param view, the clicked button
+     */
     public void signIn(View view) {
 
         //no empty text fields, email must contain '@'
@@ -172,12 +175,19 @@ public class LoginFragment extends WaitFragment {
         if (pass.length() < 1 || email.length() < 1) mEditPass.setError("Please fill out the fields");
 
     }
-
+    /**
+     * The helper method to handle the register button click.
+     * @param view, the clicked button
+     */
     public void register(View view) {
 
         if (mListener != null) mListener.onRegisterClicked();
 
     }
+    /**
+     * The  method to navigate on forgotpassword button click.
+     * @param view, the item clicked
+     */
     private void forgotPassword(View view) {
         if(mListener != null) {
             if (view.getId() == R.id.txt_login_forgetPassword) {
@@ -266,6 +276,9 @@ public class LoginFragment extends WaitFragment {
         }
     }
 
+    /**
+     * Checks the if the credential is valid
+     */
     private void attemptLogin() {
         boolean hasError = false;
         if (mEditEmail.getText().length() == 0) {
@@ -286,7 +299,10 @@ public class LoginFragment extends WaitFragment {
                     .build());
         }
     }
-
+    /**
+     * credential is valid, check if it in the database.
+     * @param credentials, user detail
+     */
     private void doLogin(Credentials credentials) {
         //build the web service URL
         Uri uri = new Uri.Builder()
@@ -308,7 +324,10 @@ public class LoginFragment extends WaitFragment {
                 .build().execute();
     }
 
-
+    /**
+     * Save the credentials locally
+     * @param credentials, user detail
+     */
     private void saveCredentials(final Credentials credentials) {
         SharedPreferences prefs =
                 Objects.requireNonNull(getActivity()).getSharedPreferences(
@@ -319,6 +338,10 @@ public class LoginFragment extends WaitFragment {
         prefs.edit().putString(getString(R.string.keys_prefs_password), credentials.getPassword()).apply();
     }
 
+    /**
+     * Receive the pushy message and parse
+     * @param result, result from async task
+     */
     private void handlePushyTokenOnPost(String result) {
         try {
             Log.d("JSON result",result);
@@ -346,7 +369,9 @@ public class LoginFragment extends WaitFragment {
         }
     }
 
-
+    /**
+     * interface to handle the action from login fragment
+     */
     public interface OnLoginFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener {
 
         void onLoginSuccess(Credentials credentials, String jwt, String[] mArrayEmail);
@@ -358,6 +383,11 @@ public class LoginFragment extends WaitFragment {
     }
     private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String>
     {
+        /**
+         * action done in background during wait fragment called
+         * @param params, parameters
+         * @return string, device token
+         */
         protected String doInBackground(Void... params) {
             String deviceToken;
             try {

@@ -25,6 +25,12 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
     private final OnLocationListFragmentInteractionListener mListener;
     private final boolean mChange;
 
+    /**
+     * constructor to initialize the instance field
+     * @param items
+     * @param listener
+     * @param change
+     */
     public MySavedLocationRecyclerViewAdapter(List<location> items, OnLocationListFragmentInteractionListener listener, boolean change) {
         mValues = items;
         mListener = listener;
@@ -84,6 +90,9 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
         return mValues.size();
     }
 
+    /**
+     * class to get the UI element id
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         //public final TextView mIdView;
@@ -92,6 +101,10 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
         public ImageButton mRemove;
         location mItem;
 
+        /**
+         * constructor to initialize the instance field
+         * @param view
+         */
         ViewHolder(View view) {
             super(view);
             mView = view;

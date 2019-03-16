@@ -60,6 +60,11 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
 
     }
 
+    /**
+     * method to convert day of the week
+     * @param position, integer value
+     * @return string, day of a week
+     */
     private String convertDate (int position) {
         int date = Calendar.DAY_OF_WEEK + position;
         String result;
@@ -86,7 +91,9 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
     public int getItemCount() {
         return mValues.size();
     }
-
+    /**
+     * class to get the UI element id
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mWeatherMain;
@@ -95,6 +102,10 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
         public final ImageView mIcon;
         public DailyWeather mItem;
 
+        /**
+         * constructor to initialize the field
+         * @param view
+         */
         public ViewHolder(View view) {
             super(view);
             mView = view;

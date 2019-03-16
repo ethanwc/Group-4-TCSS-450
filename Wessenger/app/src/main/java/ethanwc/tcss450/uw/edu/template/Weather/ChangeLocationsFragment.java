@@ -105,6 +105,10 @@ public class ChangeLocationsFragment extends Fragment {
 
     }
 
+    /**
+     * method to change location on button click
+     * @param v , item from ui
+     */
     private void changeLocation(View v) {
         mZip = getActivity().findViewById(R.id.edittext_changelocation_zip);
         if (mZip.getText().toString().length() != 5) {
@@ -132,6 +136,10 @@ public class ChangeLocationsFragment extends Fragment {
         }
     }
 
+    /**
+     * handle the async task post execute
+     * @param s, result
+     */
     private void handleGetCityStateOnPostExecute(String s) {
         JSONObject json = new JSONObject(s);
         try {
@@ -156,6 +164,9 @@ public class ChangeLocationsFragment extends Fragment {
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * action done during waitfragment
+     */
     private void onWaitFragmentInteractionShow() {
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
@@ -174,6 +185,9 @@ public class ChangeLocationsFragment extends Fragment {
                 .commit();
     }
 
+    /**
+     * interface to handle when button is click to see weather by zipcode
+     */
     public interface onChangeLocationFragmentInteractionListener  {
         void onChangeLocationSubmit(int zip);
     }
@@ -201,6 +215,9 @@ public class ChangeLocationsFragment extends Fragment {
 //        }
     }
 
+    /**
+     * method to change the titlebar color on new message
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -220,6 +237,9 @@ public class ChangeLocationsFragment extends Fragment {
         }
 
     }
+    /**
+     * method to change the titlebar color on new connection
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -238,7 +258,9 @@ public class ChangeLocationsFragment extends Fragment {
         }
 
     }
-
+    /**
+     * method to change the titlebar color on new chat added
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());

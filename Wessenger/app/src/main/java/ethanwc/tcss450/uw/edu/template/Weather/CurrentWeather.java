@@ -106,6 +106,9 @@ public class CurrentWeather extends Fragment {
                 Log.e("ASYNC_TASK_ERROR", result);
             }
 
+            /**
+             * action to do on wait fragment show
+             */
             private void onWaitFragmentInteractionShow() {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
@@ -124,6 +127,10 @@ public class CurrentWeather extends Fragment {
                         .commit();
             }
 
+            /**
+             * action to do on post async task
+             * @param s, result
+             */
             private void handleAddLocationOnPostExecute(String s) {
 
                 try {
@@ -144,6 +151,10 @@ public class CurrentWeather extends Fragment {
 
             }
 
+            /**
+             * action to do after async task
+             * @param s, result
+             */
             private void handleGetCityStateOnPostExecute(String s) {
                 try {
                     JSONObject json = new JSONObject(s);
@@ -200,11 +211,17 @@ public class CurrentWeather extends Fragment {
 
     }
 
-
+    /**
+     * action to do before hitting endpoint
+     */
     private void handleLoginOnPre() {
         mListener.onWaitFragmentInteractionShow();
     }
 
+    /**
+     * action to change ui from the result from endpoint
+     * @param response, the result from async task
+     */
     public void handleSetWeather(final String response) {
         mListener.onWaitFragmentInteractionHide();
 
@@ -245,10 +262,18 @@ public class CurrentWeather extends Fragment {
 
     }
 
+    /**
+     * show progress wait fagment
+     */
     public void showWaitProgress () {
 
     }
 
+    /**
+     * convert Kelvin to fahrenheit
+     * @param kelvin , temperature
+     * @return int, fahrenheit
+     */
     private int kelvinToFar(String kelvin) {
         return (int) (((Double.parseDouble(kelvin)) - 273.15) * 9/5 + 32);
 

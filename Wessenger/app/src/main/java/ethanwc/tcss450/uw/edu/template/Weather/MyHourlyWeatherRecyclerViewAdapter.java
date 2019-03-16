@@ -45,7 +45,9 @@ public class MyHourlyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyH
     public int getItemCount() {
         return mValues.size();
     }
-
+    /**
+     * class to get the UI element id
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mTemperatureView;
@@ -53,6 +55,10 @@ public class MyHourlyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyH
         public final TextView mTime;
         public HourlyWeather mItem;
 
+        /**
+         * constructor to initialize the instance field
+         * @param view
+         */
         public ViewHolder(View view) {
             super(view);
             mView = view;
