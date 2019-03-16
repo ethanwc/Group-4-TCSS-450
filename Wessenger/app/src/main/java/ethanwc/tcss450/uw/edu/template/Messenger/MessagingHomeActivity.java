@@ -287,6 +287,9 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * A helper method that to load the weather in home page
+     */
     private void loadWeather() {
         WeatherHome weatherHome = new WeatherHome();
         Bundle args = new Bundle();
@@ -315,9 +318,13 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         mFab.setEnabled(true);
     }
+
+    /**
+     *  A helper function to initialize the location
+     * @param location
+     */
     private void setLocation(final Location location) {
         mCurrentLocation = location;
-
     }
     @Override
     protected void onResume() {
@@ -1073,6 +1080,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         onWaitFragmentInteractionHide();
     }
 
+    /**
+     *
+     * @param response
+     */
     private void handleHourlyWeatherPostExecute(final String response) {
 
         try {
