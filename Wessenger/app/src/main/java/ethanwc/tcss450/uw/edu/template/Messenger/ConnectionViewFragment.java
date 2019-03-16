@@ -79,6 +79,10 @@ public class ConnectionViewFragment extends Fragment {
 
         }
     }
+
+    /**
+     * The inner class the receive the pushy message
+     */
     private PushMessageReceiver mPushMessageReciever;
     @Override
     public void onResume() {
@@ -102,7 +106,9 @@ public class ConnectionViewFragment extends Fragment {
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -122,6 +128,9 @@ public class ConnectionViewFragment extends Fragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -140,7 +149,9 @@ public class ConnectionViewFragment extends Fragment {
         }
 
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -207,8 +218,6 @@ public class ConnectionViewFragment extends Fragment {
                     }else{
                         changeColorOnAddToChat();
                     }
-                    //
-
 
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)

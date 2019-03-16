@@ -10,6 +10,13 @@ public class ChatModel {
     public String sender;
     public String text;
 
+    /**
+     *  Constructor
+     * @param type
+     * @param text
+     * @param data
+     * @param sender
+     */
     public ChatModel(int type, String text, int data, String sender)
     {
         this.type = type;

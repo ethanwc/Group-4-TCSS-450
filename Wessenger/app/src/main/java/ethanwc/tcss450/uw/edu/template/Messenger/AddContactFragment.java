@@ -118,12 +118,12 @@ private String mMyEmail;
 
     }
 
-
+    /**
+     * action listener interface
+     */
     public interface OnNewContactFragmentButtonAction extends WaitFragment.OnFragmentInteractionListener{
 
         void addContactButton(Credentials credentials);
-
-
     }
 
 
@@ -149,7 +149,9 @@ private String mMyEmail;
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -169,6 +171,9 @@ private String mMyEmail;
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -187,7 +192,9 @@ private String mMyEmail;
         }
 
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -254,8 +261,6 @@ private String mMyEmail;
                     }else{
                         changeColorOnAddToChat();
                     }
-                    //
-
 
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -291,8 +296,6 @@ private String mMyEmail;
                         notificationManager.notify( 1, builder.build() );
                     }
 
-
-                    //
                 }else if(type.equals("acpt")){
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)

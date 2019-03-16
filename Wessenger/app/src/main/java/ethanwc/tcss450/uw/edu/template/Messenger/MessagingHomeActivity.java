@@ -369,27 +369,30 @@ public class MessagingHomeActivity extends AppCompatActivity
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_LOCATIONS: {
-// If request is cancelled, the result arrays are empty.
- if (grantResults.length > 0
-&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-// permission was granted, yay! Do the // locations-related task you need to do.
- requestLocation();
-            } else {
-// permission denied, boo! Disable the
-// functionality that depends on this permission.
- Log.d("PERMISSION DENIED", "Nothing to see or do here.");
- System.out.println("-----Permission Denied");
-//Shut down the app. In production release, you would let the user
-// know why the app is shutting down...maybe ask for permission again?
-// finishAndRemoveTask();
-            }
-            return;
-        }
-// other 'case' lines to check for other
-// permissions this app might request
- }
+        // If request is cancelled, the result arrays are empty.
+         if (grantResults.length > 0
+        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        // permission was granted, yay! Do the // locations-related task you need to do.
+         requestLocation();
+                    } else {
+        // permission denied, boo! Disable the
+        // functionality that depends on this permission.
+         Log.d("PERMISSION DENIED", "Nothing to see or do here.");
+         System.out.println("-----Permission Denied");
+        //Shut down the app. In production release, you would let the user
+        // know why the app is shutting down...maybe ask for permission again?
+        // finishAndRemoveTask();
+                    }
+                    return;
+                }
+        // other 'case' lines to check for other
+        // permissions this app might request
+         }
     }
 
+    /**
+     * Ask user to allow or deny the location function
+     */
     private void requestLocation() {
         System.out.println("request location----------");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -405,8 +408,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                         @Override
                         public void onSuccess(Location location) {
                             System.out.println(" onsuccess----------");
-// Got last known location. In some rare situations this can be null.
- if (location != null) {
+        // Got last known location. In some rare situations this can be null.
+        if (location != null) {
                             Log.d("LOCATION", location.toString());
                         } }
         }); }
@@ -581,6 +584,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                         .remove(getSupportFragmentManager().findFragmentByTag("WAIT"))
                         .commit();
             }
+        /**
+             *  A helper function to parse user's credentials
+             * @param result
+             */
             public void handleConnectionGetDetailOnPostExecute(final String result){
                 //parse JSON
                 try {
@@ -666,14 +673,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-    public void messageIn(){
-
-
-
-        mdrawer.closeDrawers();
-
-
-    }
 
     /**
      * Method used to handle when menu items are selected.
@@ -723,12 +722,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             weatherHome.setArguments(args);
             getSupportActionBar().setTitle("Weather Home");
 
-
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath("api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")
-                    .build();
-
             new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
 //                    .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleWeatherPostExecute)
@@ -736,13 +729,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .build()
                     .execute();
 
-
             mFab.show();
-//            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
 
-            // loadFragment(weatherHome);
-            //Change locations has been chosen
         } else if (id == R.id.nav_Change_Locations) {
             mFab.setEnabled(true);
             mFab.show();
@@ -873,10 +862,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .build().execute();
             //Show FAB
 
-
-
-
-
             mFab.setEnabled(true);
             mFab.show();
 //            mFab.setImageResource(android.R.drawable.ic_input_add);
@@ -896,7 +881,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
         DrawerLayout drawer = findViewById(R.id.activity_messaging_container);
         drawer.closeDrawer(GravityCompat.START);
-
 
         return true;
     }
@@ -1001,6 +985,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * The method parse weather api
+     * @param response
+     */
     private void handleWeatherPostExecute(final String response) {
 
         try {
@@ -1129,8 +1117,6 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
 
-
-
     /**
      * Helper method used to handle the tasks after the async task has been completed for receiving contact list.
      *
@@ -1143,8 +1129,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             onWaitFragmentInteractionHide();
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
-
-
 
 
             if (success) {
@@ -1254,6 +1238,9 @@ public class MessagingHomeActivity extends AppCompatActivity
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * Load the wait fragment
+     */
     public void onWaitFragmentInteractionShow() {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -1356,13 +1343,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
 
 
-
-
         mFab.setEnabled(true);
         mFab.show();
 //        mFab.setImageResource(android.R.drawable.ic_input_add);
-
-
         uri = new Uri.Builder()
                 .scheme("https")
                 .appendPath(getString(R.string.ep_base_url))
@@ -1377,7 +1360,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleConnectionGetOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-
     }
 
     @Override
@@ -1504,6 +1486,10 @@ public class MessagingHomeActivity extends AppCompatActivity
         loadChats();
     }
 
+    /**
+     * The method the connection in the home fragment
+     * @param result
+     */
     private void handleLoadHomeOnPost (final String result){
         //parse JSON
         try {
@@ -1512,9 +1498,7 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
-
             if (success) {
-
                 mConnections = new ArrayList<>();
                 JSONArray firstnames = resultJSON.getJSONArray("firstnames");
                 JSONArray lastnames = resultJSON.getJSONArray("lastnames");
@@ -1562,8 +1546,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
-
-
 
             if (success) {
 
@@ -1753,7 +1735,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                     mChatMembers.put(chatid, memberid);
                 }
 
-
                 swapToChats();
             }
 
@@ -1766,8 +1747,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
 
-    /*
-    Just loads the chats fragment.
+    /**
+    *Just loads the chats fragment.
      */
     private void swapToChats() {
         Message[] m = setChatInfo();
@@ -1784,11 +1765,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .addToBackStack(null);
         transaction.commit();
 
-
-//        //Show FAB
-//        mFab.setEnabled(true);
-//        mFab.show();
-        //mFab.setImageResource(android.R.drawable.ic_input_add);
     }
 
 
@@ -1875,10 +1851,6 @@ public class MessagingHomeActivity extends AppCompatActivity
         }
 
     }
-
-
-
-
 
     private void handleInvitationGetOnPostExecute(String result) {
 
@@ -1979,6 +1951,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
     }
 
+    /**
+     * method to accept the invitation and send the notification
+     * @param result
+     */
     private void handleInvitationAcceptOnPostExecute(String result) {
         //parse JSON
         try {
@@ -2015,13 +1991,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                 //Show FAB
 
 
-
-
-
                 mFab.setEnabled(true);
                 mFab.show();
-//                mFab.setImageResource(android.R.drawable.ic_input_add);
-
 
                 //Set on click listener for FAB
                 mFab.setOnClickListener(new View.OnClickListener() {
@@ -2032,9 +2003,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         mFab.hide();
                         mFab.setEnabled(false);
                     }
-
                 });
-
 
             }
             onWaitFragmentInteractionHide();
@@ -2081,6 +2050,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
     }
 
+    /**
+     * the method decline the invitation and send the notification
+     * @param result
+     */
     private void handleInvitationDeclineOnPostExecute(String result) {
 
         //parse JSON
@@ -2116,8 +2089,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             //notify user
             onWaitFragmentInteractionHide();
         }
-
-
     }
 
     @Override
@@ -2127,7 +2098,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     @Override
     public void onLocationListFragmentInteraction(location item) {
-
 
             mZip = Integer.parseInt(item.getZip());
 //            WeatherHome weatherHome = new WeatherHome();
@@ -2150,12 +2120,9 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .build()
                     .execute();
 
-
             mFab.show();
 //            mFab.setImageResource(android.R.drawable.ic_menu_save);
             mFab.setEnabled(true);
-
-
 
 
     }
@@ -2186,6 +2153,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
     }
 
+    /**
+     * The method remove the save location
+     * @param s
+     */
     private void handleLocationRemoveOnPostExecute(String s) {
         getSupportActionBar().setTitle("Saved Locations");
         SavedLocationFragment locationFragment = new SavedLocationFragment();
@@ -2206,7 +2177,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleLocationGetOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-
 
         mFab.hide();
         mFab.setEnabled(false);
@@ -2263,6 +2233,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
+    /**
+     * The method add a new chat
+     * @param result
+     */
     private void handleAddToChatOnPostExecute(String result) {
 
         JSONObject resultJSON = null;
@@ -2275,10 +2249,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 chatFrag = new ChatFragment2();
 
                 Bundle args = new Bundle();
-
-//              mEmail = getArguments().getString("email_token_123");
-//              mJwToken = getArguments().getString("jwt_token");
-//              mChatID = getArguments().getString("chat_id");
 
                 args.putString("chat_id", mChatId);
                 args.putString("email_token_123", getIntent().getExtras().getString("email"));
@@ -2298,7 +2268,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             //notify user
             onWaitFragmentInteractionHide();
         }
-
 
     }
 
@@ -2322,7 +2291,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleAddToChatOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
-
     }
 
     @Override
@@ -2350,6 +2318,10 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .build().execute();
     }
 
+    /**
+     * The method that open the chat
+     * @param s
+     */
     private void handleAddChatOnPostExecute(String s) {
         loadChats();
         getSupportActionBar().setTitle("Chat");
@@ -2367,9 +2339,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         });
 
         onWaitFragmentInteractionHide();
-
         //Connections has been chosen
-
     }
 
     @Override
@@ -2377,7 +2347,10 @@ public class MessagingHomeActivity extends AppCompatActivity
 
     }
 
-    //@Override
+    /**
+     * the method that change the location
+     * @param zip
+     */
     public void onChangeLocationSubmit(int zip) {
         mZip = zip;
 
@@ -2407,7 +2380,6 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onCancelled(this::handleErrorsInTask)
                 .build()
                 .execute();
-
 
         mFab.show();
 //            mFab.setImageResource(android.R.drawable.ic_menu_save);

@@ -166,7 +166,6 @@ public class ChangePasswordFragment extends WaitFragment {
         } else {
             warning(newPwString);
         }
-
     }
 
     /**
@@ -357,17 +356,17 @@ public class ChangePasswordFragment extends WaitFragment {
         }
     }
 
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
-
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
         text.setSpan(new ForegroundColorSpan( Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
 
-
         NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
         if(navigationView!= null){
             Menu menu = navigationView.getMenu();
-
             MenuItem item = menu.findItem(R.id.nav_global_chat);
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
@@ -376,41 +375,37 @@ public class ChangePasswordFragment extends WaitFragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
-
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
         text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
-
         NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
         if(navigationView!= null){
             Menu menu = navigationView.getMenu();
-
             MenuItem item = menu.findItem(R.id.nav_chat_view_connections);
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
             item.setTitle(s);
-
         }
-
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
         text.setSpan(new ForegroundColorSpan(Color.RED), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(text);
-
-
         NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
         if(navigationView!= null){
             Menu menu = navigationView.getMenu();
-
             MenuItem item = menu.findItem(R.id.nav_chat_home);
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
             item.setTitle(s);
-
         }
 
     }
@@ -421,8 +416,6 @@ public class ChangePasswordFragment extends WaitFragment {
         private static final String CHANNEL_ID = "1";
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            System.out.println("in push message receive---+++++->CHange Password Fragment"+intent.toString());
             if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
 
                 String type = intent.getStringExtra("TYPE");
@@ -453,17 +446,12 @@ public class ChangePasswordFragment extends WaitFragment {
                     // Build the notification and display it
                     notificationManager.notify(1, builder.build());
 
-
                 }else if(type.equals("msg")) {
-//                    String msgtype = intent.getStringExtra( "MsgType" );
                     if(chatid.equals( "1" )) {
                         changeColorOnMsg();
                     }else{
                         changeColorOnAddToChat();
                     }
-                    //
-
-
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                                 .setAutoCancel(true)
@@ -497,9 +485,6 @@ public class ChangePasswordFragment extends WaitFragment {
                         // Build the notification and display it
                         notificationManager.notify( 1, builder.build() );
                     }
-
-
-                    //
                 }else if(type.equals("acpt")){
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)

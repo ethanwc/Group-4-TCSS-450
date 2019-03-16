@@ -177,6 +177,11 @@ public class ChatFragment2 extends Fragment {
 //        else Toast.makeText(getActivity(), "Error Occurred", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * The helper method that open image file.
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -193,6 +198,10 @@ public class ChatFragment2 extends Fragment {
         return image;
     }
 
+    /**
+     * The helper method that take the picture and store the picutes
+     * @param view
+     */
     private void dispatchTakePictureIntent(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -221,6 +230,10 @@ public class ChatFragment2 extends Fragment {
         }
     }
 
+    /**
+     * Select the picture from gallery
+     * @param view
+     */
     private void pickFromGallery(View view) {
         Intent GalleryIntent = new Intent();
         GalleryIntent.setType("image/*");
@@ -228,7 +241,9 @@ public class ChatFragment2 extends Fragment {
         startActivityForResult(Intent.createChooser(GalleryIntent, "select media"), SELECT_IMAGE);
     }
 
-
+    /**
+     * Add new picture to gallery
+     */
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
@@ -240,6 +255,10 @@ public class ChatFragment2 extends Fragment {
         getActivity().sendBroadcast(mediaScanIntent);
     }
 
+    /**
+     * The helper  method that upload the photo
+     * @param uri
+     */
     private void uploadPhoto(Uri uri) {
         MediaManager.get()
                 .upload(uri)
@@ -282,6 +301,10 @@ public class ChatFragment2 extends Fragment {
                 }).dispatch();
     }
 
+    /**
+     * The helper method that upload the video
+     * @param uri
+     */
     private void uploadVideo(Uri uri) {
         MediaManager.get()
                 .upload(uri)
@@ -386,6 +409,9 @@ public class ChatFragment2 extends Fragment {
 //        Picasso.get().load(firstImgUrl).into(img1);
     }
 
+    /**
+     * The helper method that resize the chat
+     */
     public void finalizeChat() {
         MultiViewTypeAdapter adapter = new MultiViewTypeAdapter(list, getActivity(), this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
@@ -467,7 +493,6 @@ public class ChatFragment2 extends Fragment {
     /**
      * Method to add a photo to a chat after upload.
      */
-
     private void addPhotoToConversation(String url) {
         JSONObject messageJson = new JSONObject();
         //Build message for web service.
@@ -526,6 +551,9 @@ public class ChatFragment2 extends Fragment {
                 .build().execute();
     }
 
+    /**
+     * The helper method the get the chat history and display
+     */
     private void setChatHistory() {
         String getAll = new Uri.Builder()
                 .scheme("https")
@@ -571,7 +599,10 @@ public class ChatFragment2 extends Fragment {
     }
 
 
-    //output the chat history result
+    /**
+     * out put all the chat result
+     * @param result
+     */
     private void getAllHistory(final String result) {
         int imageCount = 0;
         int loadedImages = 0;
@@ -672,6 +703,9 @@ public class ChatFragment2 extends Fragment {
                 }
             }
         }
+        /**
+         * In app notification
+         */
         public void changeColorOnInv(){
 
             Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -692,6 +726,9 @@ public class ChatFragment2 extends Fragment {
         }
     }
 
+    /**
+     * action listener interface
+     */
     public interface OnChatFragmentButtonAction {
 
         void addToChatButton(Credentials credentials);

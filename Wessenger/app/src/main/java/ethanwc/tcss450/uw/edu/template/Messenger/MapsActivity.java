@@ -156,7 +156,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
 
             List<Address> addresses = geocoder.getFromLocation(mLat, mLong, 1);
-System.out.println("-------address-------"+addresses.get(0).getPostalCode().toString());
 
             if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
                 if(addresses.get( 0 ).getPostalCode().toString().equals(null)){
@@ -264,7 +263,6 @@ System.out.println("-------address-------"+addresses.get(0).getPostalCode().toSt
                 color = "HUE_RED";
                 break;
 
-
         }
         return color;
     }
@@ -284,6 +282,5 @@ System.out.println("-------address-------"+addresses.get(0).getPostalCode().toSt
 //        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
         return false;
     }
-
 
 }
