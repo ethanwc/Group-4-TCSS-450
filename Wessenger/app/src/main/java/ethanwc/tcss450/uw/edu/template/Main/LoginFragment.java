@@ -153,7 +153,10 @@ public class LoginFragment extends WaitFragment {
         mListener = null;
     }
 
-
+    /**
+     * The helper method checks if the credential is correct.
+     * @param view
+     */
     public void signIn(View view) {
 
         //no empty text fields, email must contain '@'
@@ -170,11 +173,20 @@ public class LoginFragment extends WaitFragment {
 
     }
 
+    /**
+     * Go to register fragment
+     * @param view
+     */
     public void register(View view) {
 
         if (mListener != null) mListener.onRegisterClicked();
 
     }
+
+    /**
+     * Go to forgot password fragment
+     * @param view
+     */
     private void forgotPassword(View view) {
         if(mListener != null) {
             if (view.getId() == R.id.txt_login_forgetPassword) {
@@ -263,6 +275,9 @@ public class LoginFragment extends WaitFragment {
         }
     }
 
+    /**
+     * Checks the if the credential is valid
+     */
     private void attemptLogin() {
         boolean hasError = false;
         if (mEditEmail.getText().length() == 0) {
@@ -284,6 +299,10 @@ public class LoginFragment extends WaitFragment {
         }
     }
 
+    /**
+     * credential is valid, check if it in the database.
+     * @param credentials
+     */
     private void doLogin(Credentials credentials) {
         //build the web service URL
         Uri uri = new Uri.Builder()
@@ -305,7 +324,10 @@ public class LoginFragment extends WaitFragment {
                 .build().execute();
     }
 
-
+    /**
+     * Save the credentials locally
+     * @param credentials
+     */
     private void saveCredentials(final Credentials credentials) {
         SharedPreferences prefs =
                 Objects.requireNonNull(getActivity()).getSharedPreferences(
@@ -316,6 +338,10 @@ public class LoginFragment extends WaitFragment {
         prefs.edit().putString(getString(R.string.keys_prefs_password), credentials.getPassword()).apply();
     }
 
+    /**
+     * Receive the pushy message and parse
+     * @param result
+     */
     private void handlePushyTokenOnPost(String result) {
         try {
             Log.d("JSON result",result);
@@ -344,7 +370,9 @@ public class LoginFragment extends WaitFragment {
 //        mListener.onWaitFragmentInteractionHide();
     }
 
-
+    /**
+     * action listener interface
+     */
     public interface OnLoginFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener {
 
         void onLoginSuccess(Credentials credentials, String jwt, String[] mArrayEmail);
@@ -354,6 +382,10 @@ public class LoginFragment extends WaitFragment {
         void saveCredentialsClicked(Credentials credentials);
 
     }
+
+    /**
+     * Register the push service with device token
+     */
     private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String> {
         protected String doInBackground(Void... params) {
             String deviceToken;
