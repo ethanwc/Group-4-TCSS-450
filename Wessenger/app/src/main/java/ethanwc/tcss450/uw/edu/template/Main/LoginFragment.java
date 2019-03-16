@@ -127,9 +127,6 @@ public class LoginFragment extends WaitFragment {
         mEditEmail = mView.findViewById(R.id.edittext_login_email);
         mEditPass = mView.findViewById(R.id.edittext_login_password);
 
-        SignInButton signInButton = mView.findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(this::showHint);
-
 
         return mView;
 
@@ -158,7 +155,7 @@ public class LoginFragment extends WaitFragment {
 
     /**
      * The helper method checks if the credential is correct.
-     * @param view, the clicked button
+     * @param view
      */
     public void signIn(View view) {
 
@@ -175,18 +172,20 @@ public class LoginFragment extends WaitFragment {
         if (pass.length() < 1 || email.length() < 1) mEditPass.setError("Please fill out the fields");
 
     }
+
     /**
-     * The helper method to handle the register button click.
-     * @param view, the clicked button
+     * Go to register fragment
+     * @param view
      */
     public void register(View view) {
 
         if (mListener != null) mListener.onRegisterClicked();
 
     }
+
     /**
-     * The  method to navigate on forgotpassword button click.
-     * @param view, the item clicked
+     * Go to forgot password fragment
+     * @param view
      */
     private void forgotPassword(View view) {
         if(mListener != null) {
@@ -245,7 +244,7 @@ public class LoginFragment extends WaitFragment {
                 }
                 mArrayEmail = emailList;
 //                System.out.println("---email length----"+ar.length());
-
+//                mListener.onWaitFragmentInteractionHide();
                 new RegisterForPushNotificationsAsync().execute();
 
 
@@ -299,9 +298,10 @@ public class LoginFragment extends WaitFragment {
                     .build());
         }
     }
+
     /**
      * credential is valid, check if it in the database.
-     * @param credentials, user detail
+     * @param credentials
      */
     private void doLogin(Credentials credentials) {
         //build the web service URL
@@ -326,7 +326,7 @@ public class LoginFragment extends WaitFragment {
 
     /**
      * Save the credentials locally
-     * @param credentials, user detail
+     * @param credentials
      */
     private void saveCredentials(final Credentials credentials) {
         SharedPreferences prefs =
@@ -340,7 +340,7 @@ public class LoginFragment extends WaitFragment {
 
     /**
      * Receive the pushy message and parse
-     * @param result, result from async task
+     * @param result
      */
     private void handlePushyTokenOnPost(String result) {
         try {
@@ -367,10 +367,11 @@ public class LoginFragment extends WaitFragment {
             ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.edittext_login_email))
                     .setError("Login Unsuccessful");
         }
+//        mListener.onWaitFragmentInteractionHide();
     }
 
     /**
-     * interface to handle the action from login fragment
+     * action listener interface
      */
     public interface OnLoginFragmentInteractionListener extends WaitFragment.OnFragmentInteractionListener {
 
@@ -381,60 +382,62 @@ public class LoginFragment extends WaitFragment {
         void saveCredentialsClicked(Credentials credentials);
 
     }
-    private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String>
-    {
-        /**
-         * action done in background during wait fragment called
-         * @param params, parameters
-         * @return string, device token
-         */
+
+    /**
+     * Register the push service with device token
+     */
+    private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String> {
         protected String doInBackground(Void... params) {
             String deviceToken;
             try {
                 // Assign a unique token to this device
-                deviceToken = Pushy.register(Objects.requireNonNull(getActivity()).getApplicationContext());
+                deviceToken = Pushy.register( Objects.requireNonNull( getActivity() ).getApplicationContext() );
                 //subscribe to a topic (this is a Blocking call)
-                Pushy.subscribe("all", getActivity().getApplicationContext());
-            }
-            catch (Exception exc) {
-                cancel(true);
+                Pushy.subscribe( "all", getActivity().getApplicationContext() );
+            } catch (Exception exc) {
+                cancel( true );
                 // Return exc to onCancelled
                 return exc.getMessage();
             }
             // Success
             return deviceToken;
         }
+
         @Override
         protected void onCancelled(String errorMsg) {
-            super.onCancelled(errorMsg);
-            Log.d("PhishApp", "Error getting Pushy Token: " + errorMsg);
+            super.onCancelled( errorMsg );
+            Log.d( "PhishApp", "Error getting Pushy Token: " + errorMsg );
         }
+
         @Override
         protected void onPostExecute(String deviceToken) {
             // Log it for debugging purposes
-            Log.d("PhishApp", "Pushy device token: " + deviceToken);
+            Log.d( "PhishApp", "Pushy device token: " + deviceToken );
             //build the web service URL
             Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_pushy))
-                    .appendPath(getString(R.string.ep_token))
+                    .scheme( "https" )
+                    .appendPath( getString( R.string.ep_base_url ) )
+                    .appendPath( getString( R.string.ep_pushy ) )
+                    .appendPath( getString( R.string.ep_token ) )
                     .build();
             //build the JSONObject
             JSONObject msg = mCredentials.asJSONObject();
             try {
-                msg.put("token", deviceToken);
+                msg.put( "token", deviceToken );
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //instantiate and execute the AsyncTask.
-            new SendPostAsyncTask.Builder(uri.toString(), msg)
-                    .onPostExecute(LoginFragment.this::handlePushyTokenOnPost)
-                    .onCancelled(LoginFragment.this::handleErrorsInTask)
-                    .addHeaderField("authorization", mJwt)
-                    .build().execute();
-        }
+            {
+//                mListener.onWaitFragmentInteractionHide();
+                //instantiate and execute the AsyncTask.
+                new SendPostAsyncTask.Builder( uri.toString(), msg )
+                        .onPostExecute( LoginFragment.this::handlePushyTokenOnPost )
+                        .onCancelled( LoginFragment.this::handleErrorsInTask )
+                        .addHeaderField( "authorization", mJwt )
+                        .build().execute();
+            }
 
+        }
     }
 
 }

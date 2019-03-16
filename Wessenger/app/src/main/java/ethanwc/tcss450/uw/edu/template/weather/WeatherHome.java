@@ -51,8 +51,9 @@ public class WeatherHome extends Fragment {
     private HourlyWeather[] mHourlyWeatherArray;
 
 
-
-
+    /**
+     * constructor
+     */
     public WeatherHome() {
         // Required empty public constructor
     }
@@ -141,7 +142,9 @@ public class WeatherHome extends Fragment {
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
-
+    /**
+     * method to change the titlebar color on new message
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -161,6 +164,9 @@ public class WeatherHome extends Fragment {
         }
 
     }
+    /**
+     * method to change the titlebar color on new connection
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -179,7 +185,9 @@ public class WeatherHome extends Fragment {
         }
 
     }
-
+    /**
+     * method to change the titlebar color on new chat add
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
