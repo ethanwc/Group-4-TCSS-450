@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +34,8 @@ import org.cloudinary.json.JSONObject;
 
 import ethanwc.tcss450.uw.edu.template.Connections.GetAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
+import ethanwc.tcss450.uw.edu.template.Messenger.MapsActivity;
+import ethanwc.tcss450.uw.edu.template.Messenger.MessagingHomeActivity;
 import ethanwc.tcss450.uw.edu.template.utils.PushReceiver;
 import ethanwc.tcss450.uw.edu.template.Messenger.ConnectionsFragment;
 import ethanwc.tcss450.uw.edu.template.R;
@@ -38,7 +43,6 @@ import me.pushy.sdk.Pushy;
 
 
 /**
- * This is the class to change the location via zip code or from the map.
  * A simple {@link Fragment} subclass.
  */
 public class ChangeLocationsFragment extends Fragment {
@@ -65,8 +69,6 @@ public class ChangeLocationsFragment extends Fragment {
         }
     }
 
-
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,14 +79,35 @@ public class ChangeLocationsFragment extends Fragment {
         Button btnChangePassword = v.findViewById(R.id.button_changelocation_submit);
         btnChangePassword.setOnClickListener(v1 ->changeLocation(v));
 
+        FloatingActionButton mFab = v.findViewById(R.id.fab_map_fab);
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Location mCurrentLocation = getArguments().getParcelable("locations");
+                if (mCurrentLocation == null) {
+
+                    Snackbar.make(view, "Please wait for location to enable", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show(); } else {
+                    Intent i = new Intent(getActivity(), MapsActivity.class);
+                    //pass the current location on to the MapActivity when it is loaded
+                    i.putExtra("LOCATION", mCurrentLocation);
+
+                    startActivity(i);
+                }
+
+            }
+
+        });
         return v;
 
 
     }
 
     /**
-     * This method is to change the location from the zipcode pass by the user from edittext
-     * @param v
+     * method to change location on button click
+     * @param v , item from ui
      */
     private void changeLocation(View v) {
         mZip = getActivity().findViewById(R.id.edittext_changelocation_zip);
@@ -102,7 +125,7 @@ public class ChangeLocationsFragment extends Fragment {
 
 
 
-//get the city from the zip code
+
             new GetAsyncTask.Builder(uri.toString())
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleGetCityStateOnPostExecute)
@@ -114,8 +137,8 @@ public class ChangeLocationsFragment extends Fragment {
     }
 
     /**
-     * THis method check condition if the zipcode provided exist or not
-     * @param s
+     * handle the async task post execute
+     * @param s, result
      */
     private void handleGetCityStateOnPostExecute(String s) {
         JSONObject json = new JSONObject(s);
@@ -141,6 +164,9 @@ public class ChangeLocationsFragment extends Fragment {
         Log.e("ASYNC_TASK_ERROR", result);
     }
 
+    /**
+     * action done during waitfragment
+     */
     private void onWaitFragmentInteractionShow() {
         getActivity().getSupportFragmentManager()
                 .beginTransaction()
@@ -159,6 +185,9 @@ public class ChangeLocationsFragment extends Fragment {
                 .commit();
     }
 
+    /**
+     * interface to handle when button is click to see weather by zipcode
+     */
     public interface onChangeLocationFragmentInteractionListener  {
         void onChangeLocationSubmit(int zip);
     }
@@ -187,7 +216,7 @@ public class ChangeLocationsFragment extends Fragment {
     }
 
     /**
-     * This method is to change the color of title bar on msg
+     * method to change the titlebar color on new message
      */
     public void changeColorOnMsg(){
 
@@ -209,7 +238,7 @@ public class ChangeLocationsFragment extends Fragment {
 
     }
     /**
-     * This method is to change the color of title bar on invitation
+     * method to change the titlebar color on new connection
      */
     public void changeColorOnInv(){
 
@@ -230,7 +259,7 @@ public class ChangeLocationsFragment extends Fragment {
 
     }
     /**
-     * This method is to change the color of title bar on added to group chat
+     * method to change the titlebar color on new chat added
      */
     public void changeColorOnAddToChat(){
 

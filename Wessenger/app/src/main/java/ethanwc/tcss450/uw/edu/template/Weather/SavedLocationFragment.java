@@ -59,9 +59,9 @@ public class SavedLocationFragment extends Fragment {
     }
 
     /**
-     * to return the fragment by adding the arguments
-     * @param columnCount
-     * @return, fragment
+     * to return the sacedlocation fragment with the argument
+     * @param columnCount , number of column
+     * @return the fragment
      */
     public static SavedLocationFragment newInstance(int columnCount) {
         SavedLocationFragment fragment = new SavedLocationFragment();
@@ -159,9 +159,8 @@ public class SavedLocationFragment extends Fragment {
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
-
     /**
-     * Method to change the color of title bar on msg
+     * method to change the titlebar color on new message
      */
     public void changeColorOnMsg(){
 
@@ -183,7 +182,7 @@ public class SavedLocationFragment extends Fragment {
 
     }
     /**
-     * Method to change the color of title bar on invitation connection
+     * method to change the titlebar color on new connection
      */
     public void changeColorOnInv(){
 
@@ -203,8 +202,9 @@ public class SavedLocationFragment extends Fragment {
         }
 
     }
+
     /**
-     * Method to change the color of title bar on added to chat
+     * method to change the titlebar color on new chat add
      */
     public void changeColorOnAddToChat(){
 

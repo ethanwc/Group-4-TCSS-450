@@ -12,24 +12,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
 import java.util.Calendar;
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DailyWeather} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDailyWeatherRecyclerViewAdapter.ViewHolder> {
 
     private final List<DailyWeather> mValues;
-    private final OnListFragmentInteractionListener mListener;
 
-    public MyDailyWeatherRecyclerViewAdapter(List<DailyWeather> items, OnListFragmentInteractionListener listener) {
+    public MyDailyWeatherRecyclerViewAdapter(List<DailyWeather> items) {
         mValues = items;
-        mListener = listener;
     }
 
     @Override
@@ -62,22 +57,13 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
 
         Log.e("weather", " "+ mValues.get(position).getWeather());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onWeatherListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+
     }
 
     /**
-     * method to convert the day of the week
-     * @param position, date postition
-     * @return , the day
+     * method to convert day of the week
+     * @param position, integer value
+     * @return string, day of a week
      */
     private String convertDate (int position) {
         int date = Calendar.DAY_OF_WEEK + position;
@@ -105,9 +91,8 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
     public int getItemCount() {
         return mValues.size();
     }
-
     /**
-     * View HOlder for recyclerview
+     * class to get the UI element id
      */
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
@@ -119,7 +104,7 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
 
         /**
          * constructor to initialize the field
-         * @param view, view
+         * @param view
          */
         public ViewHolder(View view) {
             super(view);

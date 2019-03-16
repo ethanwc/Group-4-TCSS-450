@@ -120,11 +120,6 @@ public class SavedLocationViewFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-
-    /**
-     * action to do in button click
-     * @param uri, link
-     */
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -185,8 +180,9 @@ public class SavedLocationViewFragment extends Fragment {
         }
     }
     /**
-     * Method to change the color of title bar on msg
+     * method to change the titlebar color on new message
      */
+
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -207,7 +203,7 @@ public class SavedLocationViewFragment extends Fragment {
 
     }
     /**
-     * Method to change the color of title bar on connection
+     * method to change the titlebar color on new connection
      */
     public void changeColorOnInv(){
 
@@ -228,7 +224,7 @@ public class SavedLocationViewFragment extends Fragment {
 
     }
     /**
-     * Method to change the color of title bar on added to chat
+     * method to change the titlebar color on new chat add
      */
     public void changeColorOnAddToChat(){
 

@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import ethanwc.tcss450.uw.edu.template.Messenger.ConversationFragment;
@@ -38,14 +39,12 @@ import static ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment.ARG_D
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link WeatherHome.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
 public class WeatherHome extends Fragment {
 
 
 
-    private OnFragmentInteractionListener mListener;
     private PushMessageReceiver mPushMessageReciever;
     private Toolbar toolbar;
     private DailyWeather[] mDailyWeatherArray;
@@ -53,7 +52,7 @@ public class WeatherHome extends Fragment {
 
 
     /**
-     * empty constructor
+     * constructor
      */
     public WeatherHome() {
         // Required empty public constructor
@@ -72,6 +71,12 @@ public class WeatherHome extends Fragment {
     }
 
     @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+        TextView cityView = view.findViewById(R.id.textview_weather_location);
+        cityView.setText(getArguments().getString("city"));
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -79,6 +84,7 @@ public class WeatherHome extends Fragment {
         toolbar = (Toolbar) view.findViewById(R.id.toolbar_messenging_toolbar);
 
         FragmentManager manager= getChildFragmentManager();//create an instance of fragment manager
+
 
 
         FragmentTransaction transaction= manager.beginTransaction();//create an instance of Fragment-transaction
@@ -104,51 +110,14 @@ public class WeatherHome extends Fragment {
 
         transaction.commit();
 
+
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-
-    /**
-     * action to handle button press
-     * @param uri, link
-     */
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnHomeFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     @Override
@@ -174,7 +143,7 @@ public class WeatherHome extends Fragment {
         }
     }
     /**
-     * Method to change the color of title bar on msg
+     * method to change the titlebar color on new message
      */
     public void changeColorOnMsg(){
 
@@ -196,7 +165,7 @@ public class WeatherHome extends Fragment {
 
     }
     /**
-     * Method to change the color of title bar on connection
+     * method to change the titlebar color on new connection
      */
     public void changeColorOnInv(){
 
@@ -217,7 +186,7 @@ public class WeatherHome extends Fragment {
 
     }
     /**
-     * Method to change the color of title bar on add to chat
+     * method to change the titlebar color on new chat add
      */
     public void changeColorOnAddToChat(){
 

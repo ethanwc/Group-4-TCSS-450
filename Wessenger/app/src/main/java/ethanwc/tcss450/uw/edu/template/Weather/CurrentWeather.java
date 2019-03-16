@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +20,6 @@ import ethanwc.tcss450.uw.edu.template.Connections.SendPostAsyncTask;
 import ethanwc.tcss450.uw.edu.template.Main.WaitFragment;
 import ethanwc.tcss450.uw.edu.template.R;
 
-/**
- * The class to display the currentweather of the saved zip code
- */
 public class CurrentWeather extends Fragment {
 
     private OnCurrentWeatherUpdateListener mListener;
@@ -38,7 +34,7 @@ public class CurrentWeather extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_weather_current, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Home Page");
+
 
         return view;
     }
@@ -76,7 +72,7 @@ public class CurrentWeather extends Fragment {
         mZip = getArguments().getInt("zip");
 
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_messaging_fab);
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_save);
         fab.setOnClickListener( new View.OnClickListener() {
 
             @Override
@@ -110,6 +106,9 @@ public class CurrentWeather extends Fragment {
                 Log.e("ASYNC_TASK_ERROR", result);
             }
 
+            /**
+             * action to do on wait fragment show
+             */
             private void onWaitFragmentInteractionShow() {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
@@ -129,8 +128,8 @@ public class CurrentWeather extends Fragment {
             }
 
             /**
-             * Method to handle the result after adding location
-             * @param s
+             * action to do on post async task
+             * @param s, result
              */
             private void handleAddLocationOnPostExecute(String s) {
 
@@ -153,8 +152,8 @@ public class CurrentWeather extends Fragment {
             }
 
             /**
-             * Method to get the city and state name after the post execution
-             * @param s
+             * action to do after async task
+             * @param s, result
              */
             private void handleGetCityStateOnPostExecute(String s) {
                 try {
@@ -181,8 +180,7 @@ public class CurrentWeather extends Fragment {
                         json.put("latitude", "0");
                         json.put("nickname", mCity);
                         json.put("zip", mZip);
-//                        System.out.println("----------city---------"+mCity);
-//                        System.out.println("----------city---------");
+
                     Log.e("CITY!!!!", mCity);
                     } catch (JSONException e) {
                         Log.wtf("CREDENTIALS", "Error creating JSON: " + e.getMessage());
@@ -214,15 +212,15 @@ public class CurrentWeather extends Fragment {
     }
 
     /**
-     * method to handle the pre login action of getasynctask
+     * action to do before hitting endpoint
      */
     private void handleLoginOnPre() {
         mListener.onWaitFragmentInteractionShow();
     }
 
     /**
-     * Method to handle the response of set weather async task
-     * @param response
+     * action to change ui from the result from endpoint
+     * @param response, the result from async task
      */
     public void handleSetWeather(final String response) {
         mListener.onWaitFragmentInteractionHide();
@@ -245,7 +243,7 @@ public class CurrentWeather extends Fragment {
                 String max = maininfo.get("temp_max").toString();
 
 
-//                ((TextView)getView().findViewById(R.id.fragment_weather_current_city)).setText(mCity);
+
                 ((TextView)getView().findViewById(R.id.fragment_weather_current_main)).setText(main);
                 ((TextView)getView().findViewById(R.id.fragment_weather_current_temperature)).setText(kelvinToFar(temperature) + "\u2109");
                 ((TextView)getView().findViewById(R.id.fragment_weather_current_high_low)).setText(kelvinToFar(max) + "\u00b0" + "/" + kelvinToFar(min) + "\u00b0");
@@ -265,16 +263,16 @@ public class CurrentWeather extends Fragment {
     }
 
     /**
-     * Show wait progress
+     * show progress wait fagment
      */
     public void showWaitProgress () {
 
     }
 
     /**
-     * Method to convert kelvin into fahrenheit
-     * @param kelvin
-     * @return fahrenheit
+     * convert Kelvin to fahrenheit
+     * @param kelvin , temperature
+     * @return int, fahrenheit
      */
     private int kelvinToFar(String kelvin) {
         return (int) (((Double.parseDouble(kelvin)) - 273.15) * 9/5 + 32);

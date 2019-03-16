@@ -120,6 +120,9 @@ public class NewUserFragment extends WaitFragment {
         }
     }
 
+    /**
+     * to register
+     */
     public void doRegister() {
 
     }
