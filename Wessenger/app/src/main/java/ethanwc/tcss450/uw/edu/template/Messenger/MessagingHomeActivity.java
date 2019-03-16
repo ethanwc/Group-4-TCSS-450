@@ -672,7 +672,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         //Chat has been chosen
         if (id == R.id.nav_global_chat) {
             SpannableString s = new SpannableString(item.getTitle());
-            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
+            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messageText ) ), 0, s.length(), 0);
             item.setTitle(s);
 
             String jwt = getIntent().getExtras().getString(getString(R.string.keys_intent_jwt));
@@ -791,7 +791,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 
             //Set title red if pushy message received.
             SpannableString s = new SpannableString(item.getTitle());
-            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
+            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messageText ) ), 0, s.length(), 0);
             item.setTitle(s);
             getSupportActionBar().setTitle("Chat");
             //Enable mFab, disable saveFab
@@ -814,7 +814,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_chat_view_connections) {
             //Set title color if pushy message is received.
             SpannableString s = new SpannableString(item.getTitle());
-            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messagePrimary ) ), 0, s.length(), 0);
+            s.setSpan(new ForegroundColorSpan(getResources().getColor( R.color.messageText ) ), 0, s.length(), 0);
             item.setTitle(s);
 
             mEmails = new ArrayList<>();
