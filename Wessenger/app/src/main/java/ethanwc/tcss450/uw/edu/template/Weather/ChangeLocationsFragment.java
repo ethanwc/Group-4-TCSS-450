@@ -38,6 +38,7 @@ import me.pushy.sdk.Pushy;
 
 
 /**
+ * This is the class to change the location via zip code or from the map.
  * A simple {@link Fragment} subclass.
  */
 public class ChangeLocationsFragment extends Fragment {
@@ -81,6 +82,10 @@ public class ChangeLocationsFragment extends Fragment {
 
     }
 
+    /**
+     * This method is to change the location from the zipcode pass by the user from edittext
+     * @param v
+     */
     private void changeLocation(View v) {
         mZip = getActivity().findViewById(R.id.edittext_changelocation_zip);
         if (mZip.getText().toString().length() != 5) {
@@ -97,7 +102,7 @@ public class ChangeLocationsFragment extends Fragment {
 
 
 
-
+//get the city from the zip code
             new GetAsyncTask.Builder(uri.toString())
                     .onPreExecute(this::onWaitFragmentInteractionShow)
                     .onPostExecute(this::handleGetCityStateOnPostExecute)
@@ -108,6 +113,10 @@ public class ChangeLocationsFragment extends Fragment {
         }
     }
 
+    /**
+     * THis method check condition if the zipcode provided exist or not
+     * @param s
+     */
     private void handleGetCityStateOnPostExecute(String s) {
         JSONObject json = new JSONObject(s);
         try {
@@ -177,6 +186,9 @@ public class ChangeLocationsFragment extends Fragment {
 //        }
     }
 
+    /**
+     * This method is to change the color of title bar on msg
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -196,6 +208,9 @@ public class ChangeLocationsFragment extends Fragment {
         }
 
     }
+    /**
+     * This method is to change the color of title bar on invitation
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -214,7 +229,9 @@ public class ChangeLocationsFragment extends Fragment {
         }
 
     }
-
+    /**
+     * This method is to change the color of title bar on added to group chat
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());

@@ -58,6 +58,11 @@ public class SavedLocationFragment extends Fragment {
     public SavedLocationFragment() {
     }
 
+    /**
+     * to return the fragment by adding the arguments
+     * @param columnCount
+     * @return, fragment
+     */
     public static SavedLocationFragment newInstance(int columnCount) {
         SavedLocationFragment fragment = new SavedLocationFragment();
         Bundle args = new Bundle();
@@ -155,6 +160,9 @@ public class SavedLocationFragment extends Fragment {
         }
     }
 
+    /**
+     * Method to change the color of title bar on msg
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -174,6 +182,9 @@ public class SavedLocationFragment extends Fragment {
         }
 
     }
+    /**
+     * Method to change the color of title bar on invitation connection
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -192,7 +203,9 @@ public class SavedLocationFragment extends Fragment {
         }
 
     }
-
+    /**
+     * Method to change the color of title bar on added to chat
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());

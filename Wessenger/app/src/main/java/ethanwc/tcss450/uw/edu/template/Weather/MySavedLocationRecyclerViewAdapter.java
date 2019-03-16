@@ -83,7 +83,9 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
 
         return mValues.size();
     }
-
+    /**
+     * View HOlder for recyclerview
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
         //public final TextView mIdView;
@@ -91,7 +93,9 @@ public class MySavedLocationRecyclerViewAdapter extends RecyclerView.Adapter<MyS
         public final TextView mZip;
         public ImageButton mRemove;
         location mItem;
-
+/**
+*constructor to initialize the field
+ */
         ViewHolder(View view) {
             super(view);
             mView = view;
