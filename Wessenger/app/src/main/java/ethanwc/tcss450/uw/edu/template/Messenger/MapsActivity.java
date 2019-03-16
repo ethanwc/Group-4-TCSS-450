@@ -48,55 +48,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Double mLat;
     private Double mLong;
     private int mZipcode;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-//mMap.setMyLocationEnabled(  );
+
         mCurrentLocation = (Location) getIntent().getParcelableExtra("LOCATION");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        checkLocationPermission();
 
 
-        //
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_messaging_fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mapFragment.getMapAsync(new OnMapReadyCallback() {
-//                    @Override
-//                    public void onMapReady(GoogleMap googleMap) {
-//                        googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-//
-//                        googleMap.addMarker(new MarkerOptions()
-//                                .position(new LatLng(37.4233438, -122.0728817))
-//                                .title("LinkedIn")
-//                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-//
-//                        googleMap.addMarker(new MarkerOptions()
-//                                .position(new LatLng(37.4629101,-122.2449094))
-//                                .title("Facebook")
-//                                .snippet("Facebook HQ: Menlo Park"));
-//
-//                        googleMap.addMarker(new MarkerOptions()
-//                                .position(new LatLng(37.3092293, -122.1136845))
-//                                .title("Apple"));
-//
-//                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.4233438, -122.0728817), 10));
-//                    }
-//                });
-//            }
-//        });
-        //
+
     }
-//
-public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    /**
+     * Check if the location is permitted by device.
+     * @return boolean
+     */
     public boolean checkLocationPermission(){
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -127,7 +101,7 @@ public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
             return true;
         }
     }
-    //
+
 
     /**
      * Manipulates the map once available.
@@ -141,24 +115,23 @@ public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        UiSettings.setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled( true );
         mMap.getUiSettings().setMyLocationButtonEnabled( true );
         mMap.getUiSettings().setCompassEnabled( true );
-//        mMap.getUiSettings().setMyL
-//        googleMap.setMyLocationEnabled( true );
+
+        //check for the permission to access the location to use on map
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             googleMap.setMyLocationEnabled(true);
         } else {
-// Show rationale and request permission.
+            // Show rationale and request permission.
         }
         // Add a marker in the current device location and move the camera
         LatLng current = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
         mMap.addMarker(new MarkerOptions().position(current).title("Current Location"));
         //Zoom levels are from 2.0f (zoomed out) to 21.f (zoomed in)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 15.0f));
-//
+
 //        mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         //
@@ -169,35 +142,76 @@ public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public void onMapClick(LatLng latLng) {
         System.out.println(latLng.longitude+"map clicked--------"+latLng.latitude);
 
+        // convert the float format of latitude and longitude from map
         DecimalFormat df = new DecimalFormat( "#.#####" );
         mLong = Double.parseDouble(df.format(latLng.longitude));
         df = new DecimalFormat( "#.#######" );
         mLat = Double.parseDouble(df.format(latLng.latitude));
 
         System.out.println(mLong+"#####"+mLat);
-//        mCurrentLocation.setLatitude( latLng.longitude );
         System.out.println(mCurrentLocation.getLongitude()+"map clicked+++++++"+mCurrentLocation.getLatitude());
-//        Location loc = new Location(  )
+
+        // Class to convert the geo code into the zipcode
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
+
             List<Address> addresses = geocoder.getFromLocation(mLat, mLong, 1);
-//            List<Address> addresses = geocoder.getFromLocation(latLng.longitude, latLng.latitude, 1);
+System.out.println("-------address-------"+addresses.get(0).getPostalCode().toString());
 
             if(!(addresses.get(0).getPostalCode().toString()).equals(null)) {
-                mZipcode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
-                System.out.println( "-------ZIPPP----" + mZipcode );
+                if(addresses.get( 0 ).getPostalCode().toString().equals(null)){
+                    // if zipcode is unable default
+                    mZipcode = 98418;
+                    System.out.println( "-------ZIPPP----" + mZipcode );
 
-                Intent intent = new Intent("zipCodeSent");
-                intent.putExtra("zip", mZipcode);
-                sendBroadcast(intent);
-                finish();
+                    Intent intent = new Intent( "zipCodeSent" );
+                    intent.putExtra( "zip", mZipcode );
+                    sendBroadcast( intent );
+                    finish();
+                }else {
+                    mZipcode = Integer.parseInt( addresses.get( 0 ).getPostalCode().toString() );
+                    System.out.println( "-------ZIPPP----" + mZipcode );
 
+                    Intent intent = new Intent( "zipCodeSent" );
+                    intent.putExtra( "zip", mZipcode );
+                    sendBroadcast( intent );
+                    finish();
+                }
             }else{
                 System.out.println("cannot get zip code");
+
             }
         } catch (IOException e) {
             e.printStackTrace();
+// if zipcode is unable default
+            mZipcode = 98418;
+            System.out.println( "-------ZIPPP----" + mZipcode );
+
+            Intent intent = new Intent( "zipCodeSent" );
+            intent.putExtra( "zip", mZipcode );
+            sendBroadcast( intent );
+            finish();
+        } catch(IndexOutOfBoundsException e){
+            System.out.println("---index out exception---");
+            // if zipcode is outside us
+            mZipcode = 98418;
+            System.out.println( "-------ZIPPP----" + mZipcode );
+
+            Intent intent = new Intent( "zipCodeSent" );
+            intent.putExtra( "zip", mZipcode );
+            sendBroadcast( intent );
+            finish();
+        }  catch(NullPointerException e) {
+            // if zipcode is outside us
+            mZipcode = 98418;
+            System.out.println( "-------ZIPPP----" + mZipcode );
+
+            Intent intent = new Intent( "zipCodeSent" );
+            intent.putExtra( "zip", mZipcode );
+            sendBroadcast( intent );
+            finish();
         }
+
         Log.d("LAT/LONG", latLng.toString());
 
         Marker marker = mMap.addMarker(new MarkerOptions() .position(latLng)
@@ -218,19 +232,19 @@ public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker m) {
-                System.out.println("marker clicked----");
-//                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
-//                builder.setTitle("Delete Marker");
-//                builder.setMessage("Do you want to delete the marker?");
-//
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
+
                 return true;
             }
         });
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
 
     }
+
+    /**
+     *
+     * @param i, random value to select the color
+     * @return, the color
+     */
     public String color(int i){
         String color;
         switch(i){
@@ -271,26 +285,5 @@ public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
         return false;
     }
 
-//    @Override
-//    public boolean onMarkerClick(Marker marker) {
-//        System.out.println("marker clicked-------");
-//        new AlertDialog.Builder(this)
-//                .setTitle("Delete entry")
-//                .setMessage("Are you sure you want to delete this entry?")
-//
-//                // Specifying a listener allows you to take an action before dismissing the dialog.
-//                // The dialog is automatically dismissed when a dialog button is clicked.
-//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                })
-//
-//                // A null listener allows the button to dismiss the dialog and take no further action.
-//                .setNegativeButton(android.R.string.no, null)
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .create()
-//                .show();
-//        return false;
-//    }
+
 }

@@ -211,7 +211,7 @@ public class MessagingHomeActivity extends AppCompatActivity
 // Update UI with location data
 // ...
                     setLocation(location);
-                    Log.d("LOCATION UPDATE!", mCurrentLocation.toString());
+//                    Log.d("LOCATION UPDATE!", mCurrentLocation.toString());
                 } };
         };
         createLocationRequest();
@@ -279,9 +279,11 @@ public class MessagingHomeActivity extends AppCompatActivity
                     .commit();
         } else {
             loadHome();
+//            loadFragment(new AddContactFragment());
             mFab.hide();
             mFab.setEnabled(false);
         }
+
 
     }
 
@@ -1272,6 +1274,7 @@ public class MessagingHomeActivity extends AppCompatActivity
      * @param frag
      */
     private void loadFragment(Fragment frag) {
+        onWaitFragmentInteractionHide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_messaging_container, frag)
                 .addToBackStack(null);

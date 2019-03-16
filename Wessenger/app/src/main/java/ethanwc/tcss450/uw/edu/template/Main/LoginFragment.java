@@ -232,7 +232,7 @@ public class LoginFragment extends WaitFragment {
                 }
                 mArrayEmail = emailList;
 //                System.out.println("---email length----"+ar.length());
-
+//                mListener.onWaitFragmentInteractionHide();
                 new RegisterForPushNotificationsAsync().execute();
 
 
@@ -341,6 +341,7 @@ public class LoginFragment extends WaitFragment {
             ((TextView) Objects.requireNonNull(getView()).findViewById(R.id.edittext_login_email))
                     .setError("Login Unsuccessful");
         }
+//        mListener.onWaitFragmentInteractionHide();
     }
 
 
@@ -353,55 +354,58 @@ public class LoginFragment extends WaitFragment {
         void saveCredentialsClicked(Credentials credentials);
 
     }
-    private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String>
-    {
+    private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String> {
         protected String doInBackground(Void... params) {
             String deviceToken;
             try {
                 // Assign a unique token to this device
-                deviceToken = Pushy.register(Objects.requireNonNull(getActivity()).getApplicationContext());
+                deviceToken = Pushy.register( Objects.requireNonNull( getActivity() ).getApplicationContext() );
                 //subscribe to a topic (this is a Blocking call)
-                Pushy.subscribe("all", getActivity().getApplicationContext());
-            }
-            catch (Exception exc) {
-                cancel(true);
+                Pushy.subscribe( "all", getActivity().getApplicationContext() );
+            } catch (Exception exc) {
+                cancel( true );
                 // Return exc to onCancelled
                 return exc.getMessage();
             }
             // Success
             return deviceToken;
         }
+
         @Override
         protected void onCancelled(String errorMsg) {
-            super.onCancelled(errorMsg);
-            Log.d("PhishApp", "Error getting Pushy Token: " + errorMsg);
+            super.onCancelled( errorMsg );
+            Log.d( "PhishApp", "Error getting Pushy Token: " + errorMsg );
         }
+
         @Override
         protected void onPostExecute(String deviceToken) {
             // Log it for debugging purposes
-            Log.d("PhishApp", "Pushy device token: " + deviceToken);
+            Log.d( "PhishApp", "Pushy device token: " + deviceToken );
             //build the web service URL
             Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_pushy))
-                    .appendPath(getString(R.string.ep_token))
+                    .scheme( "https" )
+                    .appendPath( getString( R.string.ep_base_url ) )
+                    .appendPath( getString( R.string.ep_pushy ) )
+                    .appendPath( getString( R.string.ep_token ) )
                     .build();
             //build the JSONObject
             JSONObject msg = mCredentials.asJSONObject();
             try {
-                msg.put("token", deviceToken);
+                msg.put( "token", deviceToken );
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            //instantiate and execute the AsyncTask.
-            new SendPostAsyncTask.Builder(uri.toString(), msg)
-                    .onPostExecute(LoginFragment.this::handlePushyTokenOnPost)
-                    .onCancelled(LoginFragment.this::handleErrorsInTask)
-                    .addHeaderField("authorization", mJwt)
-                    .build().execute();
-        }
+            {
+//                mListener.onWaitFragmentInteractionHide();
+                //instantiate and execute the AsyncTask.
+                new SendPostAsyncTask.Builder( uri.toString(), msg )
+                        .onPostExecute( LoginFragment.this::handlePushyTokenOnPost )
+                        .onCancelled( LoginFragment.this::handleErrorsInTask )
+                        .addHeaderField( "authorization", mJwt )
+                        .build().execute();
+            }
 
+        }
     }
 
 }
