@@ -57,7 +57,11 @@ public class ConnectionsFragment extends Fragment {
     public ConnectionsFragment() {
     }
 
-
+    /**
+     * Store your connection list
+     * @param columnCount
+     * @return fragment
+     */
     public static ConnectionsFragment newInstance(int columnCount) {
         ConnectionsFragment fragment = new ConnectionsFragment();
         Bundle args = new Bundle();
@@ -161,7 +165,6 @@ public class ConnectionsFragment extends Fragment {
             MenuItem item = menu.findItem(R.id.nav_chat_view_connections);
 //            ((MessagingHomeActivity)getActivity()).onNavigationItemSelected(item);
 
-
         }
     }
 
@@ -188,7 +191,9 @@ public class ConnectionsFragment extends Fragment {
 //            getActivity().unregisterReceiver(mPushMessageReciever);
 //        }
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -208,6 +213,9 @@ public class ConnectionsFragment extends Fragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -226,7 +234,9 @@ public class ConnectionsFragment extends Fragment {
         }
 
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());

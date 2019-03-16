@@ -171,7 +171,9 @@ public class InvitationsFragment extends Fragment {
 //            getActivity().unregisterReceiver(mPushMessageReciever);
 //        }
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -191,6 +193,9 @@ public class InvitationsFragment extends Fragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -209,7 +214,9 @@ public class InvitationsFragment extends Fragment {
         }
 
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -268,7 +275,6 @@ public class InvitationsFragment extends Fragment {
                     // Build the notification and display it
                     notificationManager.notify(1, builder.build());
 
-
                 }else if(type.equals("msg")) {
 //                    String msgtype = intent.getStringExtra( "MsgType" );
                     if(chatid.equals( "1" )) {
@@ -276,8 +282,6 @@ public class InvitationsFragment extends Fragment {
                     }else{
                         changeColorOnAddToChat();
                     }
-                    //
-
 
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)

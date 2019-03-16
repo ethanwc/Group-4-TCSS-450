@@ -185,6 +185,9 @@ public class RequestsFragment extends Fragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());

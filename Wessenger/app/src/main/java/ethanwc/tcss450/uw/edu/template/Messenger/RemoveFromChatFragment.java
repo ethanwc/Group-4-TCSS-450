@@ -114,7 +114,9 @@ public class RemoveFromChatFragment extends Fragment {
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -134,6 +136,9 @@ public class RemoveFromChatFragment extends Fragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -152,7 +157,9 @@ public class RemoveFromChatFragment extends Fragment {
         }
 
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());

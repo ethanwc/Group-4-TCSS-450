@@ -87,7 +87,9 @@ public class ConnectionInviteFragment extends Fragment {
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -107,6 +109,9 @@ public class ConnectionInviteFragment extends Fragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -121,11 +126,11 @@ public class ConnectionInviteFragment extends Fragment {
             SpannableString s = new SpannableString(item.getTitle());
             s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
             item.setTitle(s);
-
         }
-
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -145,6 +150,10 @@ public class ConnectionInviteFragment extends Fragment {
         }
 
     }
+
+    /**
+     * The method that update the connection
+     */
     public void refreshFragment(){
         System.out.println("#############");
         NavigationView navigationView = (NavigationView) ((AppCompatActivity) getActivity()).findViewById(R.id.navview_messanging_nav);
@@ -199,7 +208,6 @@ public class ConnectionInviteFragment extends Fragment {
 //                    // Build the notification and display it
 //                    notificationManager.notify(1, builder.build());
 
-
                 }else if(type.equals("msg")) {
 //                    String msgtype = intent.getStringExtra( "MsgType" );
                     if(chatid.equals( "1" )) {
@@ -207,9 +215,6 @@ public class ConnectionInviteFragment extends Fragment {
                     }else{
                         changeColorOnAddToChat();
                     }
-                    //
-
-
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                                 .setAutoCancel(true)

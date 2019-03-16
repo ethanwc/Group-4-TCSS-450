@@ -178,8 +178,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                             , Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_LOCATIONS);
         } else {
-        //The user has already allowed the use of Locations. Get the current location.
-        requestLocation();
+            //The user has already allowed the use of Locations. Get the current location.
+            requestLocation();
         }
 
         mLocationCallback = new LocationCallback() {
@@ -369,18 +369,18 @@ public class MessagingHomeActivity extends AppCompatActivity
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the // locations-related task you need to do.
                     requestLocation();
-            } else {
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-                Log.d("PERMISSION DENIED", "Nothing to see or do here.");
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Log.d("PERMISSION DENIED", "Nothing to see or do here.");
 
-                //Shut down the app. In production release, you would let the user
-                // know why the app is shutting down...maybe ask for permission again?
-                // finishAndRemoveTask();
+                    //Shut down the app. In production release, you would let the user
+                    // know why the app is shutting down...maybe ask for permission again?
+                    // finishAndRemoveTask();
+                }
+                return;
             }
-            return;
         }
-}
     }
 
     /**
@@ -402,8 +402,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                             if (location != null) {
                                 Log.d("LOCATION", location.toString());
                             }
-                    }
-            });
+                        }
+                    });
         }
     }
 
@@ -429,13 +429,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     public void setupEmojis() {
         final EmojiCompat.Config config;
 
-            // Use a downloadable font for EmojiCompat
-            final FontRequest fontRequest = new FontRequest(
-                    "com.google.android.gms.fonts",
-                    "com.google.android.gms",
-                    "Noto Color Emoji Compat",
-                    R.array.com_google_android_gms_fonts_certs);
-            config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
+        // Use a downloadable font for EmojiCompat
+        final FontRequest fontRequest = new FontRequest(
+                "com.google.android.gms.fonts",
+                "com.google.android.gms",
+                "Noto Color Emoji Compat",
+                R.array.com_google_android_gms_fonts_certs);
+        config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
 
         config.setReplaceAll(true)
                 .registerInitCallback(new EmojiCompat.InitCallback() {
@@ -475,7 +475,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
-        //Show mFab
+            //Show mFab
         } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null
                 || addChatFrag != null || chatFrag != null) {
             //Show the FAB on correct windows when back is pressed.
@@ -550,7 +550,7 @@ public class MessagingHomeActivity extends AppCompatActivity
              * Inner helper method to show wait fragment.
              */
             public void onWaitFragmentInteractionShow() {
-              getSupportFragmentManager()
+                getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.activity_messaging_container, new WaitFragment(), "WAIT")
                         .addToBackStack(null)
@@ -2047,16 +2047,16 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onLocationListFragmentInteraction(location item) {
 
-            mZip = Integer.parseInt(item.getZip());
-            mFab.hide();
-            mFab.setEnabled(false);
+        mZip = Integer.parseInt(item.getZip());
+        mFab.hide();
+        mFab.setEnabled(false);
 
-            //Build ASYNC task to get weather information.
-            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                    .onPostExecute(this::handleWeatherPostExecute)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build()
-                    .execute();
+        //Build ASYNC task to get weather information.
+        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+                .onPostExecute(this::handleWeatherPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build()
+                .execute();
 
     }
 

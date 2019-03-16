@@ -39,6 +39,9 @@ public class HomeFragment extends Fragment {
 
 
 
+    /**
+     * Constructor
+     */
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -152,7 +155,9 @@ public class HomeFragment extends Fragment {
             getActivity().unregisterReceiver(mPushMessageReciever);
         }
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnMsg(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -172,6 +177,9 @@ public class HomeFragment extends Fragment {
         }
 
     }
+    /**
+     * In app notification
+     */
     public void changeColorOnInv(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -190,7 +198,9 @@ public class HomeFragment extends Fragment {
         }
 
     }
-
+    /**
+     * In app notification
+     */
     public void changeColorOnAddToChat(){
 
         Spannable text = new SpannableString(((AppCompatActivity) getActivity()).getSupportActionBar().getTitle());
@@ -249,17 +259,12 @@ public class HomeFragment extends Fragment {
                     // Build the notification and display it
                     notificationManager.notify(1, builder.build());
 
-
                 }else if(type.equals("msg")) {
-//                    String msgtype = intent.getStringExtra( "MsgType" );
                     if(chatid.equals( "1" )) {
                         changeColorOnMsg();
                     }else{
                         changeColorOnAddToChat();
                     }
-                    //
-
-
                     if(msgtype.equals( "0" )){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                                 .setAutoCancel(true)
@@ -294,8 +299,6 @@ public class HomeFragment extends Fragment {
                         notificationManager.notify( 1, builder.build() );
                     }
 
-
-                    //
                 }else if(type.equals("acpt")){
                     changeColorOnInv();
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
