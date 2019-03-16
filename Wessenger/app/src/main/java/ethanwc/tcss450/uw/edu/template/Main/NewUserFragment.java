@@ -120,9 +120,6 @@ public class NewUserFragment extends WaitFragment {
         }
     }
 
-    public void doRegister() {
-
-    }
 
     /**
      * OnCreateView used to instantiate relevant items to the fragment.

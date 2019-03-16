@@ -72,7 +72,7 @@ public class CurrentWeather extends Fragment {
         mZip = getArguments().getInt("zip");
 
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab_messaging_fab);
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab_save);
         fab.setOnClickListener( new View.OnClickListener() {
 
             @Override

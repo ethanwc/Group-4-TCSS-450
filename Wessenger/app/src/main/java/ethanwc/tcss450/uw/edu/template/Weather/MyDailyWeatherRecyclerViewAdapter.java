@@ -12,24 +12,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import ethanwc.tcss450.uw.edu.template.R;
-import ethanwc.tcss450.uw.edu.template.Weather.DailyWeatherFragment.OnListFragmentInteractionListener;
 import ethanwc.tcss450.uw.edu.template.model.DailyWeather;
 import java.util.Calendar;
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DailyWeather} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDailyWeatherRecyclerViewAdapter.ViewHolder> {
 
     private final List<DailyWeather> mValues;
-    private final OnListFragmentInteractionListener mListener;
 
-    public MyDailyWeatherRecyclerViewAdapter(List<DailyWeather> items, OnListFragmentInteractionListener listener) {
+    public MyDailyWeatherRecyclerViewAdapter(List<DailyWeather> items) {
         mValues = items;
-        mListener = listener;
     }
 
     @Override
@@ -62,16 +57,7 @@ public class MyDailyWeatherRecyclerViewAdapter extends RecyclerView.Adapter<MyDa
 
         Log.e("weather", " "+ mValues.get(position).getWeather());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onWeatherListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+
     }
 
     private String convertDate (int position) {
