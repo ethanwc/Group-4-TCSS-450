@@ -131,8 +131,6 @@ public class MessagingHomeActivity extends AppCompatActivity
     private static final String TAG = "MyLocationsActivity";
     private boolean mIsMedia = false;
     private Connection[] mConnectionsAsArray;
-    SearchView mSearchView;
-    MenuItem mSearchMenu;
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
@@ -180,8 +178,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                             , Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_LOCATIONS);
         } else {
-        //The user has already allowed the use of Locations. Get the current location.
-        requestLocation();
+            //The user has already allowed the use of Locations. Get the current location.
+            requestLocation();
         }
 
         mLocationCallback = new LocationCallback() {
@@ -193,7 +191,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 for (Location location : locationResult.getLocations()) {
                     // Update UI with location data
                     setLocation(location);
-//                    Log.d("LOCATION UPDATE!", mCurrentLocation.toString());
+                    Log.d("LOCATION UPDATE!", mCurrentLocation.toString());
                 } };
         };
         createLocationRequest();
@@ -270,7 +268,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             mFab.setEnabled(false);
         }
 
-
     }
 
     /**
@@ -300,6 +297,7 @@ public class MessagingHomeActivity extends AppCompatActivity
      */
     private void setLocation(final Location location) {
         mCurrentLocation = location;
+
     }
 
     /**
@@ -371,18 +369,18 @@ public class MessagingHomeActivity extends AppCompatActivity
                         grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the // locations-related task you need to do.
                     requestLocation();
-            } else {
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-                Log.d("PERMISSION DENIED", "Nothing to see or do here.");
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Log.d("PERMISSION DENIED", "Nothing to see or do here.");
 
-                //Shut down the app. In production release, you would let the user
-                // know why the app is shutting down...maybe ask for permission again?
-                // finishAndRemoveTask();
+                    //Shut down the app. In production release, you would let the user
+                    // know why the app is shutting down...maybe ask for permission again?
+                    // finishAndRemoveTask();
+                }
+                return;
             }
-            return;
         }
-}
     }
 
     /**
@@ -404,8 +402,8 @@ public class MessagingHomeActivity extends AppCompatActivity
                             if (location != null) {
                                 Log.d("LOCATION", location.toString());
                             }
-                    }
-            });
+                        }
+                    });
         }
     }
 
@@ -431,13 +429,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     public void setupEmojis() {
         final EmojiCompat.Config config;
 
-            // Use a downloadable font for EmojiCompat
-            final FontRequest fontRequest = new FontRequest(
-                    "com.google.android.gms.fonts",
-                    "com.google.android.gms",
-                    "Noto Color Emoji Compat",
-                    R.array.com_google_android_gms_fonts_certs);
-            config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
+        // Use a downloadable font for EmojiCompat
+        final FontRequest fontRequest = new FontRequest(
+                "com.google.android.gms.fonts",
+                "com.google.android.gms",
+                "Noto Color Emoji Compat",
+                R.array.com_google_android_gms_fonts_certs);
+        config = new FontRequestEmojiCompatConfig(getApplicationContext(), fontRequest);
 
         config.setReplaceAll(true)
                 .registerInitCallback(new EmojiCompat.InitCallback() {
@@ -477,7 +475,7 @@ public class MessagingHomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
 
-        //Show mFab
+            //Show mFab
         } else if (connectionViewFrag != null || addcontactViewFrag != null || conversationViewFrag != null
                 || addChatFrag != null || chatFrag != null) {
             //Show the FAB on correct windows when back is pressed.
@@ -507,13 +505,13 @@ public class MessagingHomeActivity extends AppCompatActivity
         menuInflater.inflate(R.menu.messaging_home, menu);
 
         // Get the search menu.
-        mSearchMenu = menu.findItem(R.id.app_bar_menu_search);
+        MenuItem searchMenu = menu.findItem(R.id.app_bar_menu_search);
 
         // Get SearchView object.
-        mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchMenu);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
 
         // Get SearchView autocomplete object.
-        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setBackgroundColor(getResources().getColor(R.color.backgroundDark));
         searchAutoComplete.setTextColor(getResources().getColor(R.color.messageText));
         searchAutoComplete.setDropDownBackgroundResource(android.R.color.holo_blue_light);
@@ -552,7 +550,7 @@ public class MessagingHomeActivity extends AppCompatActivity
              * Inner helper method to show wait fragment.
              */
             public void onWaitFragmentInteractionShow() {
-              getSupportFragmentManager()
+                getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.activity_messaging_container, new WaitFragment(), "WAIT")
                         .addToBackStack(null)
@@ -671,10 +669,6 @@ public class MessagingHomeActivity extends AppCompatActivity
 //        mMenuItem = R.id.nav_global_chat
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        mSearchView.setEnabled(false);
-        mSearchMenu.setEnabled(false);
-        mSearchMenu.setVisible(false);
-
         //Chat has been chosen
         if (id == R.id.nav_global_chat) {
             SpannableString s = new SpannableString(item.getTitle());
@@ -692,9 +686,6 @@ public class MessagingHomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Global chat");
             mFab.hide();
             mFab.setEnabled(false);
-            mSearchView.setEnabled(false);
-            mSearchMenu.setEnabled(false);
-            mSearchMenu.setVisible(false);
 
             loadFragment(chatFrag);
         }
@@ -1016,8 +1007,13 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
     /**
+     * Helper method used to handle what happens after the web service for hourly weather returns.
+     * @param response String used to represent the JSON result.
+     */
+    private void handleHourlyWeatherPostExecute(final String response) {
 
         try {
+            List<HourlyWeather> hourlyWeathers = new ArrayList<>();
             JSONObject result = new JSONObject(response);
             JSONArray data = result.getJSONArray("data");
 
@@ -1217,7 +1213,6 @@ public class MessagingHomeActivity extends AppCompatActivity
      * @param frag Fragment used to represent the chosen fragment to load.
      */
     private void loadFragment(Fragment frag) {
-        onWaitFragmentInteractionHide();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_messaging_container, frag)
                 .addToBackStack(null);
@@ -1303,6 +1298,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleConnectionGetOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
+
     }
 
     /**
@@ -1451,7 +1447,9 @@ public class MessagingHomeActivity extends AppCompatActivity
             JSONObject resultJSON = new JSONObject(result);
             boolean success = resultJSON.getBoolean("success");
 
+
             if (success) {
+
                 mConnections = new ArrayList<>();
                 JSONArray firstnames = resultJSON.getJSONArray("firstnames");
                 JSONArray lastnames = resultJSON.getJSONArray("lastnames");
@@ -1692,8 +1690,8 @@ public class MessagingHomeActivity extends AppCompatActivity
     }
 
 
-    /**
-    *Just loads the chats fragment.
+    /*
+    Just loads the chats fragment.
      */
     private void swapToChats() {
         Message[] m = setChatInfo();
@@ -1946,6 +1944,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                         mFab.hide();
                         mFab.setEnabled(false);
                     }
+
                 });
 
             }
@@ -2048,16 +2047,16 @@ public class MessagingHomeActivity extends AppCompatActivity
     @Override
     public void onLocationListFragmentInteraction(location item) {
 
-            mZip = Integer.parseInt(item.getZip());
-            mFab.hide();
-            mFab.setEnabled(false);
+        mZip = Integer.parseInt(item.getZip());
+        mFab.hide();
+        mFab.setEnabled(false);
 
-            //Build ASYNC task to get weather information.
-            new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
-                    .onPostExecute(this::handleWeatherPostExecute)
-                    .onCancelled(this::handleErrorsInTask)
-                    .build()
-                    .execute();
+        //Build ASYNC task to get weather information.
+        new GetAsyncTask.Builder("https://api.openweathermap.org/data/2.5/forecast?zip=" + mZip + "&cnt=10&appid=b0ce6ca6ee362ce9ea5bbe361fdcbf92")//uri.toString()
+                .onPostExecute(this::handleWeatherPostExecute)
+                .onCancelled(this::handleErrorsInTask)
+                .build()
+                .execute();
 
     }
 
@@ -2244,6 +2243,7 @@ public class MessagingHomeActivity extends AppCompatActivity
                 .onPostExecute(this::handleAddToChatOnPostExecute)
                 .onCancelled(this::handleErrorsInTask)
                 .build().execute();
+
     }
 
     /**
